@@ -15,6 +15,7 @@
     <link rel="shortcut icon" type="image/x-icon" href="/assets/imgs/theme/favicon.svg" />
     <!-- Template CSS -->
     <link rel="stylesheet" href="/assets/css/main.css?v=6.0" />
+    @stack('head')
 </head>
 
 <body>
@@ -22,9 +23,11 @@
 
     @include('layouts.landing.component.header-web')
     @include('layouts.landing.component.header-mobile')
-    
+
     @yield('content')
-    
+
+    @include('layouts.landing.component.footer')
+
     <div id="preloader-active">
         <div class="preloader d-flex align-items-center justify-content-center">
             <div class="preloader-inner position-relative">
@@ -54,9 +57,11 @@
     <script src="/assets/js/plugins/jquery.vticker-min.js"></script>
     <script src="/assets/js/plugins/jquery.theia.sticky.js"></script>
     <script src="/assets/js/plugins/jquery.elevatezoom.js"></script>
+    <script src="assets/js/plugins/slider-range.js"></script>
     <!-- Template  JS -->
     <script src="/assets/js/main.js?v=6.0"></script>
     <script src="/assets/js/shop.js?v=6.0"></script>
+    @stack('script')
 </body>
 
 </html>
