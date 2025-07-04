@@ -67,66 +67,74 @@
                                 </a>
                                 <a href="shop-cart.html"><span class="lable">Cart</span></a>
                                 <div class="cart-dropdown-wrap cart-dropdown-hm2">
+                                    @php $authUser = auth()->user()->load('cart'); $cartPopUp = $authUser->cart; $cartPopUpSubTotal = 0; @endphp
+                                    @if($cartPopUp)
                                     <ul>
-                                        <li>
-                                            <div class="shopping-cart-img">
-                                                <a href="shop-product-right.html"><img alt="Nest"
-                                                                                       src="/assets/imgs/shop/thumbnail-3.jpg"/></a>
-                                            </div>
-                                            <div class="shopping-cart-title">
-                                                <h4><a href="shop-product-right.html">Daisy Casual Bag</a></h4>
-                                                <h4><span>1 × </span>$800.00</h4>
-                                            </div>
-                                            <div class="shopping-cart-delete">
-                                                <a href="#"><i class="fi-rs-cross-small"></i></a>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="shopping-cart-img">
-                                                <a href="shop-product-right.html"><img alt="Nest"
-                                                                                       src="/assets/imgs/shop/thumbnail-2.jpg"/></a>
-                                            </div>
-                                            <div class="shopping-cart-title">
-                                                <h4><a href="shop-product-right.html">Corduroy Shirts</a></h4>
-                                                <h4><span>1 × </span>$3200.00</h4>
-                                            </div>
-                                            <div class="shopping-cart-delete">
-                                                <a href="#"><i class="fi-rs-cross-small"></i></a>
-                                            </div>
-                                        </li>
+                                        @foreach(json_decode($cartPopUp->items, true) as $i => $cartPopUpItem)
+                                            @php $cartPopUpSubTotal += ($cartPopUpItem['price'] * $cartPopUpItem['quantity']) @endphp
+                                            @if($i < 2)
+                                                <li>
+                                                    <div class="shopping-cart-img">
+                                                        <a href="/{{ $cartPopUpItem['slug'] }}"><img alt="Nest"
+                                                                                               src="{{ $cartPopUpItem['image'] }}"/></a>
+                                                    </div>
+                                                    <div class="shopping-cart-title">
+                                                        <h4><a href="/{{ $cartPopUpItem['slug'] }}">{{ $cartPopUpItem['name'] }}</a></h4>
+                                                        <h4><span>{{ $cartPopUpItem['quantity'] }} × </span>Rp. {{ number_format($cartPopUpItem['price']) }}</h4>
+                                                    </div>
+                                                    <div class="shopping-cart-delete">
+                                                        <a href="#"><i class="fi-rs-cross-small"></i></a>
+                                                    </div>
+                                                </li>
+                                            @endif
+                                        @endforeach
+
+                                        @if (count(json_decode($cartPopUp->items, true)) > 2)
+                                            <li><a href="/cart">And {{ count(json_decode($cartPopUp->items, true)) - 2 }} more</a></li>
+                                        @endif
                                     </ul>
                                     <div class="shopping-cart-footer">
                                         <div class="shopping-cart-total">
-                                            <h4>Total <span>$4000.00</span></h4>
+                                            <h4>Total <span>Rp. {{ number_format($cartPopUpSubTotal) }}</span></h4>
                                         </div>
                                         <div class="shopping-cart-button">
-                                            <a href="shop-cart.html" class="outline">View cart</a>
-                                            <a href="shop-checkout.html">Checkout</a>
+                                            <a href="/cart" class="outline">View cart</a>
+                                            <a href="/cart">Checkout</a>
                                         </div>
                                     </div>
+                                    @else
+                                        <p>No Data</p>
+                                    @endif
+
                                 </div>
                             </div>
                             <div class="header-action-icon-2">
-                                <a href="page-account.html">
+                                <a href="/me">
                                     <img class="svgInject" alt="Nest" src="/assets/imgs/theme/icons/icon-user.svg"/>
                                 </a>
-                                <a href="page-account.html"><span class="lable ml-0">Account</span></a>
+                                <a href="/me"><span class="lable ml-0">Account</span></a>
                                 <div class="cart-dropdown-wrap cart-dropdown-hm2 account-dropdown">
                                     <ul>
-                                        <li><a href="page-account.html"><i class="fi fi-rs-user mr-10"></i>My
+                                        <li><a href="/me"><i class="fi fi-rs-user mr-10"></i>My
                                                 Account</a></li>
-                                        <li><a href="page-account.html"><i class="fi fi-rs-location-alt mr-10"></i>Order
+                                        <li><a href="/me/orders"><i class="fi fi-rs-location-alt mr-10"></i>Order
                                                 Tracking</a></li>
-                                        <li><a href="page-account.html"><i class="fi fi-rs-label mr-10"></i>My
+                                        <li><a href="/me/vouchers"><i class="fi fi-rs-label mr-10"></i>My
                                                 Voucher</a></li>
-                                        <li><a href="shop-wishlist.html"><i class="fi fi-rs-heart mr-10"></i>My Wishlist</a>
+                                        <li><a href="/me/wishlist"><i class="fi fi-rs-heart mr-10"></i>My Wishlist</a>
                                         </li>
-                                        <li><a href="page-account.html"><i class="fi fi-rs-settings-sliders mr-10"></i>Setting</a>
+                                        <li><a href="/me/setting"><i class="fi fi-rs-settings-sliders mr-10"></i>Setting</a>
                                         </li>
-                                        <li><a href="page-login.html"><i class="fi fi-rs-sign-out mr-10"></i>Sign
-                                                out</a></li>
+                                        @if(auth()->user())
+                                            <li><a href="#" onclick="document.getElementById('form-logout').submit();"><i class="fi fi-rs-sign-out mr-10"></i>Sign out</a></li>
+                                        @endif
                                     </ul>
                                 </div>
+                                @if(auth()->user())
+                                    <form style="display: none" id="form-logout" action="/logout" method="POST">
+                                        @csrf
+                                    </form>
+                                @endif
                             </div>
                         </div>
                     </div>

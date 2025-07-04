@@ -15,30 +15,36 @@ class CartController extends Controller
     public function index(Request $request)
     {
         $currentUser = $request->user();
-        $cart = $currentUser->load('cart');
+        $currentUser->load('cart');
+        $cart = $currentUser->cart;
         if (is_null($cart)) {
             $cart = $currentUser->cart()->create(['items' => json_encode([])]);
         }
 
         $cartItems = json_decode($cart->items, true);
 
-        $cartItems = collect($cartItems)->map(function ($item) {
+        $subTotal = 0;
+
+        $cartItems = collect($cartItems)->map(function ($item) use (&$subTotal) {
+            $subTotal += ($item['price'] * $item['quantity']);
             return [
                 'id' => $item['id'],
                 'quantity' => $item['quantity'],
                 'price' => $item['price'],
                 'name' => $item['name'],
+                'slug' => $item['slug'],
                 'image' => $item['image'],
             ];
         });
 
-        return view('cart.index', compact('cartItems'));
+        return view('buyer.cart', compact('cartItems','subTotal'));
     }
 
     public function add(Request $request)
     {
         $currentUser = $request->user();
-        $cart = $currentUser->load('cart');
+        $currentUser->load('cart');
+        $cart = $currentUser->cart;
 
         if (is_null($cart)) {
             $cart = $currentUser->cart()->create(['items' => json_encode([])]);
@@ -68,7 +74,8 @@ class CartController extends Controller
                 'quantity' => $quantity,
                 'price' => $product->final_price,
                 'name' => $product->name,
-                'image' => $product->defaultImage ? $product->defaultImage->url : null,
+                'slug' => $product->slug,
+                'image' => $product->defaultImage ? $product->defaultImage->getFullUrl() : null,
             ];
         }
 

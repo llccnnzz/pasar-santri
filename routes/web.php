@@ -11,6 +11,8 @@ Route::get('/products', [ProductController::class, 'index']);
 
 Auth::routes();
 
+Route::get('/me', [HomeController::class, 'account'])->name('account');
+
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::post('/cart', [CartController::class, 'add'])->name('cart.add');
 
