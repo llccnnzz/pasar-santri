@@ -164,16 +164,22 @@
                                         <span class="number-items-available text-success" id="stock-available">{{$product['final_stock']}} products available</span>
                                     </div>
                                     <div class="detail-extralink mb-50">
-                                        <div class="variant-qty border radius">
-                                            <a href="#" class="variant-qty-down"><i class="fi-rs-angle-small-down"></i></a>
-                                            <input type="text" name="quantity" class="variant-qty-val" value="1" min="1">
-                                            <a href="#" class="variant-qty-up"><i class="fi-rs-angle-small-up"></i></a>
-                                        </div>
-                                        <div class="product-extra-link2">
-                                            <button type="submit" class="button button-add-to-cart"><i class="fi-rs-shopping-cart"></i>Add to cart</button>
-                                            <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                            <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
-                                        </div>
+
+                                            <div class="variant-qty border radius">
+                                                <a href="#" class="variant-qty-down"><i class="fi-rs-angle-small-down"></i></a>
+                                                <form id="add-to-cart" action="/cart" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="product_id" value="{{ $product['id'] }}">
+                                                    <input type="text" name="quantity" class="variant-qty-val" value="1" min="1">
+                                                </form>
+                                                <a href="#" class="variant-qty-up"><i class="fi-rs-angle-small-up"></i></a>
+                                            </div>
+                                            <div class="product-extra-link2">
+                                                <button type="button" onclick="document.getElementById('add-to-cart').submit()" class="button button-add-to-cart"><i class="fi-rs-shopping-cart"></i>Add to cart</button>
+                                                <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
+                                                <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                            </div>
+
                                     </div>
                                     <div class="font-xs">
                                         <ul class="mr-50 float-start">

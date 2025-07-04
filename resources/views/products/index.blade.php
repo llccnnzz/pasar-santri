@@ -27,7 +27,7 @@
                                     <div class="categories-dropdown-wrap font-heading">
                                         <div class="row">
                                             @foreach($categories as $category)
-                                                <div class="col-6">
+                                                <div class="col-12">
                                                     <div class="custome-checkbox d-flex align-items-start">
                                                         <input class="form-check-input category-filter me-2 mt-1"
                                                                type="checkbox"
@@ -50,7 +50,7 @@
                                     <div class="brands-dropdown-wrap font-heading">
                                         <div class="row">
                                             @foreach($brands as $index => $brand)
-                                                <div class="col-6">
+                                                <div class="col-12">
                                                     <div class="custome-checkbox d-flex align-items-start">
                                                         <input class="form-check-input brand-filter me-2 mt-1"
                                                                type="checkbox"
@@ -73,7 +73,7 @@
                                     <div class="brands-dropdown-wrap font-heading">
                                         <div class="row">
                                             @foreach($tags as $index => $tag)
-                                                <div class="col-6">
+                                                <div class="col-12">
                                                     <div class="custome-checkbox d-flex align-items-start">
                                                         <input class="form-check-input tag-filter me-2 mt-1"
                                                                type="checkbox"
