@@ -17,9 +17,6 @@ class WishlistController extends Controller
         $currentUser = $request->user();
         $currentUser->load('wishlist');
         $wishlist = $currentUser->wishlist;
-        if (is_null($wishlist)) {
-            $wishlist = $currentUser->wishlist()->create(['items' => json_encode([])]);
-        }
 
         $wishlistItems = json_decode($wishlist->items, true);
 
@@ -42,10 +39,6 @@ class WishlistController extends Controller
         $currentUser = $request->user();
         $currentUser->load('wishlist');
         $wishlist = $currentUser->wishlist;
-
-        if (is_null($wishlist)) {
-            $wishlist = $currentUser->wishlist()->create(['items' => json_encode([])]);
-        }
 
         $wishlistItems = json_decode($wishlist->items, true);
 
@@ -83,10 +76,6 @@ class WishlistController extends Controller
         $currentUser = $request->user();
         $currentUser->load('wishlist');
         $wishlist = $currentUser->wishlist;
-
-        if (is_null($wishlist)) {
-            return redirect()->back()->with('error', 'wishlist not found.');
-        }
 
         $wishlistItems = json_decode($wishlist->items, true);
 

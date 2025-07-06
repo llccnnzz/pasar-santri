@@ -17,9 +17,6 @@ class CartController extends Controller
         $currentUser = $request->user();
         $currentUser->load('cart');
         $cart = $currentUser->cart;
-        if (is_null($cart)) {
-            $cart = $currentUser->cart()->create(['items' => json_encode([])]);
-        }
 
         $cartItems = json_decode($cart->items, true);
 
@@ -45,10 +42,6 @@ class CartController extends Controller
         $currentUser = $request->user();
         $currentUser->load('cart');
         $cart = $currentUser->cart;
-
-        if (is_null($cart)) {
-            $cart = $currentUser->cart()->create(['items' => json_encode([])]);
-        }
 
         $cartItems = json_decode($cart->items, true);
 
@@ -90,10 +83,6 @@ class CartController extends Controller
         $currentUser = $request->user();
         $currentUser->load('cart');
         $cart = $currentUser->cart;
-
-        if (is_null($cart)) {
-            return redirect()->back()->with('error', 'Cart not found.');
-        }
 
         $cartItems = json_decode($cart->items, true);
 

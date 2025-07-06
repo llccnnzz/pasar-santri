@@ -63,10 +63,15 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
+        $currentUser = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
+
+        $cart = $currentUser->cart()->create(['items' => json_encode([])]);
+        $wishlist = $currentUser->wishlist()->create(['items' => json_encode([])]);
+
+        return $currentUser;
     }
 }
