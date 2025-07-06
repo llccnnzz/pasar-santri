@@ -46,67 +46,77 @@
                                     </select>
                                 </form>
                             </div>
+                            @if(auth()->user())
+                                @php
+                                    $authUser = auth()->user()->load(['wishlist','cart']);
+                                    $wishlistPopUp = $authUser->wishlist;
+                                    $cartPopUp = $authUser->cart;
+                                    $cartPopUpSubTotal = 0;
+                                @endphp
+                            @endif
+
                             <div class="header-action-icon-2">
-                                <a href="shop-compare.html">
-                                    <img class="svgInject" alt="Nest" src="/assets/imgs/theme/icons/icon-compare.svg"/>
-                                    <span class="pro-count blue">3</span>
-                                </a>
-                                <a href="shop-compare.html"><span class="lable ml-0">Compare</span></a>
-                            </div>
-                            <div class="header-action-icon-2">
-                                <a href="shop-wishlist.html">
+                                <a href="/wishlist">
                                     <img class="svgInject" alt="Nest" src="/assets/imgs/theme/icons/icon-heart.svg"/>
-                                    <span class="pro-count blue">6</span>
+                                    @if (auth()->user() && $wishlistPopUp && count(json_decode($wishlistPopUp->items, true)) > 0)
+                                        <span class="pro-count blue">{{ count(json_decode($wishlistPopUp->items, true)) }}</span>
+                                    @endif
                                 </a>
-                                <a href="shop-wishlist.html"><span class="lable">Wishlist</span></a>
+                                <a href="/wishlist"><span class="lable">Wishlist</span></a>
                             </div>
                             <div class="header-action-icon-2">
-                                <a class="mini-cart-icon" href="shop-cart.html">
+                                <a class="mini-cart-icon" href="/cart">
                                     <img alt="Nest" src="/assets/imgs/theme/icons/icon-cart.svg"/>
-                                    <span class="pro-count blue">2</span>
-                                </a>
-                                <a href="shop-cart.html"><span class="lable">Cart</span></a>
-                                <div class="cart-dropdown-wrap cart-dropdown-hm2">
-                                    @php $authUser = auth()->user()->load('cart'); $cartPopUp = $authUser->cart; $cartPopUpSubTotal = 0; @endphp
-                                    @if($cartPopUp)
-                                    <ul>
-                                        @foreach(json_decode($cartPopUp->items, true) as $i => $cartPopUpItem)
-                                            @php $cartPopUpSubTotal += ($cartPopUpItem['price'] * $cartPopUpItem['quantity']) @endphp
-                                            @if($i < 2)
-                                                <li>
-                                                    <div class="shopping-cart-img">
-                                                        <a href="/{{ $cartPopUpItem['slug'] }}"><img alt="Nest"
-                                                                                               src="{{ $cartPopUpItem['image'] }}"/></a>
-                                                    </div>
-                                                    <div class="shopping-cart-title">
-                                                        <h4><a href="/{{ $cartPopUpItem['slug'] }}">{{ $cartPopUpItem['name'] }}</a></h4>
-                                                        <h4><span>{{ $cartPopUpItem['quantity'] }} × </span>Rp. {{ number_format($cartPopUpItem['price']) }}</h4>
-                                                    </div>
-                                                    <div class="shopping-cart-delete">
-                                                        <a href="#"><i class="fi-rs-cross-small"></i></a>
-                                                    </div>
-                                                </li>
-                                            @endif
-                                        @endforeach
-
-                                        @if (count(json_decode($cartPopUp->items, true)) > 2)
-                                            <li><a href="/cart">And {{ count(json_decode($cartPopUp->items, true)) - 2 }} more</a></li>
-                                        @endif
-                                    </ul>
-                                    <div class="shopping-cart-footer">
-                                        <div class="shopping-cart-total">
-                                            <h4>Total <span>Rp. {{ number_format($cartPopUpSubTotal) }}</span></h4>
-                                        </div>
-                                        <div class="shopping-cart-button">
-                                            <a href="/cart" class="outline">View cart</a>
-                                            <a href="/cart">Checkout</a>
-                                        </div>
-                                    </div>
-                                    @else
-                                        <p>No Data</p>
+                                    @if(auth()->user() && $cartPopUp && count(json_decode($cartPopUp->items, true)) > 0)
+                                        <span class="pro-count blue">{{ count(json_decode($cartPopUp->items, true)) }}</span>
                                     @endif
+                                </a>
+                                <a href="/cart"><span class="lable">Cart</span></a>
+                                @if(auth()->user())
+                                    <div class="cart-dropdown-wrap cart-dropdown-hm2">
+                                        @if($cartPopUp)
+                                        <ul>
+                                            @foreach(json_decode($cartPopUp->items, true) as $i => $cartPopUpItem)
+                                                @php $cartPopUpSubTotal += ($cartPopUpItem['price'] * $cartPopUpItem['quantity']) @endphp
+                                                @if($i < 2)
+                                                    <li>
+                                                        <div class="shopping-cart-img">
+                                                            <a href="/{{ $cartPopUpItem['slug'] }}"><img alt="Nest"
+                                                                                                   src="{{ $cartPopUpItem['image'] }}"/></a>
+                                                        </div>
+                                                        <div class="shopping-cart-title">
+                                                            <h4><a href="/{{ $cartPopUpItem['slug'] }}">{{ $cartPopUpItem['name'] }}</a></h4>
+                                                            <h4><span>{{ $cartPopUpItem['quantity'] }} × </span>Rp. {{ number_format($cartPopUpItem['price']) }}</h4>
+                                                        </div>
+                                                        <div class="shopping-cart-delete">
+                                                            <form id="delete-cart-pop-up-{{ $cartPopUpItem['id'] }}" style="display: none" action="/cart/{{ $cartPopUpItem['id'] }}" method="POST">
+                                                                @method('DELETE')
+                                                                @csrf
+                                                            </form>
+                                                            <a href="#" onclick="document.getElementById('delete-cart-pop-up-{{ $cartPopUpItem['id'] }}').submit()"><i class="fi-rs-cross-small"></i></a>
+                                                        </div>
+                                                    </li>
+                                                @endif
+                                            @endforeach
 
-                                </div>
+                                            @if (count(json_decode($cartPopUp->items, true)) > 2)
+                                                <li><a href="/cart">And {{ count(json_decode($cartPopUp->items, true)) - 2 }} more</a></li>
+                                            @endif
+                                        </ul>
+                                        <div class="shopping-cart-footer">
+                                            <div class="shopping-cart-total">
+                                                <h4>Total <span>Rp. {{ number_format($cartPopUpSubTotal) }}</span></h4>
+                                            </div>
+                                            <div class="shopping-cart-button">
+                                                <a href="/cart" class="outline">View cart</a>
+                                                <a href="/cart">Checkout</a>
+                                            </div>
+                                        </div>
+                                        @else
+                                            <p>No Data</p>
+                                        @endif
+                                    </div>
+                                @endif
                             </div>
                             <div class="header-action-icon-2">
                                 <a href="/me">

@@ -10,4 +10,8 @@ class Cart extends Model
         'user_id',
         'items'
     ];
+
+    protected $casts = [
+        'items' => 'array',
+    ];
 }

@@ -82,6 +82,36 @@ class CartController extends Controller
         // Save updated cart items
         $cart->update(['items' => json_encode($cartItems)]);
 
-        return redirect()->route('cart.index')->with('success', 'Product added to cart successfully.');
+        return redirect()->back()->with('success', 'Product added to cart successfully.');
+    }
+
+    public function remove(Request $request, Product $product)
+    {
+        $currentUser = $request->user();
+        $currentUser->load('cart');
+        $cart = $currentUser->cart;
+
+        if (is_null($cart)) {
+            return redirect()->back()->with('error', 'Cart not found.');
+        }
+
+        $cartItems = json_decode($cart->items, true);
+
+        // Find the item in the cart
+        $itemKey = collect($cartItems)->search(function ($item) use ($product) {
+            return $item['id'] == $product->id;
+        });
+
+        if ($itemKey !== false) {
+            // Remove the item from the cart
+            unset($cartItems[$itemKey]);
+            // Re-index the array
+            $cartItems = array_values($cartItems);
+            // Save updated cart items
+            $cart->update(['items' => json_encode($cartItems)]);
+            return redirect()->back()->with('success', 'Product removed from cart successfully.');
+        }
+
+        return redirect()->back()->with('error', 'Product not found in cart.');
     }
 }

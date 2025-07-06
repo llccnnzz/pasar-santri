@@ -15,6 +15,7 @@ Route::get('/me', [HomeController::class, 'account'])->name('account');
 
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::post('/cart', [CartController::class, 'add'])->name('cart.add');
+Route::delete('/cart/{product}', [CartController::class, 'remove'])->name('cart.remove');
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 

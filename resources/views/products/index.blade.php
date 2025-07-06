@@ -157,6 +157,41 @@
 
 @push('script')
     <script>
+        function addToCart(productId, quantity, token) {
+            // create execute submit form but stay in this page
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/cart';
+            form.style.display = 'none';
+            const inputProductId = document.createElement('input');
+            inputProductId.type = 'hidden';
+            inputProductId.name = 'product_id';
+            inputProductId.value = productId;
+            const inputQuantity = document.createElement('input');
+            inputQuantity.type = 'hidden';
+            inputQuantity.name = 'quantity';
+            inputQuantity.value = quantity;
+            // add csrf token
+            const inputCsrf = document.createElement('input');
+            inputCsrf.type = 'hidden';
+            inputCsrf.name = '_token';
+            inputCsrf.value = token;
+            form.appendChild(inputCsrf);
+            form.appendChild(inputProductId);
+            form.appendChild(inputQuantity);
+            document.body.appendChild(form);
+            form.submit();
+
+            // create alert
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-success';
+            alert.innerHTML = `<strong>Success!</strong> Product has been added to cart.`;
+            document.body.appendChild(alert);
+            setTimeout(() => {
+                alert.remove();
+            }, 3000);
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const baseUrl = '/api/products';
 
@@ -234,7 +269,7 @@
                                             <span class="old-price">Rp ${formatPrice(product.price)}</span>
                                         </div>
                                         <div class="add-cart">
-                                            <a class="add" href="shop-cart.html"><i class="fi-rs-shopping-cart mr-5"></i>Add </a>
+                                            <a class="add" href="#" onclick="addToCart('${product.id}', 1, '{{ csrf_token() }}')"><i class="fi-rs-shopping-cart mr-5"></i>Add </a>
                                         </div>
                                     </div>
                                 </div>

@@ -41,12 +41,14 @@
                                                     <input type="text" required="" name="code" placeholder="Security code *" />
                                                 </div>
                                                 <span class="security-code">
-                                                    @php $color = ['new','hot','sale','best'] @endphp
+                                                    @php $color = ['new','hot','sale','best']; $captchaKey = '' @endphp
                                                     @for($i = 0; $i < 4; $i++)
-                                                        <b class="text-{{ $color[$i] }}">{{ rand(1,9) }}</b>
+                                                        @php $key = rand(0,9); $captchaKey .= $key @endphp
+                                                        <b class="text-{{ $color[rand(0,3)] }}">{{ $key }}</b>
                                                     @endfor
                                                 </span>
                                             </div>
+                                            <input type="hidden" name="captcha_token" value="{{ \Illuminate\Support\Facades\Hash::make($captchaKey) }}">
                                             <div class="login_footer form-group mb-50">
                                                 <div class="chek-form">
                                                     <div class="custome-checkbox">

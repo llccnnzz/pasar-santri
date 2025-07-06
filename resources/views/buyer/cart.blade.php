@@ -71,7 +71,13 @@
                                 <td class="price" data-title="Price">
                                     <h4 class="text-brand">Rp. {{ number_format($item['price'] * $item['quantity']) }} </h4>
                                 </td>
-                                <td class="action text-center" data-title="Remove"><a href="#" class="text-body"><i class="fi-rs-trash"></i></a></td>
+                                <td class="action text-center" data-title="Remove">
+                                    <form id="delete-cart-{{ $item['id'] }}" style="display: none" action="/cart/{{ $item['id'] }}" method="POST">
+                                        @method('DELETE')
+                                        @csrf
+                                    </form>
+                                    <a href="#" onclick="document.getElementById('delete-cart-{{ $item['id'] }}').submit()" class="text-body"><i class="fi-rs-trash"></i></a>
+                                </td>
                             </tr>
                             @endforeach
                             </tbody>

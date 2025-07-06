@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
@@ -36,5 +38,48 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
         $this->middleware('auth')->only('logout');
+    }
+
+    public function login(Request $request)
+    {
+        $this->validateLogin($request);
+
+        $validCaptcha = $this->validateCaptcha($request);
+
+        if ($validCaptcha) {
+            if (method_exists($this, 'hasTooManyLoginAttempts') &&
+                $this->hasTooManyLoginAttempts($request)) {
+                $this->fireLockoutEvent($request);
+
+                return $this->sendLockoutResponse($request);
+            }
+
+            if ($this->attemptLogin($request)) {
+                if ($request->hasSession()) {
+                    $request->session()->put('auth.password_confirmed_at', time());
+                }
+
+                return $this->sendLoginResponse($request);
+            }
+
+            $this->incrementLoginAttempts($request);
+        }
+
+        return $this->sendFailedLoginResponse($request);
+    }
+
+    protected function validateLogin(Request $request)
+    {
+        $request->validate([
+            $this->username() => 'required|string',
+            'password' => 'required|string',
+            'code' => 'required|string',
+            'captcha_token' => 'required|string',
+        ]);
+    }
+
+    protected function validateCaptcha(Request $request)
+    {
+        return Hash::check($request['code'], $request['captcha_token']);
     }
 }
