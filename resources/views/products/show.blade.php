@@ -176,9 +176,29 @@
                                             </div>
                                             <div class="product-extra-link2">
                                                 <button type="button" onclick="document.getElementById('add-to-cart').submit()" class="button button-add-to-cart"><i class="fi-rs-shopping-cart"></i>Add to cart</button>
-                                                <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                @php
+                                                    $authUser = auth()->user()->load(['wishlist']);
+                                                    $wishlistPopUp = $authUser->wishlist;
+                                                @endphp
+                                                @if(collect(json_decode($wishlistPopUp->items, true))->where('id', $product['id'])->isNotEmpty())
+                                                    <a aria-label="Remove from Wishlist" class="action-btn hover-up" style="background: #3BB77E; color: white" href="#" onclick="document.getElementById('remove-from-wishlist').submit()">
+                                                        <i class="fi-rs-heart"></i>
+                                                    </a>
+                                                @else
+                                                    <a aria-label="Add To Wishlist" class="action-btn hover-up" href="#" onclick="document.getElementById('add-to-wishlist').submit()">
+                                                        <i class="fi-rs-heart"></i>
+                                                    </a>
+                                                @endif
+
                                             </div>
+                                            <form id="add-to-wishlist" action="/wishlist" method="POST">
+                                                @csrf
+                                                <input type="hidden" name="product_id" value="{{ $product['id'] }}">
+                                            </form>
+                                            <form id="remove-from-wishlist" action="/wishlist/{{ $product['id'] }}" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                            </form>
 
                                     </div>
                                     <div class="font-xs">
