@@ -33,7 +33,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            @foreach($wishlistItems as $i => $item)
+                            @forelse($wishlistItems as $i => $item)
                                 <tr class="{{ $i === 0 ? 'pt-30' : '' }}">
                                     <td class="custome-checkbox pl-30">
                                         <input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox1" value="" />
@@ -75,7 +75,11 @@
                                         <a href="#" onclick="document.getElementById('remove-from-wishlist-{{ $item['id'] }}').submit()" class="text-body"><i class="fi-rs-trash"></i></a>
                                     </td>
                                 </tr>
-                            @endforeach
+                            @empty
+                                <tr>
+                                    <td colspan="7" class="text-center">Your wishlist is empty.</td>
+                                </tr>
+                            @endforelse
                             </tbody>
                         </table>
                     </div>
