@@ -81,19 +81,29 @@ class CartController extends Controller
         if ($existingItemKey !== false) {
             $isAvailable = true;
             $message = null;
-            if ($product->stock < $quantity) {
+            if ($product->stock < ($cartItems[$existingItemKey]['quantity'] + $quantity) - 1) {
                 $isAvailable = false;
                 $message = 'Out of Stock';
             }
-            $cartItems[$existingItemKey]['quantity'] += $quantity;
+            if ($isAvailable) {
+                $cartItems[$existingItemKey]['quantity'] += $quantity;
+            }
             $cartItems[$existingItemKey]['is_available'] = $isAvailable;
             $cartItems[$existingItemKey]['message'] = $message;
+
+            if ($cartItems[$existingItemKey]['quantity'] < 1) {
+                unset($cartItems[$existingItemKey]);
+                $cartItems = array_values($cartItems);
+            }
         } else {
             $isAvailable = true;
             $message = null;
             if ($product->stock < $quantity) {
                 $isAvailable = false;
                 $message = 'Out of Stock';
+            }
+            if ($quantity < 1) {
+                return redirect()->back()->withErrors('Minimum Quantity is 1.');
             }
             $cartItems[] = [
                 'id' => $productId,
