@@ -45,7 +45,7 @@ class WishlistController extends Controller
         $productId = $request->input('product_id');
         $product = Product::find($productId);
         if (!$product) {
-            return redirect()->back()->with('error', 'Product not found.');
+            return redirect()->back()->withErrors('Product not found.');
         }
 
         // Check if the product already exists in the wishlist
@@ -68,7 +68,7 @@ class WishlistController extends Controller
         // Save updated wishlist items
         $wishlist->update(['items' => json_encode($wishlistItems)]);
 
-        return redirect()->back()->with('success', 'Product added to wishlist successfully.');
+        return redirect()->back()->withMessage('Product added to wishlist successfully.');
     }
 
     public function remove(Request $request, Product $product)
@@ -91,9 +91,9 @@ class WishlistController extends Controller
             $wishlistItems = array_values($wishlistItems);
             // Save updated wishlist items
             $wishlist->update(['items' => json_encode($wishlistItems)]);
-            return redirect()->back()->with('success', 'Product removed from wishlist successfully.');
+            return redirect()->back()->withMessage('Product removed from wishlist successfully.');
         }
 
-        return redirect()->back()->with('error', 'Product not found in wishlist.');
+        return redirect()->back()->withErrors('Product not found in wishlist.');
     }
 }

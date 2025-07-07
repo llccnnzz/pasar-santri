@@ -47,29 +47,42 @@
                                 </td>
                                 <td class="image product-thumbnail pt-40"><img src="{{ $item['image'] }}" alt="#"></td>
                                 <td class="product-des product-name">
-                                    <h6 class="mb-5"><a class="product-name mb-10 text-heading" href="/{{ $item['slug'] }}">{{ $item['name'] }}</a></h6>
+                                    <h6 class="mb-5"><a class="product-name mb-10 text-heading {{ $item['is_available'] ? '':'text-muted' }}" href="/{{ $item['slug'] }}">{{ $item['name'] }}</a></h6>
                                     <div class="product-rate-cover">
                                         <div class="product-rate d-inline-block">
                                             <div class="product-rating" style="width:90%">
                                             </div>
                                         </div>
-                                        <span class="font-small ml-5 text-muted"> (4.0)</span>
+                                        <span class="font-small ml-5 {{ $item['is_available'] ? '':'text-muted' }}"> (4.0)</span>
                                     </div>
                                 </td>
                                 <td class="price" data-title="Price">
-                                    <h4 class="text-body">Rp. {{ number_format($item['price']) }} </h4>
+                                    <h4 class="{{ $item['is_available'] ? 'text-brand':'text-muted' }}">Rp. {{ number_format($item['price']) }} </h4>
                                 </td>
                                 <td class="text-center detail-info" data-title="Stock">
                                     <div class="detail-extralink mr-15">
                                         <div class="detail-qty border radius">
-                                            <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
-                                            <input type="text" name="quantity" class="qty-val" value="{{ $item['quantity'] }}" min="1">
-                                            <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
+                                            <a href="#" onclick="document.getElementById('reduce-to-cart-{{ $item['id'] }}').submit()" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
+                                            <input type="text" name="quantity" class="qty-val" value="{{ $item['quantity'] }}">
+                                            <a href="#" onclick="document.getElementById('add-to-cart-{{ $item['id'] }}').submit()" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
                                         </div>
                                     </div>
+                                    <form style="display: none" id="add-to-cart-{{ $item['id'] }}" action="/cart" method="POST">
+                                        @csrf
+                                        <input type="hidden" name="product_id" value="{{ $item['id'] }}">
+                                        <input type="hidden" name="quantity" value="1">
+                                    </form>
+                                    <form style="display: none" id="reduce-to-cart-{{ $item['id'] }}" action="/cart" method="POST">
+                                        @csrf
+                                        <input type="hidden" name="product_id" value="{{ $item['id'] }}">
+                                        <input type="hidden" name="quantity" value="-1">
+                                    </form>
+                                    @if(!$item['is_available'])
+                                        <span class="text-danger">{{ $item['message'] }}</span>
+                                    @endif
                                 </td>
                                 <td class="price" data-title="Price">
-                                    <h4 class="text-brand">Rp. {{ number_format($item['price'] * $item['quantity']) }} </h4>
+                                    <h4 class="{{ $item['is_available'] ? 'text-brand':'text-muted' }}">Rp. {{ number_format($item['price'] * $item['quantity']) }} </h4>
                                 </td>
                                 <td class="action text-center" data-title="Remove">
                                     <form id="delete-cart-{{ $item['id'] }}" style="display: none" action="/cart/{{ $item['id'] }}" method="POST">

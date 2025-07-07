@@ -15,6 +15,7 @@
     <link rel="shortcut icon" type="image/x-icon" href="/assets/imgs/theme/favicon.svg" />
     <!-- Template CSS -->
     <link rel="stylesheet" href="/assets/css/main.css?v=6.0" />
+    <link rel="stylesheet" href="/assets/toastr/toastr.min.css"/>
     @stack('head')
 </head>
 
@@ -61,6 +62,20 @@
     <!-- Template  JS -->
     <script src="/assets/js/main.js?v=6.0"></script>
     <script src="/assets/js/shop.js?v=6.0"></script>
+    <script src="/assets/toastr/toastr.min.js"></script>
+    <script>
+        toastr.options = {
+            "debug": false,
+            "positionClass": "toast-bottom-right",
+            "onclick": null,
+            "fadeIn": 300,
+            "fadeOut": 1000,
+            "timeOut": 5000,
+            "extendedTimeOut": 1000,
+            "preventDuplicates": true,
+        }
+    </script>
+    @include('layouts.landing.component.toastr')
     @stack('script')
 </body>
 

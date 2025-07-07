@@ -22,7 +22,24 @@ class CartController extends Controller
 
         $subTotal = 0;
 
-        $cartItems = collect($cartItems)->map(function ($item) use (&$subTotal) {
+        $products = Product::whereIn('id', collect($cartItems)->pluck('id')->toArray())->get();
+
+        $cartItems = collect($cartItems)->map(function ($item) use (&$subTotal, $products) {
+            $isAvailable = $item['is_available'];
+            $message = $item['message'];
+
+            $product = $products->where('id', $item['id'])->first();
+
+            if(!$product) {
+                $isAvailable = false;
+                $message = 'Product not available';
+            } else {
+                if ($product->stock < $item['quantity']) {
+                    $isAvailable = false;
+                    $message = 'Out of Stock';
+                }
+            }
+
             $subTotal += ($item['price'] * $item['quantity']);
             return [
                 'id' => $item['id'],
@@ -31,10 +48,14 @@ class CartController extends Controller
                 'name' => $item['name'],
                 'slug' => $item['slug'],
                 'image' => $item['image'],
+                'is_available' => $isAvailable,
+                'message' => $message,
             ];
         });
 
-        return view('buyer.cart', compact('cartItems','subTotal'));
+        $cart->update(['items' => json_encode($cartItems)]);
+
+        return view('buyer.cart', compact('cartItems', 'subTotal'));
     }
 
     public function add(Request $request)
@@ -48,7 +69,7 @@ class CartController extends Controller
         $productId = $request->input('product_id');
         $product = Product::find($productId);
         if (!$product) {
-            return redirect()->back()->with('error', 'Product not found.');
+            return redirect()->back()->withErrors('Product not found.');
         }
         $quantity = $request->input('quantity', 1);
 
@@ -58,10 +79,22 @@ class CartController extends Controller
         });
 
         if ($existingItemKey !== false) {
-            // Update quantity if it exists
+            $isAvailable = true;
+            $message = null;
+            if ($product->stock < $quantity) {
+                $isAvailable = false;
+                $message = 'Out of Stock';
+            }
             $cartItems[$existingItemKey]['quantity'] += $quantity;
+            $cartItems[$existingItemKey]['is_available'] = $isAvailable;
+            $cartItems[$existingItemKey]['message'] = $message;
         } else {
-            // Add new item to the cart
+            $isAvailable = true;
+            $message = null;
+            if ($product->stock < $quantity) {
+                $isAvailable = false;
+                $message = 'Out of Stock';
+            }
             $cartItems[] = [
                 'id' => $productId,
                 'quantity' => $quantity,
@@ -69,13 +102,15 @@ class CartController extends Controller
                 'name' => $product->name,
                 'slug' => $product->slug,
                 'image' => $product->defaultImage ? $product->defaultImage->getFullUrl() : null,
+                'is_available' => $isAvailable,
+                'message' => $message,
             ];
         }
 
         // Save updated cart items
         $cart->update(['items' => json_encode($cartItems)]);
 
-        return redirect()->back()->with('success', 'Product added to cart successfully.');
+        return redirect()->back()->withMessage('Product added to cart successfully.');
     }
 
     public function remove(Request $request, Product $product)
@@ -98,9 +133,9 @@ class CartController extends Controller
             $cartItems = array_values($cartItems);
             // Save updated cart items
             $cart->update(['items' => json_encode($cartItems)]);
-            return redirect()->back()->with('success', 'Product removed from cart successfully.');
+            return redirect()->back()->withMessage('Product removed from cart successfully.');
         }
 
-        return redirect()->back()->with('error', 'Product not found in cart.');
+        return redirect()->back()->withErrors('Product not found in cart.');
     }
 }

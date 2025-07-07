@@ -96,6 +96,7 @@
                 <div class="col-12">
                     <div class="shop-product-fillter">
                         <div class="totall-product">
+                            <h4></h4>
                             <p>We found <strong class="text-brand">0</strong> items for you!</p>
                         </div>
                         <div class="sort-by-product-area">
