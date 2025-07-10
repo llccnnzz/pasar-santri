@@ -15,7 +15,7 @@ class Product extends Model implements HasMedia
         'sku',
         'name',
         'slug',
-        'brand',
+        'shop_id',
         'meta_description',
         'long_description',
         'tags',
@@ -46,6 +46,16 @@ class Product extends Model implements HasMedia
         }
 
         return $this['stock'];
+    }
+
+    public function shop()
+    {
+        return $this->belongsTo(Shop::class);
+    }
+
+    public function getBranxAttribute()
+    {
+        return $this->shop ? $this->shop->name : '??????';
     }
 
     public function defaultImage()

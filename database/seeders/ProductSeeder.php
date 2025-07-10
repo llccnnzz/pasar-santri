@@ -7,6 +7,7 @@ use App\Models\AttributeValue;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use App\Models\Shop;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -62,8 +63,129 @@ class ProductSeeder extends Seeder
             'Indian Monsooned Malabar',
             'Papua New Guinea Sigri'
         ];
+        $brands = [
+            [
+                'id' => 1,
+                'name' => 'Kopi Kenangan',
+                'slug' => 'kopi-kenangan',
+                'description' => 'Kopi Kenangan is a popular coffee chain in Indonesia, known for its high-quality coffee and unique blends.',
+                'address' => 'Jl. Jend. Sudirman No.1, Jakarta',
+                'phone' => '+62 21 1234 5678',
+                'social_links' => json_encode([
+                    'facebook' => 'https://www.facebook.com/kopikenangan',
+                    'instagram' => 'https://www.instagram.com/kopikenangan',
+                    'twitter' => 'https://twitter.com/kopikenangan'
+                ]),
+                'is_open' => true,
+            ],
+            [
+                'id' => 2,
+                'name' => 'Tomorrow',
+                'slug' => 'tomorrow',
+                'description' => 'Tomorrow is a modern coffee brand focusing on sustainability and quality sourcing.',
+                'address' => 'Jl. Kebon Jeruk No.2, Jakarta',
+                'phone' => '+62 21 2345 6789',
+                'social_links' => json_encode([
+                    'facebook' => 'https://www.facebook.com/tomorrowcoffee',
+                    'instagram' => 'https://www.instagram.com/tomorrowcoffee',
+                    'twitter' => 'https://twitter.com/tomorrowcoffee'
+                ]),
+                'is_open' => true,
+            ],
+            [
+                'id' => 3,
+                'name' => 'Tanamera',
+                'slug' => 'tanamera',
+                'description' => 'Tanamera is known for its specialty coffee sourced from various regions in Indonesia.',
+                'address' => 'Jl. Melawai No.3, Jakarta',
+                'phone' => '+62 21 3456 7890',
+                'social_links' => json_encode([
+                    'facebook' => 'https://www.facebook.com/tanameracoffee',
+                    'instagram' => 'https://www.instagram.com/tanameracoffee',
+                    'twitter' => 'https://twitter.com/tanameracoffee'
+                ]),
+                'is_open' => true,
+            ],
+            [
+                'id' => 4,
+                'name' => 'Anomali Coffee',
+                'slug' => 'anomali-coffee',
+                'description' => 'Anomali Coffee offers a wide range of Indonesian coffee beans and blends.',
+                'address' => 'Jl. Senopati No.4, Jakarta',
+                'phone' => '+62 21 4567 8901',
+                'social_links' => json_encode([
+                    'facebook' => 'https://www.facebook.com/anomalicoffee',
+                    'instagram' => 'https://www.instagram.com/anomalicoffee',
+                    'twitter' => 'https://twitter.com/anomalicoffee'
+                ]),
+                'is_open' => true,
+            ],
+            [
+                'id' => 5,
+                'name' => 'Fore Coffee',
+                'slug' => 'fore-coffee',
+                'description' => 'Fore Coffee is a trendy coffee brand with a focus on quality and innovation.',
+                'address' => 'Jl. Panglima Polim No.5, Jakarta',
+                'phone' => '+62 21 5678 9012',
+                'social_links' => json_encode([
+                    'facebook' => 'https://www.facebook.com/forecoffee',
+                    'instagram' => 'https://www.instagram.com/forecoffee',
+                    'twitter' => 'https://twitter.com/forecoffee'
+                ]),
+                'is_open' => true,
+            ],
+            [
+                'id' => 6,
+                'name' => 'Kapal Api',
+                'slug' => 'kapal-api',
+                'description' => 'Kapal Api is one of Indonesia\'s oldest and most recognized coffee brands, known for its rich flavors.',
+                'address' => 'Jl. Raya Kapal Api No.6, Surabaya',
+                'phone' => '+62 31 6789 0123',
+                'social_links' => json_encode([
+                    'facebook' => 'https://www.facebook.com/kapalapi',
+                    'instagram' => 'https://www.instagram.com/kapalapi',
+                    'twitter' => 'https://twitter.com/kapalapi'
+                ]),
+                'is_open' => true,
+            ],
+            [
+                'id' => 7,
+                'name' => 'Tuku',
+                'slug' => 'tuku',
+                'description' => 'Tuku is a coffee brand that emphasizes local sourcing and community engagement.',
+                'address' => 'Jl. Cikini No.7, Jakarta',
+                'phone' => '+62 21 7890 1234',
+                'social_links' => json_encode([
+                    'facebook' => 'https://www.facebook.com/tukucoffee',
+                    'instagram' => 'https://www.instagram.com/tukucoffee',
+                    'twitter' => 'https://twitter.com/tukucoffee'
+                ]),
+                'is_open' => true,
+            ],
+            [
+                'id' => 8,
+                'name' => 'Excelso',
+                'slug' => 'excelso',
+                'description' => 'Excelso is a premium coffee brand offering a wide range of blends and single-origin coffees.',
+                'address' => 'Jl. Thamrin No.8, Jakarta',
+                'phone' => '+62 21 8901 2345',
+                'social_links' => json_encode([
+                    'facebook' => 'https://www.facebook.com/excelso',
+                    'instagram' => 'https://www.instagram.com/excelso',
+                    'twitter' => 'https://twitter.com/excelso'
+                ]),
+                'is_open' => true,
+            ],
+        ];
 
-        $brands = ['Kopi Kenangan', 'Tomorrow', 'Tanamera', 'Anomali Coffee', 'Fore Coffee', 'Kapal Api', 'Tuku', 'Excelso'];
+        foreach ($brands as $brand) {
+            $shop = Shop::create($brand);
+//            $shop->addMedia(public_path('assets/imgs/shop/' . $brand['slug'] . '.jpg'))
+//                ->preservingOriginal()
+//                ->toMediaCollection('logo');
+        }
+
+
         $tags = ['Arabica', 'Robusta', 'Single Origin', 'Espresso', 'Cold Brew', 'Drip Bag', 'Specialty Coffee', 'Decaf', 'Organic'];
 
         $roastAttr = Attribute::firstOrCreate(['name' => 'Roast Level']);
@@ -114,7 +236,7 @@ class ProductSeeder extends Seeder
                 'name' => $name,
                 'slug' => $slug,
                 'sku' => $baseSku,
-                'brand' => $brands[array_rand($brands)],
+                'shop_id' => $brands[array_rand($brands)]['id'],
                 'meta_description' => 'Sample meta description for ' . $name,
                 'long_description' => 'Sample long description for ' . $name,
                 'price' => $price,
