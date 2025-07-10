@@ -8,7 +8,7 @@
         </div>
         <div class="product-action-1">
             <a aria-label="Quick view" class="action-btn small hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal"> <i class="fi-rs-eye"></i></a>
-            <a aria-label="Add To Wishlist" class="action-btn small hover-up" href="#" onclick="addToWishlist('{{ $p['id'] }}')"><i class="fi-rs-heart"></i></a>
+            <a aria-label="Add To Wishlist" class="action-btn small hover-up" href="#" onclick="addToWishlist('{{ $p['id'] }}','{{ csrf_token() }}')"><i class="fi-rs-heart"></i></a>
         </div>
     </div>
     <div class="product-content-wrap">
