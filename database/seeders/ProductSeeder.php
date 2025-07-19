@@ -245,6 +245,8 @@ class ProductSeeder extends Seeder
                 'tags' => [$tags[array_rand($tags)], $tags[array_rand($tags)]],
                 'specification' => $selectedSpecs,
                 'stock' => 0,
+                'is_featured' => rand(0, 100) < 30, // 30% chance of being featured
+                'is_popular' => rand(0, 100) < 25,  // 25% chance of being popular
             ]);
 
             $product->categories()->attach(collect($allCategoryIds)->random(rand(3, 6)));
