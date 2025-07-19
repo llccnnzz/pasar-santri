@@ -48,7 +48,7 @@
                                     <span class="text-brand">your<br />
                                         home</span>
                                 </h2>
-                                <a href="shop-grid-right.html" class="btn btn-xs">Shop Now <i class="fi-rs-arrow-small-right"></i></a>
+                                <a href="/products" class="btn btn-xs">Shop Now <i class="fi-rs-arrow-small-right"></i></a>
                             </div>
                         </div>
                     </div>
@@ -67,7 +67,7 @@
                                     Everyday Fresh & <br />Clean with Our<br />
                                     Products
                                 </h4>
-                                <a href="/" class="btn btn-xs">Shop Now <i class="fi-rs-arrow-small-right"></i></a>
+                                <a href="/products" class="btn btn-xs">Shop Now <i class="fi-rs-arrow-small-right"></i></a>
                             </div>
                         </div>
                     </div>
@@ -79,7 +79,7 @@
                                     Make your Breakfast<br />
                                     Healthy and Easy
                                 </h4>
-                                <a href="/" class="btn btn-xs">Shop Now <i class="fi-rs-arrow-small-right"></i></a>
+                                <a href="/products" class="btn btn-xs">Shop Now <i class="fi-rs-arrow-small-right"></i></a>
                             </div>
                         </div>
                     </div>
@@ -88,7 +88,7 @@
                             <img src="/assets/imgs/banner/banner-3.png" alt="" />
                             <div class="banner-text">
                                 <h4>The best Organic <br />Products Online</h4>
-                                <a href="/" class="btn btn-xs">Shop Now <i class="fi-rs-arrow-small-right"></i></a>
+                                <a href="/products" class="btn btn-xs">Shop Now <i class="fi-rs-arrow-small-right"></i></a>
                             </div>
                         </div>
                     </div>
@@ -159,7 +159,7 @@
                         <div class="banner-img style-2">
                             <div class="banner-text">
                                 <h2 class="mb-100">Bring nature into your home</h2>
-                                <a href="/" class="btn btn-xs">Shop Now <i class="fi-rs-arrow-small-right"></i></a>
+                                <a href="/products" class="btn btn-xs">Shop Now <i class="fi-rs-arrow-small-right"></i></a>
                             </div>
                         </div>
                     </div>
@@ -208,7 +208,7 @@
             <div class="container">
                 <div class="section-title">
                     <h3 class="">Deals Of The Day</h3>
-                    <a class="show-all" href="shop-grid-right.html">
+                    <a class="show-all" href="/products">
                         All Deals
                         <i class="fi-rs-angle-right"></i>
                     </a>
