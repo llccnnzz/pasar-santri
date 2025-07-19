@@ -255,10 +255,10 @@
                         @foreach($categories as $category)
                         <div class="card-1">
                             <figure class="img-hover-scale overflow-hidden">
-                                <a href="/{{$product['slug']}}"><img src="{{$category->icon->getFullUrl()}}" alt="" /></a>
+                                <a href="/products?filter[categories][]={{$category['id']}}"><img src="{{$category->icon->getFullUrl()}}" alt="{{$category['name']}}" /></a>
                             </figure>
                             <h6>
-                                <a href="/{{$product['slug']}}">{{$category['name']}}</a>
+                                <a href="/products?filter[categories][]={{$category['id']}}">{{$category['name']}}</a>
                             </h6>
                         </div>
                         @endforeach

@@ -15,27 +15,40 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $products = QueryBuilder::for(Product::class)
+            ->select([
+                'id', 'slug', 'name', 'shop_id', 'meta_description', 
+                'price', 'final_price', 'tags', 'stock', 'created_at'
+            ])
             ->allowedFilters([
                 AllowedFilter::callback('categories', function (Builder $query, $value) {
                     $query->whereHas('categories', function (Builder $query) use ($value) {
-                        $query->whereIn('id', $value);
+                        $query->whereIn('categories.id', $value);
                     });
                 }),
                 AllowedFilter::callback('brands', function (Builder $query, $value) {
                    $query->whereIn('shop_id', $value);
                 }),
                 AllowedFilter::callback('tags', function (Builder $query, $value) {
-                    $tags = $value;
-                    $query->where(function ($q) use ($tags) {
-                        foreach ($tags as $tag) {
+                    $query->where(function ($q) use ($value) {
+                        foreach ($value as $tag) {
                             $q->orWhereJsonContains('tags', $tag);
                         }
                     });
                 }),
+                AllowedFilter::callback('price_range', function (Builder $query, $value) {
+                    if (isset($value['min'])) {
+                        $query->where('final_price', '>=', $value['min']);
+                    }
+                    if (isset($value['max'])) {
+                        $query->where('final_price', '<=', $value['max']);
+                    }
+                }),
             ])
             ->allowedSorts(['final_price', 'created_at', 'name'])
-            ->with(['defaultImage', 'hoverImage', 'shop'])
-            ->jsonPaginate();
+            ->with(['defaultImage', 'hoverImage', 'shop:id,name,slug'])
+            ->whereNotNull('final_price')
+            ->where('stock', '>', 0)
+            ->jsonPaginate($request->get('page.size', 20));
 
         return ProductResource::collection($products);
     }

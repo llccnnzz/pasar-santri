@@ -17,4 +17,13 @@ class Shop extends Model
         'is_open',
     ];
 
+    protected $casts = [
+        'social_links' => 'array',
+        'is_open' => 'boolean',
+    ];
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
 }
