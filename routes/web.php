@@ -24,4 +24,6 @@ Route::delete('/wishlist/{product}', [WishlistController::class, 'remove'])->nam
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
+Route::get('/s/{shops:slug}', [ShopController::class, 'show']);
+
 Route::get('/{product:slug}', [ProductController::class, 'show']);

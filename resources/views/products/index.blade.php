@@ -49,16 +49,16 @@
                                     <h5 class="mb-30">By Brands</h5>
                                     <div class="brands-dropdown-wrap font-heading">
                                         <div class="row">
-                                            @foreach($brands as $index => $brand)
+                                            @foreach($brands as $index => $shop)
                                                 <div class="col-12">
                                                     <div class="custome-checkbox d-flex align-items-start">
                                                         <input class="form-check-input brand-filter me-2 mt-1"
                                                                type="checkbox"
-                                                               value="{{ $brand }}"
+                                                               value="{{ $shop['id'] }}"
                                                                id="checkbox-brand-{{ $index }}">
                                                         <label class="form-check-label"
                                                                for="checkbox-brand-{{ $index }}">
-                                                            {{ $brand }}
+                                                            {{ $shop['name'] }}
                                                         </label>
                                                     </div>
                                                 </div>
@@ -262,7 +262,7 @@
                                         <span class="font-small ml-5 text-muted"> (4.5)</span>
                                     </div>
                                     <div>
-                                        <span class="font-small text-muted">By <a href="vendor-details-1.html">${product.brand}</a></span>
+                                        <span class="font-small text-muted">By <a href="/s/${product.shop_slug}">${product.shop_name}</a></span>
                                     </div>
                                     <div class="product-card-bottom">
                                         <div class="product-price">

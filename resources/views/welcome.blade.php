@@ -116,49 +116,7 @@
                     <div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="tab-one">
                         <div class="row product-grid-4">
                             @foreach($featured as $product)
-                                <div class="col-lg-1-5 col-md-4 col-12 col-sm-6">
-                                    <div class="product-cart-wrap mb-30">
-                                        <div class="product-img-action-wrap">
-                                            <div class="product-img product-img-zoom">
-                                                <a href="/{{$product['slug']}}">
-                                                    <img class="default-img" src="{{$product?->defaultImage?->getFullUrl()}}" alt="{{$product['name']}}" loading="lazy" />
-                                                    <img class="hover-img" src="{{$product?->hoverImage?->getFullUrl()}}" alt="{{$product['name']}}" loading="lazy" />
-                                                </a>
-                                            </div>
-                                            <div class="product-action-1">
-                                                <a aria-label="Add To Wishlist" class="action-btn" href="{{ route('wishlist.index') }}"><i class="fi-rs-heart"></i></a>
-                                                <a aria-label="Compare" class="action-btn" href="#"><i class="fi-rs-shuffle"></i></a>
-                                                <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
-                                            </div>
-                                        </div>
-                                        <div class="product-content-wrap">
-                                            <div class="product-category">
-                                                <a href="{{ route('products.index') }}">{{$product['tags'][0] ?? 'Product'}}</a>
-                                            </div>
-                                            <h2><a href="/{{$product['slug']}}">{{$product['name']}}</a></h2>
-                                            <div class="product-rate-cover">
-                                                <div class="product-rate d-inline-block">
-                                                    <div class="product-rating" style="width: 90%"></div>
-                                                </div>
-                                                <span class="font-small ml-5 text-muted"> (4.5)</span>
-                                            </div>
-                                            <div>
-                                                <span class="font-small text-muted">By <a href="#">{{$product['brand'] ?? 'Brand'}}</a></span>
-                                            </div>
-                                            <div class="product-card-bottom">
-                                                <div class="product-price">
-                                                    <span>Rp {{number_format($product['final_price'], 0, ',', '.')}}</span>
-                                                    @if($product['price'] != $product['final_price'])
-                                                        <span class="old-price">Rp {{number_format($product['price'], 0, ',', '.')}}</span>
-                                                    @endif
-                                                </div>
-                                                <div class="add-cart">
-                                                    <a class="add" href="{{ route('cart.index') }}"><i class="fi-rs-shopping-cart mr-5"></i>Add </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                @include('layouts.landing.component.product.card', ['p' => $product])
                             @endforeach
                             <!--end product card-->
                         </div>
@@ -169,50 +127,7 @@
                         <div class="tab-pane fade" id="tab-{{$index}}" role="tabpanel" aria-labelledby="tab-{{$index}}">
                             <div class="row product-grid-4">
                                 @foreach($category->products as $product)
-                                    <div class="col-lg-1-5 col-md-4 col-12 col-sm-6">
-                                        <div class="product-cart-wrap mb-30">
-                                            <div class="product-img-action-wrap">
-                                                <div class="product-img product-img-zoom">
-                                                    <a href="/{{$product['slug']}}">
-                                                        <img class="default-img" src="{{$product?->defaultImage?->getFullUrl()}}" alt="{{$product['name']}}" loading="lazy" />
-                                                        <img class="hover-img" src="{{$product?->hoverImage?->getFullUrl()}}" alt="{{$product['name']}}" loading="lazy" />
-                                                    </a>
-                                                </div>
-                                                <div class="product-action-1">
-                                                    <a aria-label="Add To Wishlist" class="action-btn" href="{{ route('wishlist.index') }}"><i class="fi-rs-heart"></i></a>
-                                                    <a aria-label="Compare" class="action-btn" href="#"><i class="fi-rs-shuffle"></i></a>
-                                                    <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
-                                                </div>
-                                            </div>
-                                            <div class="product-content-wrap">
-                                                <div class="product-category">
-                                                    <a href="{{ route('products.index') }}">{{$product['tags'][0] ?? 'Product'}}</a>
-                                                </div>
-                                                <h2><a href="/{{$product['slug']}}">{{$product['name']}}</a></h2>
-                                                <div class="product-rate-cover">
-                                                    <div class="product-rate d-inline-block">
-                                                        <div class="product-rating" style="width: 90%"></div>
-                                                    </div>
-                                                    <span class="font-small ml-5 text-muted"> (4.5)</span>
-                                                </div>
-                                                <div>
-                                                    <span class="font-small text-muted">By <a href="#">{{$product['brand'] ?? 'Brand'}}</a></span>
-                                                </div>
-                                                <div class="product-card-bottom">
-                                                    <div class="product-price">
-                                                    <div class="product-price">
-                                                        <span>Rp {{number_format($product['final_price'], 0, ',', '.')}}</span>
-                                                        @if($product['price'] != $product['final_price'])
-                                                            <span class="old-price">Rp {{number_format($product['price'], 0, ',', '.')}}</span>
-                                                        @endif
-                                                    </div>
-                                                    <div class="add-cart">
-                                                        <a class="add" href="{{ route('cart.index') }}"><i class="fi-rs-shopping-cart mr-5"></i>Add </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    @include('layouts.landing.component.product.card', ['p' => $product])
                                 @endforeach
                             </div>
                             <!--End product-grid-4-->
@@ -255,45 +170,7 @@
                                     <div class="slider-arrow slider-arrow-2 carausel-4-columns-arrow" id="carausel-4-columns-arrows"></div>
                                     <div class="carausel-4-columns carausel-arrow-center" id="carausel-4-columns">
                                         @foreach($featured->take(5) as $product)
-                                        <div class="product-cart-wrap">
-                                            <div class="product-img-action-wrap">
-                                                <div class="product-img product-img-zoom">
-                                                    <a href="/{{$product['slug']}}">
-                                                        <img class="default-img" src="{{$product?->defaultImage?->getFullUrl()}}" alt="{{$product['name']}}" loading="lazy" />
-                                                        <img class="hover-img" src="{{$product?->hoverImage?->getFullUrl()}}" alt="{{$product['name']}}" loading="lazy" />
-                                                    </a>
-                                                </div>
-                                                <div class="product-action-1">
-                                                    <a aria-label="Quick view" class="action-btn small hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal"> <i class="fi-rs-eye"></i></a>
-                                                    <a aria-label="Add To Wishlist" class="action-btn small hover-up" href="{{ route('wishlist.index') }}"><i class="fi-rs-heart"></i></a>
-                                                    <a aria-label="Compare" class="action-btn small hover-up" href="#"><i class="fi-rs-shuffle"></i></a>
-                                                </div>
-                                            </div>
-                                            <div class="product-content-wrap">
-                                                <div class="product-category">
-                                                    <a href="{{ route('products.index') }}">{{$product['tags'][0] ?? 'Product'}}</a>
-                                                </div>
-                                                <h2><a href="/{{$product['slug']}}">{{$product['name']}}</a></h2>
-                                                <div class="product-rate d-inline-block">
-                                                    <div class="product-rating" style="width: 90%"></div>
-                                                </div>
-                                                <div class="product-price mt-10">
-                                                    <span>Rp {{number_format($product['final_price'], 0, ',', '.')}} </span>
-                                                    @if($product['price'] != $product['final_price'])
-                                                        <span class="old-price">Rp {{number_format($product['price'], 0, ',', '.')}}</span>
-                                                    @endif
-                                                </div>
-                                                <div class="sold mt-15 mb-15">
-                                                    @php $soldCount = rand(1, min(5, $product['final_stock'])); @endphp
-                                                    <div class="progress mb-5">
-                                                        <div class="progress-bar" role="progressbar" style="width: {{$product['final_stock'] > 0 ? (($product['final_stock'] - $soldCount) / $product['final_stock'] * 100) : 0}}%" aria-valuemin="0" aria-valuemax="100"></div>
-                                                    </div>
-                                                    <span class="font-xs text-heading"> Sold: {{$soldCount}}/{{$product['final_stock']}}</span>
-                                                </div>
-                                                <a href="{{ route('cart.index') }}" class="btn w-100 hover-up"><i class="fi-rs-shopping-cart mr-5"></i>Add To Cart</a>
-                                            </div>
-                                        </div>
-                                        <!--End product Wrap-->
+                                            @include('layouts.landing.component.product.card2', ['p' => $product])
                                         @endforeach
                                     </div>
                                 </div>
@@ -304,43 +181,7 @@
                                     <div class="slider-arrow slider-arrow-2 carausel-4-columns-arrow" id="carausel-4-columns-2-arrows"></div>
                                     <div class="carausel-4-columns carausel-arrow-center" id="carausel-4-columns-2">
                                         @foreach($popular->take(5) as $product)
-                                            <div class="product-cart-wrap">
-                                                <div class="product-img-action-wrap">
-                                                    <div class="product-img product-img-zoom">
-                                                        <a href="/{{$product['slug']}}">
-                                                            <img class="default-img" src="{{$product?->defaultImage?->getFullUrl()}}" alt="" />
-                                                            <img class="hover-img" src="{{$product?->hoverImage?->getFullUrl()}}" alt="" />
-                                                        </a>
-                                                    </div>
-                                                    <div class="product-action-1">
-                                                        <a aria-label="Quick view" class="action-btn small hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal"> <i class="fi-rs-eye"></i></a>
-                                                        <a aria-label="Add To Wishlist" class="action-btn small hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                        <a aria-label="Compare" class="action-btn small hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
-                                                    </div>
-                                                </div>
-                                                <div class="product-content-wrap">
-                                                    <div class="product-category">
-                                                        <a href="shop-grid-right.html">{{$product['tags'][0] ?? null}}</a>
-                                                    </div>
-                                                    <h2><a href="/{{$product['slug']}}">{{$product['name']}}</a></h2>
-                                                    <div class="product-rate d-inline-block">
-                                                        <div class="product-rating" style="width: 90%"></div>
-                                                    </div>
-                                                    <div class="product-price mt-10">
-                                                        <span>Rp {{number_format($product['final_price'], 0, ',', '.')}} </span>
-                                                        <span class="old-price">Rp {{number_format($product['price'], 0, ',', '.')}}</span>
-                                                    </div>
-                                                    <div class="sold mt-15 mb-15">
-                                                        @php $rand = rand(1,5);@endphp
-                                                        <div class="progress mb-5">
-                                                            <div class="progress-bar" role="progressbar" style="width: {{(($product['final_stock'] - $rand) / $product['final_stock'] * 100)}}%" aria-valuemin="0" aria-valuemax="100"></div>
-                                                        </div>
-                                                        <span class="font-xs text-heading"> Sold: {{($product['final_stock'] - $rand)}}/{{$product['final_stock']}}</span>
-                                                    </div>
-                                                    <a href="shop-cart.html" class="btn w-100 hover-up"><i class="fi-rs-shopping-cart mr-5"></i>Add To Cart</a>
-                                                </div>
-                                            </div>
-                                            <!--End product Wrap-->
+                                            @include('layouts.landing.component.product.card2', ['p' => $product])
                                         @endforeach
                                     </div>
                                 </div>
@@ -350,43 +191,7 @@
                                     <div class="slider-arrow slider-arrow-2 carausel-4-columns-arrow" id="carausel-4-columns-3-arrows"></div>
                                     <div class="carausel-4-columns carausel-arrow-center" id="carausel-4-columns-3">
                                         @foreach($latest->take(5) as $product)
-                                            <div class="product-cart-wrap">
-                                                <div class="product-img-action-wrap">
-                                                    <div class="product-img product-img-zoom">
-                                                        <a href="/{{$product['slug']}}">
-                                                            <img class="default-img" src="{{$product?->defaultImage?->getFullUrl()}}" alt="" />
-                                                            <img class="hover-img" src="{{$product?->hoverImage?->getFullUrl()}}" alt="" />
-                                                        </a>
-                                                    </div>
-                                                    <div class="product-action-1">
-                                                        <a aria-label="Quick view" class="action-btn small hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal"> <i class="fi-rs-eye"></i></a>
-                                                        <a aria-label="Add To Wishlist" class="action-btn small hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                        <a aria-label="Compare" class="action-btn small hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
-                                                    </div>
-                                                </div>
-                                                <div class="product-content-wrap">
-                                                    <div class="product-category">
-                                                        <a href="shop-grid-right.html">{{$product['tags'][0] ?? null}}</a>
-                                                    </div>
-                                                    <h2><a href="/{{$product['slug']}}">{{$product['name']}}</a></h2>
-                                                    <div class="product-rate d-inline-block">
-                                                        <div class="product-rating" style="width: 90%"></div>
-                                                    </div>
-                                                    <div class="product-price mt-10">
-                                                        <span>Rp {{number_format($product['final_price'], 0, ',', '.')}} </span>
-                                                        <span class="old-price">Rp {{number_format($product['price'], 0, ',', '.')}}</span>
-                                                    </div>
-                                                    <div class="sold mt-15 mb-15">
-                                                        @php $rand = rand(1,5);@endphp
-                                                        <div class="progress mb-5">
-                                                            <div class="progress-bar" role="progressbar" style="width: {{(($product['final_stock'] - $rand) / $product['final_stock'] * 100)}}%" aria-valuemin="0" aria-valuemax="100"></div>
-                                                        </div>
-                                                        <span class="font-xs text-heading"> Sold: {{($product['final_stock'] - $rand)}}/{{$product['final_stock']}}</span>
-                                                    </div>
-                                                    <a href="shop-cart.html" class="btn w-100 hover-up"><i class="fi-rs-shopping-cart mr-5"></i>Add To Cart</a>
-                                                </div>
-                                            </div>
-                                            <!--End product Wrap-->
+                                            @include('layouts.landing.component.product.card2', ['p' => $product])
                                         @endforeach
                                     </div>
                                 </div>
@@ -410,43 +215,7 @@
                 </div>
                 <div class="row">
                     @foreach($featured->take(4) as $product)
-                    <div class="col-xl-3 col-lg-4 col-md-6">
-                        <div class="product-cart-wrap style-2">
-                            <div class="product-img-action-wrap">
-                                <div class="product-img">
-                                    <a href="/{{$product['slug']}}">
-                                        <img src="{{$product?->defaultImage->getFullUrl()}}" alt="" />
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="product-content-wrap">
-                                <div class="deals-countdown-wrap">
-                                    <div class="deals-countdown" data-countdown="{{Carbon::now()->addDays(rand(20,50))->startOfDay()}}"></div>
-                                </div>
-                                <div class="deals-content">
-                                    <h2><a href="/{{$product['slug']}}">{{$product['name']}}</a></h2>
-                                    <div class="product-rate-cover">
-                                        <div class="product-rate d-inline-block">
-                                            <div class="product-rating" style="width: 90%"></div>
-                                        </div>
-                                        <span class="font-small ml-5 text-muted"> (4.5)</span>
-                                    </div>
-                                    <div>
-                                        <span class="font-small text-muted">By <a href="vendor-details-1.html">{{$product['brand']}}</a></span>
-                                    </div>
-                                    <div class="product-card-bottom">
-                                        <div class="product-price">
-                                            <span>Rp {{number_format($product['final_price'], 0, ',', '.')}}</span>
-                                            <span class="old-price">Rp {{number_format($product['price'], 0, ',', '.')}}</span>
-                                        </div>
-                                        <div class="add-cart">
-                                            <a class="add" href="shop-cart.html"><i class="fi-rs-shopping-cart mr-5"></i>Add </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                        @include('layouts.landing.component.product.card-countdown', ['p' => $product, 'countDownStartAt' => Carbon::now()->addDays(rand(20,50))->startOfDay()])
                     @endforeach
                 </div>
             </div>
@@ -455,114 +224,16 @@
         <section class="section-padding mb-30">
             <div class="container">
                 <div class="row">
-                    <div class="col-xl-3 col-lg-4 col-md-6 mb-sm-5 mb-md-0">
-                        <h4 class="section-title style-1 mb-30 animated animated">Top Selling</h4>
-                        <div class="product-list-small animated animated">
-                            @foreach($popular->take(3) as $product)
-                            <article class="row align-items-center hover-up">
-                                <figure class="col-md-4 mb-0">
-                                    <a href="/{{$product['slug']}}"><img src="{{$product?->defaultImage?->getFullUrl()}}" alt="{{$product['name']}}" loading="lazy" /></a>
-                                </figure>
-                                <div class="col-md-8 mb-0">
-                                    <h6>
-                                        <a href="/{{$product['slug']}}">{{$product['name']}}</a>
-                                    </h6>
-                                    <div class="product-rate-cover">
-                                        <div class="product-rate d-inline-block">
-                                            <div class="product-rating" style="width: 90%"></div>
-                                        </div>
-                                        <span class="font-small ml-5 text-muted"> (4.5)</span>
-                                    </div>
-                                    <div class="product-price">
-                                        <span>Rp {{number_format($product['final_price'], 0, ',', '.')}}</span>
-                                        <span class="old-price">Rp {{number_format($product['price'], 0, ',', '.')}}</span>
-                                    </div>
-                                </div>
-                            </article>
-                            @endforeach
+                    @foreach(['Top Selling' => $popular, 'Trending Products' => $featured, 'Recently added' => $latest, 'Top Rated' => $popular] as $sectionTitle => $products)
+                        <div class="col-xl-3 col-lg-4 col-md-6 mb-sm-5 mb-md-0 d-none d-lg-block">
+                            <h4 class="section-title style-1 mb-30 animated animated">{{ $sectionTitle }}</h4>
+                            <div class="product-list-small animated animated">
+                                @foreach($products->take(3) as $product)
+                                    @include('layouts.landing.component.product.card-article', ['p' => $product])
+                                @endforeach
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-xl-3 col-lg-4 col-md-6 mb-md-0">
-                        <h4 class="section-title style-1 mb-30 animated animated">Trending Products</h4>
-                        <div class="product-list-small animated animated">
-                            @foreach($featured->take(3) as $product)
-                                <article class="row align-items-center hover-up">
-                                    <figure class="col-md-4 mb-0">
-                                        <a href="/{{$product['slug']}}"><img src="{{$product?->defaultImage?->getFullUrl()}}" alt="{{$product['name']}}" loading="lazy" /></a>
-                                    </figure>
-                                    <div class="col-md-8 mb-0">
-                                        <h6>
-                                            <a href="/{{$product['slug']}}">{{$product['name']}}</a>
-                                        </h6>
-                                        <div class="product-rate-cover">
-                                            <div class="product-rate d-inline-block">
-                                                <div class="product-rating" style="width: 90%"></div>
-                                            </div>
-                                            <span class="font-small ml-5 text-muted"> (4.5)</span>
-                                        </div>
-                                        <div class="product-price">
-                                            <span>Rp {{number_format($product['final_price'], 0, ',', '.')}}</span>
-                                            <span class="old-price">Rp {{number_format($product['price'], 0, ',', '.')}}</span>
-                                        </div>
-                                    </div>
-                                </article>
-                            @endforeach
-                        </div>
-                    </div>
-                    <div class="col-xl-3 col-lg-4 col-md-6 mb-sm-5 mb-md-0 d-none d-lg-block">
-                        <h4 class="section-title style-1 mb-30 animated animated">Recently added</h4>
-                        <div class="product-list-small animated animated">
-                            @foreach($latest->take(3) as $product)
-                                <article class="row align-items-center hover-up">
-                                    <figure class="col-md-4 mb-0">
-                                        <a href="/{{$product['slug']}}"><img src="{{$product?->defaultImage?->getFullUrl()}}" alt="{{$product['name']}}" loading="lazy" /></a>
-                                    </figure>
-                                    <div class="col-md-8 mb-0">
-                                        <h6>
-                                            <a href="/{{$product['slug']}}">{{$product['name']}}</a>
-                                        </h6>
-                                        <div class="product-rate-cover">
-                                            <div class="product-rate d-inline-block">
-                                                <div class="product-rating" style="width: 90%"></div>
-                                            </div>
-                                            <span class="font-small ml-5 text-muted"> (4.5)</span>
-                                        </div>
-                                        <div class="product-price">
-                                            <span>Rp {{number_format($product['final_price'], 0, ',', '.')}}</span>
-                                            <span class="old-price">Rp {{number_format($product['price'], 0, ',', '.')}}</span>
-                                        </div>
-                                    </div>
-                                </article>
-                            @endforeach
-                        </div>
-                    </div>
-                    <div class="col-xl-3 col-lg-4 col-md-6 mb-sm-5 mb-md-0 d-none d-xl-block">
-                        <h4 class="section-title style-1 mb-30 animated animated">Top Rated</h4>
-                        <div class="product-list-small animated animated">
-                            @foreach($popular->take(3) as $product)
-                                <article class="row align-items-center hover-up">
-                                    <figure class="col-md-4 mb-0">
-                                        <a href="/{{$product['slug']}}"><img src="{{$product?->defaultImage?->getFullUrl()}}" alt="{{$product['name']}}" loading="lazy" /></a>
-                                    </figure>
-                                    <div class="col-md-8 mb-0">
-                                        <h6>
-                                            <a href="/{{$product['slug']}}">{{$product['name']}}</a>
-                                        </h6>
-                                        <div class="product-rate-cover">
-                                            <div class="product-rate d-inline-block">
-                                                <div class="product-rating" style="width: 90%"></div>
-                                            </div>
-                                            <span class="font-small ml-5 text-muted"> (4.5)</span>
-                                        </div>
-                                        <div class="product-price">
-                                            <span>Rp {{number_format($product['final_price'], 0, ',', '.')}}</span>
-                                            <span class="old-price">Rp {{number_format($product['price'], 0, ',', '.')}}</span>
-                                        </div>
-                                    </div>
-                                </article>
-                            @endforeach
-                        </div>
-                    </div>
+                    @endforeach
                 </div>
             </div>
         </section>

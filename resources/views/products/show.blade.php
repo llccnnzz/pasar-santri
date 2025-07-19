@@ -176,14 +176,16 @@
                                             </div>
                                             <div class="product-extra-link2">
                                                 <button type="button" onclick="document.getElementById('add-to-cart').submit()" class="button button-add-to-cart"><i class="fi-rs-shopping-cart"></i>Add to cart</button>
-                                                @php
-                                                    $authUser = auth()->user()->load(['wishlist']);
-                                                    $wishlistPopUp = $authUser->wishlist;
-                                                @endphp
-                                                @if(collect(json_decode($wishlistPopUp->items, true))->where('id', $product['id'])->isNotEmpty())
-                                                    <a aria-label="Remove from Wishlist" class="action-btn hover-up" style="background: #3BB77E; color: white" href="#" onclick="document.getElementById('remove-from-wishlist').submit()">
-                                                        <i class="fi-rs-heart"></i>
-                                                    </a>
+                                                @if(auth()->user())
+                                                    @php
+                                                        $authUser = auth()->user()->load(['wishlist']);
+                                                        $wishlistPopUp = $authUser->wishlist;
+                                                    @endphp
+                                                    @if(collect(json_decode($wishlistPopUp->items, true))->where('id', $product['id'])->isNotEmpty())
+                                                        <a aria-label="Remove from Wishlist" class="action-btn hover-up" style="background: #3BB77E; color: white" href="#" onclick="document.getElementById('remove-from-wishlist').submit()">
+                                                            <i class="fi-rs-heart"></i>
+                                                        </a>
+                                                    @endif
                                                 @else
                                                     <a aria-label="Add To Wishlist" class="action-btn hover-up" href="#" onclick="document.getElementById('add-to-wishlist').submit()">
                                                         <i class="fi-rs-heart"></i>

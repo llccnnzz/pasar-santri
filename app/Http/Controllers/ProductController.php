@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Shop;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -12,7 +13,7 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $categories = Category::all();
-        $brands = Product::pluck('brand')->unique();
+        $brands = Shop::where('is_open', true)->get();
         $tags = Product::pluck('tags')->flatten()->unique()->filter()->values();
 
         $minPrice = Product::min('final_price');

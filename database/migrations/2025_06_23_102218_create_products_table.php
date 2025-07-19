@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Shop;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,7 +14,7 @@ return new class extends Migration
             $table->string('sku');
             $table->string('slug')->unique();
             $table->string('name');
-            $table->string('brand')->nullable();
+            $table->foreignIdFor(Shop::class);
             $table->text('meta_description')->nullable();
             $table->text('long_description')->nullable();
             $table->json('tags')->nullable();

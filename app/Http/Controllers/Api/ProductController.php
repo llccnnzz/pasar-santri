@@ -22,7 +22,7 @@ class ProductController extends Controller
                     });
                 }),
                 AllowedFilter::callback('brands', function (Builder $query, $value) {
-                   $query->whereIn('brand', $value);
+                   $query->whereIn('shop_id', $value);
                 }),
                 AllowedFilter::callback('tags', function (Builder $query, $value) {
                     $tags = $value;
@@ -34,7 +34,7 @@ class ProductController extends Controller
                 }),
             ])
             ->allowedSorts(['final_price', 'created_at', 'name'])
-            ->with(['defaultImage', 'hoverImage'])
+            ->with(['defaultImage', 'hoverImage', 'shop'])
             ->jsonPaginate();
 
         return ProductResource::collection($products);

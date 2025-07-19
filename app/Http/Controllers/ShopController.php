@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Shop;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -40,5 +41,14 @@ class ShopController extends Controller
         });
 
         return view('welcome', $homepageData);
+    }
+
+    public function show(Shop $shop)
+    {
+//        dd($shop);
+//
+//        $shop->load('products.defaultImage', 'products.hoverImage', 'products.images', 'products.categories');
+//        $products = $shop->products;
+        return view('buyer.shop');
     }
 }
