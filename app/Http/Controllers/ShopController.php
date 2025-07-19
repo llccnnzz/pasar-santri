@@ -15,15 +15,15 @@ class ShopController extends Controller
         // Cache homepage data for 30 minutes
         $homepageData = Cache::remember('homepage_data', 1800, function () {
             return [
-                'featured' => Product::with(['defaultImage', 'hoverImage'])
+                'featured' => Product::with(['defaultImage', 'hoverImage', 'shop'])
                     ->where('is_featured', true)
                     ->limit(10)
                     ->get(),
-                'popular' => Product::with(['defaultImage', 'hoverImage'])
+                'popular' => Product::with(['defaultImage', 'hoverImage', 'shop'])
                     ->where('is_popular', true)
                     ->limit(8)
                     ->get(),
-                'latest' => Product::with(['defaultImage', 'hoverImage'])
+                'latest' => Product::with(['defaultImage', 'hoverImage', 'shop'])
                     ->latest()
                     ->limit(8)
                     ->get(),
@@ -32,7 +32,7 @@ class ShopController extends Controller
                     ->limit(8)
                     ->get(),
                 'categoryProducts' => Category::with(['products' => function($query) {
-                        $query->with(['defaultImage', 'hoverImage'])->limit(10);
+                        $query->with(['defaultImage', 'hoverImage', 'shop'])->limit(10);
                     }])
                     ->whereHas('products')
                     ->limit(5)
