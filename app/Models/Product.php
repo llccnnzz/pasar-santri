@@ -24,12 +24,32 @@ class Product extends Model implements HasMedia
         'final_price',
         'has_variant',
         'stock',
+        'is_featured',
+        'is_popular',
     ];
 
     protected $casts = [
         'tags' => 'array',
         'specification' => 'array',
+        'is_featured' => 'boolean',
+        'is_popular' => 'boolean',
     ];
+
+    // Query Scopes for Performance
+    public function scopeFeatured($query)
+    {
+        return $query->where('is_featured', true);
+    }
+
+    public function scopePopular($query)
+    {
+        return $query->where('is_popular', true);
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->whereNull('deleted_at');
+    }
 
     public function variants() {
         return $this->hasMany(ProductVariant::class);

@@ -7,8 +7,8 @@ use App\Http\Controllers\ShopController;
 use App\Http\Controllers\WishlistController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [ShopController::class, 'index']);
-Route::get('/products', [ProductController::class, 'index']);
+Route::get('/', [ShopController::class, 'index'])->name('homepage');
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 
 Auth::routes();
 
