@@ -201,7 +201,7 @@
                                     <a href="/products">Products</a>
                                 </li>
                                 <li>
-                                    <a href="#">Shop</a>
+                                    <a href="/shops">Shop</a>
                                 </li>
                             </ul>
                         </nav>

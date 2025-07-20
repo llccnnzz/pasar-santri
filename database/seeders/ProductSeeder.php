@@ -65,126 +65,214 @@ class ProductSeeder extends Seeder
         ];
         $brands = [
             [
-                'id' => Str::orderedUuid(),
                 'name' => 'Kopi Kenangan',
                 'slug' => 'kopi-kenangan',
                 'description' => 'Kopi Kenangan is a popular coffee chain in Indonesia, known for its high-quality coffee and unique blends.',
                 'address' => 'Jl. Jend. Sudirman No.1, Jakarta',
                 'phone' => '+62 21 1234 5678',
                 'social_links' => json_encode([
-                    'facebook' => 'https://www.facebook.com/kopikenangan',
-                    'instagram' => 'https://www.instagram.com/kopikenangan',
-                    'twitter' => 'https://twitter.com/kopikenangan'
+                    [
+                        'name'=> 'Facebook',
+                        'url' => 'https://www.facebook.com/kopikenangan',
+                        'logo' => '/assets/imgs/theme/icons/social-fb.svg'
+                    ],
+                    [
+                        'name'=> 'Instagram',
+                        'url' => 'https://www.instagram.com/kopikenangan',
+                        'logo' => '/assets/imgs/theme/icons/social-insta.svg'
+                    ],
+                    [
+                        'name'=> 'Twitter',
+                        'url' => 'https://twitter.com/kopikenangan',
+                        'logo' => '/assets/imgs/theme/icons/social-tw.svg'
+                    ]
                 ]),
                 'is_open' => true,
             ],
             [
-                'id' => Str::orderedUuid(),
                 'name' => 'Tomorrow',
                 'slug' => 'tomorrow',
                 'description' => 'Tomorrow is a modern coffee brand focusing on sustainability and quality sourcing.',
                 'address' => 'Jl. Kebon Jeruk No.2, Jakarta',
                 'phone' => '+62 21 2345 6789',
                 'social_links' => json_encode([
-                    'facebook' => 'https://www.facebook.com/tomorrowcoffee',
-                    'instagram' => 'https://www.instagram.com/tomorrowcoffee',
-                    'twitter' => 'https://twitter.com/tomorrowcoffee'
+                    [
+                        'name'=> 'Facebook',
+                        'url' => 'https://www.facebook.com/tomorrowcoffee',
+                        'logo' => '/assets/imgs/theme/icons/social-fb.svg'
+                    ],
+                    [
+                        'name'=> 'Instagram',
+                        'url' => 'https://www.instagram.com/tomorrowcoffee',
+                        'logo' => '/assets/imgs/theme/icons/social-insta.svg'
+                    ],
+                    [
+                        'name'=> 'Twitter',
+                        'url' => 'https://twitter.com/tomorrowcoffee',
+                        'logo' => '/assets/imgs/theme/icons/social-tw.svg'
+                    ]
                 ]),
                 'is_open' => true,
             ],
             [
-                'id' => Str::orderedUuid(),
                 'name' => 'Tanamera',
                 'slug' => 'tanamera',
                 'description' => 'Tanamera is known for its specialty coffee sourced from various regions in Indonesia.',
                 'address' => 'Jl. Melawai No.3, Jakarta',
                 'phone' => '+62 21 3456 7890',
                 'social_links' => json_encode([
-                    'facebook' => 'https://www.facebook.com/tanameracoffee',
-                    'instagram' => 'https://www.instagram.com/tanameracoffee',
-                    'twitter' => 'https://twitter.com/tanameracoffee'
+                    [
+                        'name'=> 'Facebook',
+                        'url' => 'https://www.facebook.com/tanameracoffee',
+                        'logo' => '/assets/imgs/theme/icons/social-fb.svg'
+                    ],
+                    [
+                        'name'=> 'Instagram',
+                        'url' => 'https://www.instagram.com/tanameracoffee',
+                        'logo' => '/assets/imgs/theme/icons/social-insta.svg'
+                    ],
+                    [
+                        'name'=> 'Twitter',
+                        'url' => 'https://twitter.com/tanameracoffee',
+                        'logo' => '/assets/imgs/theme/icons/social-tw.svg'
+                    ]
                 ]),
                 'is_open' => true,
             ],
             [
-                'id' => Str::orderedUuid(),
                 'name' => 'Anomali Coffee',
                 'slug' => 'anomali-coffee',
                 'description' => 'Anomali Coffee offers a wide range of Indonesian coffee beans and blends.',
                 'address' => 'Jl. Senopati No.4, Jakarta',
                 'phone' => '+62 21 4567 8901',
                 'social_links' => json_encode([
-                    'facebook' => 'https://www.facebook.com/anomalicoffee',
-                    'instagram' => 'https://www.instagram.com/anomalicoffee',
-                    'twitter' => 'https://twitter.com/anomalicoffee'
+                    [
+                        'name'=> 'Facebook',
+                        'url' => 'https://www.facebook.com/anomalicoffee',
+                        'logo' => '/assets/imgs/theme/icons/social-fb.svg'
+                    ],
+                    [
+                        'name'=> 'Instagram',
+                        'url' => 'https://www.instagram.com/anomalicoffee',
+                        'logo' => '/assets/imgs/theme/icons/social-insta.svg'
+                    ],
+                    [
+                        'name'=> 'Twitter',
+                        'url' => 'https://twitter.com/anomalicoffee',
+                        'logo' => '/assets/imgs/theme/icons/social-tw.svg'
+                    ]
                 ]),
                 'is_open' => true,
             ],
             [
-                'id' => Str::orderedUuid(),
                 'name' => 'Fore Coffee',
                 'slug' => 'fore-coffee',
                 'description' => 'Fore Coffee is a trendy coffee brand with a focus on quality and innovation.',
                 'address' => 'Jl. Panglima Polim No.5, Jakarta',
                 'phone' => '+62 21 5678 9012',
                 'social_links' => json_encode([
-                    'facebook' => 'https://www.facebook.com/forecoffee',
-                    'instagram' => 'https://www.instagram.com/forecoffee',
-                    'twitter' => 'https://twitter.com/forecoffee'
+                    [
+                        'name'=> 'Facebook',
+                        'url' => 'https://www.facebook.com/forecoffee',
+                        'logo' => '/assets/imgs/theme/icons/social-fb.svg'
+                    ],
+                    [
+                        'name'=> 'Instagram',
+                        'url' => 'https://www.instagram.com/forecoffee',
+                        'logo' => '/assets/imgs/theme/icons/social-insta.svg'
+                    ],
+                    [
+                        'name'=> 'Twitter',
+                        'url' => 'https://twitter.com/forecoffee',
+                        'logo' => '/assets/imgs/theme/icons/social-tw.svg'
+                    ]
                 ]),
                 'is_open' => true,
             ],
             [
-                'id' => Str::orderedUuid(),
                 'name' => 'Kapal Api',
                 'slug' => 'kapal-api',
                 'description' => 'Kapal Api is one of Indonesia\'s oldest and most recognized coffee brands, known for its rich flavors.',
                 'address' => 'Jl. Raya Kapal Api No.6, Surabaya',
                 'phone' => '+62 31 6789 0123',
                 'social_links' => json_encode([
-                    'facebook' => 'https://www.facebook.com/kapalapi',
-                    'instagram' => 'https://www.instagram.com/kapalapi',
-                    'twitter' => 'https://twitter.com/kapalapi'
+                    [
+                        'name'=> 'Facebook',
+                        'url' => 'https://www.facebook.com/kapalapi',
+                        'logo' => '/assets/imgs/theme/icons/social-fb.svg'
+                    ],
+                    [
+                        'name'=> 'Instagram',
+                        'url' => 'https://www.instagram.com/kapalapi',
+                        'logo' => '/assets/imgs/theme/icons/social-insta.svg'
+                    ],
+                    [
+                        'name'=> 'Twitter',
+                        'url' => 'https://twitter.com/kapalapi',
+                        'logo' => '/assets/imgs/theme/icons/social-tw.svg'
+                    ]
                 ]),
                 'is_open' => true,
             ],
             [
-                'id' => Str::orderedUuid(),
                 'name' => 'Tuku',
                 'slug' => 'tuku',
                 'description' => 'Tuku is a coffee brand that emphasizes local sourcing and community engagement.',
                 'address' => 'Jl. Cikini No.7, Jakarta',
                 'phone' => '+62 21 7890 1234',
                 'social_links' => json_encode([
-                    'facebook' => 'https://www.facebook.com/tukucoffee',
-                    'instagram' => 'https://www.instagram.com/tukucoffee',
-                    'twitter' => 'https://twitter.com/tukucoffee'
+                    [
+                        'name'=> 'Facebook',
+                        'url' => 'https://www.facebook.com/tuku',
+                        'logo' => '/assets/imgs/theme/icons/social-fb.svg'
+                    ],
+                    [
+                        'name'=> 'Instagram',
+                        'url' => 'https://www.instagram.com/tuku',
+                        'logo' => '/assets/imgs/theme/icons/social-insta.svg'
+                    ],
+                    [
+                        'name'=> 'Twitter',
+                        'url' => 'https://twitter.com/tuku',
+                        'logo' => '/assets/imgs/theme/icons/social-tw.svg'
+                    ]
                 ]),
                 'is_open' => true,
             ],
             [
-                'id' => Str::orderedUuid(),
                 'name' => 'Excelso',
                 'slug' => 'excelso',
                 'description' => 'Excelso is a premium coffee brand offering a wide range of blends and single-origin coffees.',
                 'address' => 'Jl. Thamrin No.8, Jakarta',
                 'phone' => '+62 21 8901 2345',
                 'social_links' => json_encode([
-                    'facebook' => 'https://www.facebook.com/excelso',
-                    'instagram' => 'https://www.instagram.com/excelso',
-                    'twitter' => 'https://twitter.com/excelso'
+                    [
+                        'name'=> 'Facebook',
+                        'url' => 'https://www.facebook.com/excelso',
+                        'logo' => '/assets/imgs/theme/icons/social-fb.svg'
+                    ],
+                    [
+                        'name'=> 'Instagram',
+                        'url' => 'https://www.instagram.com/excelso',
+                        'logo' => '/assets/imgs/theme/icons/social-insta.svg'
+                    ],
+                    [
+                        'name'=> 'Twitter',
+                        'url' => 'https://twitter.com/excelso',
+                        'logo' => '/assets/imgs/theme/icons/social-tw.svg'
+                    ]
                 ]),
                 'is_open' => true,
             ],
         ];
 
-        foreach ($brands as $brand) {
+        foreach ($brands as $i => $brand) {
+            $path = '/assets/imgs/vendor/vendor-'.($i+1).'.png';
             $shop = Shop::create($brand);
-//            $shop->addMedia(public_path('assets/imgs/shop/' . $brand['slug'] . '.jpg'))
-//                ->preservingOriginal()
-//                ->toMediaCollection('logo');
+            $shop->addMedia(public_path($path))->preservingOriginal()->toMediaCollection('logo');
         }
 
+        $allShopIds = Shop::pluck('id')->toArray();
 
         $tags = ['Arabica', 'Robusta', 'Single Origin', 'Espresso', 'Cold Brew', 'Drip Bag', 'Specialty Coffee', 'Decaf', 'Organic'];
 
@@ -236,7 +324,7 @@ class ProductSeeder extends Seeder
                 'name' => $name,
                 'slug' => $slug,
                 'sku' => $baseSku,
-                'shop_id' => $brands[array_rand($brands)]['id'],
+                'shop_id' => $allShopIds[array_rand($allShopIds)],
                 'meta_description' => 'Sample meta description for ' . $name,
                 'long_description' => 'Sample long description for ' . $name,
                 'price' => $price,

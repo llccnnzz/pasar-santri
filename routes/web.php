@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [ShopController::class, 'index'])->name('homepage');
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/shops', [ShopController::class, 'list']);
-Route::get('/s/{shops:slug}', [ShopController::class, 'show']);
 
 Auth::routes();
 
@@ -18,12 +17,14 @@ Route::get('/me', [HomeController::class, 'account'])->name('account');
 
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::post('/cart', [CartController::class, 'add'])->name('cart.add');
-Route::delete('/cart/{product}', [CartController::class, 'remove'])->name('cart.remove');
+Route::delete('/cart/{product:id}', [CartController::class, 'remove'])->name('cart.remove');
 
 Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
 Route::post('/wishlist', [WishlistController::class, 'add'])->name('wishlist.add');
-Route::delete('/wishlist/{product}', [WishlistController::class, 'remove'])->name('wishlist.remove');
+Route::delete('/wishlist/{product:id}', [WishlistController::class, 'remove'])->name('wishlist.remove');
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-Route::get('/{product:slug}', [ProductController::class, 'show']);
+Route::get('/s/{shop}', [ShopController::class, 'show']);
+
+Route::get('/{product}', [ProductController::class, 'show']);
