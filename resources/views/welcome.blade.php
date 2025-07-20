@@ -268,6 +268,8 @@
         </section>
         <!--End category slider-->
     </main>
+
+    @include('layouts.landing.component.footer')
 @endsection
 
 @push('script')
