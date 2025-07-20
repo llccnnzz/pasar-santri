@@ -196,6 +196,27 @@
 
 @push('script')
     <script>
+        function addToWishlist(productId, token) {
+            // create execute submit form but stay in this page
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/wishlist';
+            form.style.display = 'none';
+            const inputProductId = document.createElement('input');
+            inputProductId.type = 'hidden';
+            inputProductId.name = 'product_id';
+            inputProductId.value = productId;
+            const inputCsrf = document.createElement('input');
+            inputCsrf.type = 'hidden';
+            inputCsrf.name = '_token';
+            inputCsrf.value = token;
+            form.appendChild(inputCsrf);
+            form.appendChild(inputProductId);
+            document.body.appendChild(form);
+            form.submit();
+            toastr.success('Product added to Wishlist');
+        }
+
         function addToCart(productId, quantity, token) {
             // create execute submit form but stay in this page
             const form = document.createElement('form');
@@ -319,9 +340,7 @@
                                         </a>
                                     </div>
                                     <div class="product-action-1">
-                                        <a aria-label="Add To Wishlist" class="action-btn" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                        <a aria-label="Compare" class="action-btn" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
-                                        <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
+                                        <a aria-label="Add To Wishlist" class="action-btn" href="#" onclick="addToWishlist('${product.id}', '{{ csrf_token() }}')"><i class="fi-rs-heart"></i></a>
                                     </div>
                                 </div>
                                 <div class="product-content-wrap">
