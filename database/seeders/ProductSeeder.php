@@ -65,7 +65,7 @@ class ProductSeeder extends Seeder
         ];
         $brands = [
             [
-                'id' => 1,
+                'id' => Str::orderedUuid(),
                 'name' => 'Kopi Kenangan',
                 'slug' => 'kopi-kenangan',
                 'description' => 'Kopi Kenangan is a popular coffee chain in Indonesia, known for its high-quality coffee and unique blends.',
@@ -79,7 +79,7 @@ class ProductSeeder extends Seeder
                 'is_open' => true,
             ],
             [
-                'id' => 2,
+                'id' => Str::orderedUuid(),
                 'name' => 'Tomorrow',
                 'slug' => 'tomorrow',
                 'description' => 'Tomorrow is a modern coffee brand focusing on sustainability and quality sourcing.',
@@ -93,7 +93,7 @@ class ProductSeeder extends Seeder
                 'is_open' => true,
             ],
             [
-                'id' => 3,
+                'id' => Str::orderedUuid(),
                 'name' => 'Tanamera',
                 'slug' => 'tanamera',
                 'description' => 'Tanamera is known for its specialty coffee sourced from various regions in Indonesia.',
@@ -107,7 +107,7 @@ class ProductSeeder extends Seeder
                 'is_open' => true,
             ],
             [
-                'id' => 4,
+                'id' => Str::orderedUuid(),
                 'name' => 'Anomali Coffee',
                 'slug' => 'anomali-coffee',
                 'description' => 'Anomali Coffee offers a wide range of Indonesian coffee beans and blends.',
@@ -121,7 +121,7 @@ class ProductSeeder extends Seeder
                 'is_open' => true,
             ],
             [
-                'id' => 5,
+                'id' => Str::orderedUuid(),
                 'name' => 'Fore Coffee',
                 'slug' => 'fore-coffee',
                 'description' => 'Fore Coffee is a trendy coffee brand with a focus on quality and innovation.',
@@ -135,7 +135,7 @@ class ProductSeeder extends Seeder
                 'is_open' => true,
             ],
             [
-                'id' => 6,
+                'id' => Str::orderedUuid(),
                 'name' => 'Kapal Api',
                 'slug' => 'kapal-api',
                 'description' => 'Kapal Api is one of Indonesia\'s oldest and most recognized coffee brands, known for its rich flavors.',
@@ -149,7 +149,7 @@ class ProductSeeder extends Seeder
                 'is_open' => true,
             ],
             [
-                'id' => 7,
+                'id' => Str::orderedUuid(),
                 'name' => 'Tuku',
                 'slug' => 'tuku',
                 'description' => 'Tuku is a coffee brand that emphasizes local sourcing and community engagement.',
@@ -163,7 +163,7 @@ class ProductSeeder extends Seeder
                 'is_open' => true,
             ],
             [
-                'id' => 8,
+                'id' => Str::orderedUuid(),
                 'name' => 'Excelso',
                 'slug' => 'excelso',
                 'description' => 'Excelso is a premium coffee brand offering a wide range of blends and single-origin coffees.',

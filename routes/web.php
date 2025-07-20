@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [ShopController::class, 'index'])->name('homepage');
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+Route::get('/shops', [ShopController::class, 'list']);
+Route::get('/s/{shops:slug}', [ShopController::class, 'show']);
 
 Auth::routes();
 
@@ -23,7 +25,5 @@ Route::post('/wishlist', [WishlistController::class, 'add'])->name('wishlist.add
 Route::delete('/wishlist/{product}', [WishlistController::class, 'remove'])->name('wishlist.remove');
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
-
-Route::get('/s/{shops:slug}', [ShopController::class, 'show']);
 
 Route::get('/{product:slug}', [ProductController::class, 'show']);

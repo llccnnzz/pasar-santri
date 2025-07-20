@@ -43,6 +43,37 @@ class ShopController extends Controller
         return view('welcome', $homepageData);
     }
 
+    public function list(Request $request)
+    {
+        $query = Shop::withCount('products')->where('is_open', true);
+
+        // Search functionality
+        if ($request->filled('search')) {
+            $query->where('name', 'ilike', '%' . $request->search . '%');
+        }
+
+        // Sorting
+        switch ($request->get('sort', 'name')) {
+            case 'name_desc':
+                $query->orderBy('name', 'desc');
+                break;
+            case 'products_count':
+                $query->orderBy('products_count', 'desc');
+                break;
+            case 'newest':
+                $query->latest();
+                break;
+            default:
+                $query->orderBy('name', 'asc');
+                break;
+        }
+
+        $perPage = $request->get('per_page', 12);
+        $shops = $query->paginate($perPage);
+
+        return view('shops.index', compact('shops'));
+    }
+
     public function show(Shop $shop)
     {
 //        dd($shop);
