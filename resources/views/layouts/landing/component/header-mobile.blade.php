@@ -29,7 +29,7 @@
                                 <a href="/products">Product</a>
                             </li>
                             <li class="menu-item-has-children">
-                                <a href="#">Shop</a>
+                                <a href="/shops">Shop</a>
                             </li>
                             <li class="menu-item-has-children">
                                 <a href="#">Mega menu</a>

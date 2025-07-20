@@ -15,7 +15,7 @@
                 <div class="archive-header-3-inner">
                     <div class="vendor-logo mr-50">
                         @if($shop->logo)
-                            <img src="{{ $shop->logo->getFullUrl() }}" alt="{{ $shop->name }}" />
+                            <img src="{{ $shop->logo->getUrl() }}" alt="{{ $shop->name }}" />
                         @else
                             <img src="/assets/imgs/vendor/vendor-17.png" alt="{{ $shop->name }}" />
                         @endif
@@ -47,15 +47,15 @@
                                 </div>
                             </div>
                             <div class="col-lg-4">
-                                @if($socialLinks && count($socialLinks) > 0)
+                                @if($shop->social_links && count($shop->social_links) > 0)
                                 <div class="follow-social">
                                     <h6 class="mb-15 text-white">Follow Us</h6>
                                     <ul class="social-network">
-                                        @foreach($socialLinks as $link)
-                                            @if($link['url'])
+                                        @foreach($shop->social_links as $platform => $url)
+                                            @if($url)
                                             <li class="hover-up">
-                                                <a href="{{ $link['url'] }}" target="_blank">
-                                                    <img src="{{ strtolower($link['logo']) }}" alt="{{ $link['name'] }}" />
+                                                <a href="{{ $url }}" target="_blank">
+                                                    <img src="/assets/imgs/theme/icons/social-{{ strtolower($platform) }}.svg" alt="{{ $platform }}" />
                                                 </a>
                                             </li>
                                             @endif
@@ -98,15 +98,15 @@
                                         <span><i class="fi-rs-apps"></i>Show:</span>
                                     </div>
                                     <div class="sort-by-dropdown-wrap">
-                                        <span> {{ request('per_page', 15) }} <i class="fi-rs-angle-small-down"></i></span>
+                                        <span> {{ request('per_page', 12) }} <i class="fi-rs-angle-small-down"></i></span>
                                     </div>
                                 </div>
                                 <div class="sort-by-dropdown">
                                     <ul>
-                                        <li><a class="{{ request('per_page') == '15' ? 'active' : '' }}" href="{{ request()->fullUrlWithQuery(['per_page' => 15]) }}">15</a></li>
-                                        <li><a class="{{ request('per_page') == '30' ? 'active' : '' }}" href="{{ request()->fullUrlWithQuery(['per_page' => 30]) }}">30</a></li>
-                                        <li><a class="{{ request('per_page') == '60' ? 'active' : '' }}" href="{{ request()->fullUrlWithQuery(['per_page' => 60]) }}">60</a></li>
-                                        <li><a class="{{ request('per_page') == '90' ? 'active' : '' }}" href="{{ request()->fullUrlWithQuery(['per_page' => 90]) }}">90</a></li>
+                                        <li><a class="{{ request('per_page') == '12' ? 'active' : '' }}" href="{{ request()->fullUrlWithQuery(['per_page' => 12]) }}">12</a></li>
+                                        <li><a class="{{ request('per_page') == '24' ? 'active' : '' }}" href="{{ request()->fullUrlWithQuery(['per_page' => 24]) }}">24</a></li>
+                                        <li><a class="{{ request('per_page') == '50' ? 'active' : '' }}" href="{{ request()->fullUrlWithQuery(['per_page' => 50]) }}">50</a></li>
+                                        <li><a class="{{ request('per_page') == '100' ? 'active' : '' }}" href="{{ request()->fullUrlWithQuery(['per_page' => 100]) }}">100</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -164,7 +164,7 @@
                                     <div class="product-badges product-badges-position product-badges-mrg">
                                         <span class="hot">Hot</span>
                                     </div>
-                                    @elseif($product->final_price && $product->final_price < $product->price)
+                                    @elseif($product->sale_price && $product->sale_price < $product->price)
                                     <div class="product-badges product-badges-position product-badges-mrg">
                                         <span class="sale">Sale</span>
                                     </div>
@@ -183,20 +183,20 @@
                                     <h2><a href="/{{ $product->slug }}">{{ $product->name }}</a></h2>
                                     <div class="product-rate-cover">
                                         <div class="product-rate d-inline-block">
-                                            <div class="product-rating" style="width: 85%"></div>
+                                            <div class="product-rating" style="width: {{ ($product->rating ?? 0) * 20 }}%"></div>
                                         </div>
-                                        <span class="font-small ml-5 text-muted"> (4.2)</span>
+                                        <span class="font-small ml-5 text-muted"> ({{ number_format($product->rating ?? 0, 1) }})</span>
                                     </div>
                                     <div>
                                         <span class="font-small text-muted">By <a href="/s/{{ $product->shop->slug }}">{{ $product->shop->name }}</a></span>
                                     </div>
                                     <div class="product-card-bottom">
                                         <div class="product-price">
-                                            @if($product->final_price && $product->final_price < $product->price)
-                                                <span>Rp. {{ number_format($product->final_price) }}</span>
-                                                <span class="old-price">Rp. {{ number_format($product->price) }}</span>
+                                            @if($product->sale_price && $product->sale_price < $product->price)
+                                                <span>${{ number_format($product->sale_price, 2) }}</span>
+                                                <span class="old-price">${{ number_format($product->price, 2) }}</span>
                                             @else
-                                                <span>Rp. {{ number_format($product->price) }}</span>
+                                                <span>${{ number_format($product->price, 2) }}</span>
                                             @endif
                                         </div>
                                         <div class="add-cart">
@@ -225,7 +225,7 @@
                     <div class="sidebar-widget widget-store-info mb-30 bg-3 border-0">
                         <div class="vendor-logo mb-30">
                             @if($shop->logo)
-                                <img src="{{ $shop->logo->getFullUrl() }}" alt="{{ $shop->name }}" />
+                                <img src="{{ $shop->logo->getUrl() }}" alt="{{ $shop->name }}" />
                             @else
                                 <img src="/assets/imgs/vendor/vendor-16.png" alt="{{ $shop->name }}" />
                             @endif
@@ -244,15 +244,15 @@
                             <div class="vendor-des mb-30">
                                 <p class="font-sm text-heading">{{ $shop->description ?? 'Welcome to our store! We offer high-quality products with excellent customer service.' }}</p>
                             </div>
-                            @if($socialLinks && count($socialLinks) > 0)
+                            @if($shop->social_links && count($shop->social_links) > 0)
                             <div class="follow-social mb-20">
                                 <h6 class="mb-15">Follow Us</h6>
                                 <ul class="social-network">
-                                    @foreach($socialLinks as $link)
-                                        @if($link['url'])
+                                    @foreach($shop->social_links as $platform => $url)
+                                        @if($url)
                                         <li class="hover-up">
-                                            <a href="{{ $link['url'] }}" target="_blank">
-                                                <img src="{{ strtolower($link['logo']) }}" alt="{{ $link['name'] }}" />
+                                            <a href="{{ $url }}" target="_blank">
+                                                <img src="/assets/imgs/theme/icons/social-{{ strtolower($platform) }}.svg" alt="{{ $platform }}" />
                                             </a>
                                         </li>
                                         @endif

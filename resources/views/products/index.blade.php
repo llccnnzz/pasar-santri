@@ -90,14 +90,52 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-xl-3 col-lg-6 col-md-6 mb-lg-0 mb-md-2 mb-sm-2">
+                                <div class="card">
+                                    <h5 class="mb-30">By Price Range</h5>
+                                    <div class="price-range-wrap">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <label for="min-price" class="form-label">Min Price</label>
+                                                <input type="number" 
+                                                       id="min-price" 
+                                                       class="form-control form-control-sm" 
+                                                       placeholder="{{ $minPrice }}"
+                                                       min="{{ $minPrice }}" 
+                                                       max="{{ $maxPrice }}">
+                                            </div>
+                                            <div class="col-6">
+                                                <label for="max-price" class="form-label">Max Price</label>
+                                                <input type="number" 
+                                                       id="max-price" 
+                                                       class="form-control form-control-sm" 
+                                                       placeholder="{{ $maxPrice }}"
+                                                       min="{{ $minPrice }}" 
+                                                       max="{{ $maxPrice }}">
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn btn-primary btn-sm mt-2 w-100" id="apply-price-filter">
+                                            Apply Price Filter
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-12">
                     <div class="shop-product-fillter">
                         <div class="totall-product">
-                            <h4></h4>
-                            <p>We found <strong class="text-brand">0</strong> items for you!</p>
+                            <div id="loading-indicator" style="display: none;">
+                                <div class="spinner-border spinner-border-sm me-2" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                Loading products...
+                            </div>
+                            <div id="product-count">
+                                <h4></h4>
+                                <p>We found <strong class="text-brand">0</strong> items for you!</p>
+                            </div>
                         </div>
                         <div class="sort-by-product-area">
                             <div class="sort-by-cover mr-10">
@@ -106,15 +144,15 @@
                                         <span><i class="fi-rs-apps"></i>Show:</span>
                                     </div>
                                     <div class="sort-by-dropdown-wrap">
-                                        <span> 50 <i class="fi-rs-angle-small-down"></i></span>
+                                        <span> 20 <i class="fi-rs-angle-small-down"></i></span>
                                     </div>
                                 </div>
                                 <div class="sort-by-dropdown per-page">
                                     <ul>
-                                        <li><a class="active" href="#">50</a></li>
+                                        <li><a class="active" href="#">20</a></li>
+                                        <li><a href="#">50</a></li>
                                         <li><a href="#">100</a></li>
                                         <li><a href="#">150</a></li>
-                                        <li><a href="#">200</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -158,6 +196,27 @@
 
 @push('script')
     <script>
+        function addToWishlist(productId, token) {
+            // create execute submit form but stay in this page
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/wishlist';
+            form.style.display = 'none';
+            const inputProductId = document.createElement('input');
+            inputProductId.type = 'hidden';
+            inputProductId.name = 'product_id';
+            inputProductId.value = productId;
+            const inputCsrf = document.createElement('input');
+            inputCsrf.type = 'hidden';
+            inputCsrf.name = '_token';
+            inputCsrf.value = token;
+            form.appendChild(inputCsrf);
+            form.appendChild(inputProductId);
+            document.body.appendChild(form);
+            form.submit();
+            toastr.success('Product added to Wishlist');
+        }
+
         function addToCart(productId, quantity, token) {
             // create execute submit form but stay in this page
             const form = document.createElement('form');
@@ -200,10 +259,13 @@
                 categories: [],
                 tags: [],
                 brands: [],
+                priceRange: { min: null, max: null },
                 sort: 'created_at',
-                perPage: 50,
+                perPage: 20,
                 currentPage: 1
             };
+
+            let debounceTimer = null;
 
             // === Helper: Build Query Parameters ===
             function buildQuery() {
@@ -211,7 +273,14 @@
 
                 state.categories.forEach(cat => params.append('filter[categories][]', cat));
                 state.tags.forEach(tag => params.append('filter[tags][]', tag));
-                state.brands.forEach(price => params.append('filter[brands][]', price));
+                state.brands.forEach(brand => params.append('filter[brands][]', brand));
+                
+                // Add price range filter
+                if (state.priceRange.min || state.priceRange.max) {
+                    if (state.priceRange.min) params.set('filter[price_range][min]', state.priceRange.min);
+                    if (state.priceRange.max) params.set('filter[price_range][max]', state.priceRange.max);
+                }
+                
                 if (state.sort) params.set('sort', state.sort);
                 params.set('page[number]', state.currentPage);
                 params.set('page[size]', state.perPage);
@@ -221,11 +290,37 @@
 
             // === Fetch & Render Products ===
             async function fetchProducts() {
-                const res = await fetch(`${baseUrl}?${buildQuery()}`);
-                const data = await res.json();
-                renderProducts(data.data);
-                renderPagination(data.meta, data.links);
-                renderTotal(data.meta);
+                try {
+                    showLoading(true);
+                    
+                    const res = await fetch(`${baseUrl}?${buildQuery()}`);
+                    if (!res.ok) throw new Error('Failed to fetch products');
+                    
+                    const data = await res.json();
+                    renderProducts(data.data);
+                    renderPagination(data.meta, data.links);
+                    renderTotal(data.meta);
+                } catch (error) {
+                    console.error('Error fetching products:', error);
+                    showError('Failed to load products. Please try again.');
+                } finally {
+                    showLoading(false);
+                }
+            }
+
+            function showLoading(show) {
+                document.getElementById('loading-indicator').style.display = show ? 'block' : 'none';
+                document.getElementById('product-count').style.display = show ? 'none' : 'block';
+            }
+
+            function showError(message) {
+                const container = document.querySelector('.product-grid');
+                container.innerHTML = `<div class="col-12 text-center p-4"><div class="alert alert-danger">${message}</div></div>`;
+            }
+
+            function debouncedFetch() {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(fetchProducts, 300);
             }
 
             // === Render Product Cards ===
@@ -245,9 +340,7 @@
                                         </a>
                                     </div>
                                     <div class="product-action-1">
-                                        <a aria-label="Add To Wishlist" class="action-btn" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                        <a aria-label="Compare" class="action-btn" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
-                                        <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
+                                        <a aria-label="Add To Wishlist" class="action-btn" href="#" onclick="addToWishlist('${product.id}', '{{ csrf_token() }}')"><i class="fi-rs-heart"></i></a>
                                     </div>
                                 </div>
                                 <div class="product-content-wrap">
@@ -306,7 +399,7 @@
             }
 
             function renderTotal(meta) {
-                const totalElement = document.querySelector('.totall-product strong.text-brand');
+                const totalElement = document.querySelector('#product-count .text-brand');
                 if (totalElement) {
                     totalElement.textContent = meta.total;
                 }
@@ -334,7 +427,7 @@
                         else if (!el.checked) list.splice(list.indexOf(value), 1);
 
                         state.currentPage = 1;
-                        fetchProducts();
+                        debouncedFetch();
                     });
                 });
 
@@ -345,8 +438,19 @@
                         const tag = el.innerText.trim();
                         if (!state.tags.includes(tag)) state.tags.push(tag);
                         state.currentPage = 1;
-                        fetchProducts();
+                        debouncedFetch();
                     });
+                });
+
+                // Price range filter
+                document.getElementById('apply-price-filter').addEventListener('click', () => {
+                    const minPrice = document.getElementById('min-price').value;
+                    const maxPrice = document.getElementById('max-price').value;
+                    
+                    state.priceRange.min = minPrice ? parseInt(minPrice) : null;
+                    state.priceRange.max = maxPrice ? parseInt(maxPrice) : null;
+                    state.currentPage = 1;
+                    debouncedFetch();
                 });
 
 
@@ -403,7 +507,8 @@
                         else if (sortText.includes('ewest')) state.sort = '-created_at';
                         else if (sortText.includes('ldest')) state.sort = 'created_at';
                         else state.sort = 'created_at';
-                        fetchProducts();
+                        state.currentPage = 1;
+                        debouncedFetch();
                     });
                 });
 
@@ -411,10 +516,10 @@
                     el.addEventListener('click', e => {
                         e.preventDefault();
                         const count = parseInt(el.innerText.trim());
-                        state.perPage = isNaN(count) ? 50 : count;
+                        state.perPage = isNaN(count) ? 20 : count;
                         state.currentPage = 1;
                         console.log(state)
-                        fetchProducts();
+                        debouncedFetch();
                     });
                 });
 
