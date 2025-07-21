@@ -349,7 +349,14 @@
                 return params.toString();
             }
 
-            // === Fetch & Render Products ===
+            // === Update URL without reload ===
+            function updateUrlWithoutReload() {
+                const url = new URL(window.location);
+                url.search = buildQuery();
+                window.history.pushState({}, '', url);
+            }
+
+                        // === Fetch & Render Products ===
             async function fetchProducts() {
                 try {
                     showLoading(true);
@@ -525,18 +532,35 @@
                     });
                 }
 
-                // Category checkbox
-                document.querySelectorAll('[id^="checkbox-"]').forEach(el => {
+                // Category filters
+                document.querySelectorAll('.category-filter').forEach(el => {
+                    el.addEventListener('change', () => {
+                        const categoryId = el.value;
+                        
+                        if (el.checked && !state.categories.includes(categoryId)) {
+                            state.categories.push(categoryId);
+                        } else if (!el.checked) {
+                            const index = state.categories.indexOf(categoryId);
+                            if (index > -1) {
+                                state.categories.splice(index, 1);
+                            }
+                        }
+
+                        state.currentPage = 1;
+                        debouncedFetch();
+                        updateUrlWithoutReload();
+                    });
+                });
+
+                // Brand and Tag filters (keeping original logic for other filters)
+                document.querySelectorAll('[id^="checkbox-brand"], [id^="checkbox-tag"]').forEach(el => {
                     el.addEventListener('change', () => {
                         const id = el.id;
                         const label = el.value;
 
-                        const isCategory = id.includes('checkbox-') && el.closest('.card').querySelector('h5').innerText.includes('Categories');
-                        const isBrand = id.includes('checkbox-brand') && el.closest('.card').querySelector('h5').innerText.includes('Brands');
-                        const isTag = id.includes('checkbox-tag') && el.closest('.card').querySelector('h5').innerText.includes('Tags');
-                        const list = isCategory ? state.categories :
-                            isBrand ? state.brands :
-                                isTag ? state.tags : null;
+                        const isBrand = id.includes('checkbox-brand');
+                        const isTag = id.includes('checkbox-tag');
+                        const list = isBrand ? state.brands : isTag ? state.tags : null;
 
                         if (!list) return;
 
@@ -546,6 +570,7 @@
 
                         state.currentPage = 1;
                         debouncedFetch();
+                        updateUrlWithoutReload();
                     });
                 });
 
