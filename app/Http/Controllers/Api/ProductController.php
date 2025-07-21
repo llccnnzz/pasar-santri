@@ -52,17 +52,20 @@ class ProductController extends Controller
                     $searchTerms = explode(' ', $value);
                     $query->where(function ($q) use ($searchTerms) {
                         foreach ($searchTerms as $term) {
-                            $q->where(function ($subQuery) use ($term) {
-                                $subQuery->where('name', 'LIKE', "%{$term}%")
-                                    ->orWhere('meta_description', 'LIKE', "%{$term}%")
-                                    ->orWhereJsonContains('tags', $term)
-                                    ->orWhereHas('shop', function ($shopQuery) use ($term) {
-                                        $shopQuery->where('name', 'LIKE', "%{$term}%");
-                                    })
-                                    ->orWhereHas('categories', function ($catQuery) use ($term) {
-                                        $catQuery->where('name', 'LIKE', "%{$term}%");
-                                    });
-                            });
+                            $term = trim($term);
+                            if (!empty($term)) {
+                                $q->where(function ($subQuery) use ($term) {
+                                    $subQuery->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($term) . '%'])
+                                        ->orWhereRaw('LOWER(meta_description) LIKE ?', ['%' . strtolower($term) . '%'])
+                                        ->orWhereJsonContains('tags', $term)
+                                        ->orWhereHas('shop', function ($shopQuery) use ($term) {
+                                            $shopQuery->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($term) . '%']);
+                                        })
+                                        ->orWhereHas('categories', function ($catQuery) use ($term) {
+                                            $catQuery->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($term) . '%']);
+                                        });
+                                });
+                            }
                         }
                     });
                 }),
