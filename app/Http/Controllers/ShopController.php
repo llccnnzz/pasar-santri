@@ -17,14 +17,16 @@ class ShopController extends Controller
             return [
                 'featured' => Product::with(['defaultImage', 'hoverImage', 'shop'])
                     ->where('is_featured', true)
+                    ->orderByRaw('CASE WHEN stock > 0 THEN 0 ELSE 1 END, stock DESC')
                     ->limit(10)
                     ->get(),
                 'popular' => Product::with(['defaultImage', 'hoverImage', 'shop'])
                     ->where('is_popular', true)
+                    ->orderByRaw('CASE WHEN stock > 0 THEN 0 ELSE 1 END, stock DESC')
                     ->limit(8)
                     ->get(),
                 'latest' => Product::with(['defaultImage', 'hoverImage', 'shop'])
-                    ->latest()
+                    ->orderByRaw('CASE WHEN stock > 0 THEN 0 ELSE 1 END, created_at DESC')
                     ->limit(8)
                     ->get(),
                 'categories' => Category::with('icon')
@@ -32,7 +34,9 @@ class ShopController extends Controller
                     ->limit(8)
                     ->get(),
                 'categoryProducts' => Category::with(['products' => function($query) {
-                        $query->with(['defaultImage', 'hoverImage', 'shop'])->limit(10);
+                        $query->with(['defaultImage', 'hoverImage', 'shop'])
+                              ->orderByRaw('CASE WHEN stock > 0 THEN 0 ELSE 1 END, stock DESC')
+                              ->limit(10);
                     }])
                     ->whereHas('products')
                     ->limit(5)
@@ -100,22 +104,22 @@ class ShopController extends Controller
             $query->where('price', '<=', $request->max_price);
         }
 
-        // Sorting
+        // Sorting with stock priority
         switch ($request->get('sort', 'name')) {
             case 'price_low':
-                $query->orderBy('price', 'asc');
+                $query->orderByRaw('CASE WHEN stock > 0 THEN 0 ELSE 1 END, price ASC');
                 break;
             case 'price_high':
-                $query->orderBy('price', 'desc');
+                $query->orderByRaw('CASE WHEN stock > 0 THEN 0 ELSE 1 END, price DESC');
                 break;
             case 'rating':
-                $query->orderBy('created_at', 'desc'); // Use created_at instead of rating
+                $query->orderByRaw('CASE WHEN stock > 0 THEN 0 ELSE 1 END, created_at DESC');
                 break;
             case 'newest':
-                $query->latest();
+                $query->orderByRaw('CASE WHEN stock > 0 THEN 0 ELSE 1 END, created_at DESC');
                 break;
             default:
-                $query->orderBy('name', 'asc');
+                $query->orderByRaw('CASE WHEN stock > 0 THEN 0 ELSE 1 END, name ASC');
                 break;
         }
 

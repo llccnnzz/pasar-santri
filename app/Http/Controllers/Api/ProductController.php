@@ -14,7 +14,7 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $products = QueryBuilder::for(Product::class)
+        $query = QueryBuilder::for(Product::class)
             ->select([
                 'id', 'slug', 'name', 'shop_id', 'meta_description', 
                 'price', 'final_price', 'tags', 'stock', 'created_at'
@@ -44,11 +44,39 @@ class ProductController extends Controller
                     }
                 }),
             ])
-            ->allowedSorts(['final_price', 'created_at', 'name'])
             ->with(['defaultImage', 'hoverImage', 'shop:id,name,slug'])
-            ->whereNotNull('final_price')
-            ->where('stock', '>', 0)
-            ->jsonPaginate($request->get('page.size', 20));
+            ->whereNotNull('final_price');
+
+        // Handle sorting with stock priority
+        $sortParam = $request->get('sort');
+        if ($sortParam) {
+            if (str_starts_with($sortParam, '-')) {
+                $field = substr($sortParam, 1);
+                $direction = 'DESC';
+            } else {
+                $field = $sortParam;
+                $direction = 'ASC';
+            }
+            
+            switch ($field) {
+                case 'final_price':
+                    $query->orderByRaw("CASE WHEN stock > 0 THEN 0 ELSE 1 END, final_price {$direction}");
+                    break;
+                case 'created_at':
+                    $query->orderByRaw("CASE WHEN stock > 0 THEN 0 ELSE 1 END, created_at {$direction}");
+                    break;
+                case 'name':
+                    $query->orderByRaw("CASE WHEN stock > 0 THEN 0 ELSE 1 END, name {$direction}");
+                    break;
+                default:
+                    $query->orderByRaw('CASE WHEN stock > 0 THEN 0 ELSE 1 END, created_at DESC');
+            }
+        } else {
+            // Default sorting: in-stock first, then by created_at
+            $query->orderByRaw('CASE WHEN stock > 0 THEN 0 ELSE 1 END, created_at DESC');
+        }
+
+        $products = $query->jsonPaginate($request->get('page.size', 20));
 
         return ProductResource::collection($products);
     }

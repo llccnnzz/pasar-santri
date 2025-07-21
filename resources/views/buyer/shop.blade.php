@@ -143,7 +143,7 @@
                     <div class="row product-grid">
                         @forelse($products as $product)
                         <div class="col-lg-1-5 col-md-4 col-12 col-sm-6">
-                            <div class="product-cart-wrap mb-30">
+                            <div class="product-cart-wrap mb-30 {{ $product->stock <= 0 ? 'out-of-stock' : '' }}">
                                 <div class="product-img-action-wrap">
                                     <div class="product-img product-img-zoom">
                                         <a href="/{{ $product->slug }}">
@@ -160,7 +160,11 @@
                                     <div class="product-action-1">
                                         <a aria-label="Add To Wishlist" class="action-btn" href="{{ route('wishlist.index') }}"><i class="fi-rs-heart"></i></a>
                                     </div>
-                                    @if($product->is_featured)
+                                    @if($product->stock <= 0)
+                                    <div class="product-badges product-badges-position product-badges-mrg">
+                                        <span class="out-of-stock-badge">Out of Stock</span>
+                                    </div>
+                                    @elseif($product->is_featured)
                                     <div class="product-badges product-badges-position product-badges-mrg">
                                         <span class="hot">Hot</span>
                                     </div>
@@ -193,14 +197,18 @@
                                     <div class="product-card-bottom">
                                         <div class="product-price">
                                             @if($product->final_price && $product->final_price < $product->price)
-                                                <span>Rp. {{ number_format($product->final_price) }}</span>
+                                                <span>Rp. {{ number_format($product->final_price) }}</span><br>
                                                 <span class="old-price">Rp. {{ number_format($product->price) }}</span>
                                             @else
                                                 <span>Rp. {{ number_format($product->price) }}</span>
                                             @endif
                                         </div>
                                         <div class="add-cart">
-                                            <a class="add" href="{{ route('cart.index') }}"><i class="fi-rs-shopping-cart mr-5"></i>Add </a>
+                                            @if($product->stock <= 0)
+                                                <a class="add" href="#" style="background: none; color: red; font-size: 12px" onclick="return false;">Out of Stock</a>
+                                            @else
+                                                <a class="add" href="{{ route('cart.index') }}"><i class="fi-rs-shopping-cart mr-5"></i>Add </a>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>

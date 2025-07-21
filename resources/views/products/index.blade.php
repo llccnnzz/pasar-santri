@@ -329,9 +329,10 @@
                 container.innerHTML = '';
 
                 products.forEach(product => {
+                    const outOfStock = product.stock <= 0;
                     container.innerHTML += `
                         <div class="col-lg-1-5 col-md-4 col-12 col-sm-6">
-                            <div class="product-cart-wrap mb-30">
+                            <div class="product-cart-wrap mb-30 ${outOfStock ? 'out-of-stock' : ''}">
                                 <div class="product-img-action-wrap">
                                     <div class="product-img product-img-zoom">
                                         <a href="/${product.slug}">
@@ -342,6 +343,7 @@
                                     <div class="product-action-1">
                                         <a aria-label="Add To Wishlist" class="action-btn" href="#" onclick="addToWishlist('${product.id}', '{{ csrf_token() }}')"><i class="fi-rs-heart"></i></a>
                                     </div>
+                                    ${outOfStock ? '<div class="product-badges product-badges-position product-badges-mrg"><span class="out-of-stock-badge">Out of Stock</span></div>' : ''}
                                 </div>
                                 <div class="product-content-wrap">
                                     <div class="product-category">
@@ -359,11 +361,17 @@
                                     </div>
                                     <div class="product-card-bottom">
                                         <div class="product-price">
-                                            <span>Rp ${formatPrice(product.final_price)}</span>
-                                            <span class="old-price">Rp ${formatPrice(product.price)}</span>
+                                        ${parseInt(product.final_price) > 0 && parseInt(product.final_price) < parseInt(product.price) ? 
+                                            `<span>Rp ${formatPrice(product.final_price)}</span><br>
+                                            <span class="old-price">Rp ${formatPrice(product.price)}</span>` : 
+                                            `<span>Rp ${formatPrice(product.price)}</span>`
+                                        }
                                         </div>
                                         <div class="add-cart">
-                                            <a class="add" href="#" onclick="addToCart('${product.id}', 1, '{{ csrf_token() }}')"><i class="fi-rs-shopping-cart mr-5"></i>Add </a>
+                                            ${outOfStock ? 
+                                                '<a class="add" href="#" style="background: none; color: red; font-size: 12px" onclick="return false;">Out of Stock</a>' :
+                                                '<a class="add" href="#" onclick="addToCart(\'' + product.id + '\', 1, \'{{ csrf_token() }}\')"><i class="fi-rs-shopping-cart mr-5"></i>Add </a>'
+                                            }
                                         </div>
                                     </div>
                                 </div>
