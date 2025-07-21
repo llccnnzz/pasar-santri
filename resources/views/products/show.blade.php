@@ -1,5 +1,30 @@
 @extends('layouts.landing.component.app')
 
+@section('title'){{ $seoData['title'] }}@endsection
+@section('description'){{ $seoData['description'] }}@endsection
+@section('keywords'){{ $seoData['keywords'] }}@endsection
+@section('og_title'){{ $seoData['title'] }}@endsection
+@section('og_description'){{ $seoData['description'] }}@endsection
+@section('og_type'){{'product'}}@endsection
+@section('og_image'){{ $seoData['image'] }}@endsection
+@section('og_url'){{ $seoData['url'] }}@endsection
+@section('twitter_card'){{'summary_large_image'}}@endsection
+@section('twitter_title'){{ $seoData['title'] }}@endsection
+@section('twitter_description'){{ $seoData['description'] }}@endsection
+@section('twitter_image'){{ $seoData['image'] }}@endsection
+
+@push('schema')
+<script type="application/ld+json">
+@php
+    $structuredData = App\Helpers\SeoHelper::generateProductStructuredData($product, $seoData);
+    if($product->tags) {
+        $structuredData['keywords'] = $seoData['keywords'];
+    }
+@endphp
+{!! json_encode($structuredData, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+</script>
+@endpush
+
 @push('head')
     <style>
         .variant-option.disabled {

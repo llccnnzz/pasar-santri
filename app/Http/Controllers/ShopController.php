@@ -44,7 +44,15 @@ class ShopController extends Controller
             ];
         });
 
-        return view('welcome', $homepageData);
+        // Prepare SEO data for homepage
+        $seoData = [
+            'title' => env('APP_NAME') . ' - Your Trusted Online Marketplace',
+            'description' => 'Discover quality products from trusted sellers at ' . env('APP_NAME') . '. Shop electronics, fashion, home & garden, and more with confidence. Great deals, fast shipping, secure payments.',
+            'keywords' => 'marketplace, online shopping, electronics, fashion, home garden, deals, trusted sellers, secure payments, fast shipping',
+            'canonical' => route('homepage'),
+        ];
+
+        return view('welcome', array_merge($homepageData, compact('seoData')));
     }
 
     public function list(Request $request)
@@ -146,6 +154,16 @@ class ShopController extends Controller
 
         $socialLinks = $shop->social_links ? json_decode($shop->social_links, true) : [];
 
-        return view('buyer.shop', compact('shop', 'products', 'categories', 'priceRange', 'avgRating','socialLinks'));
+        // Prepare SEO data for shop page
+        $seoData = [
+            'title' => $shop->name . ' - Shop | ' . env('APP_NAME'),
+            'description' => $shop->description ?: 
+                            'Shop from ' . $shop->name . ' on ' . env('APP_NAME') . '. Discover quality products with great deals and reliable service.',
+            'keywords' => $shop->name . ', shop, marketplace, products, ' . ($shop->categories ?? 'electronics, fashion, home garden'),
+            'canonical' => request()->url(),
+            'og_image' => $shop->media->first() ? asset('storage/' . $shop->media->first()->path) : asset('/assets/imgs/theme/logo.png'),
+        ];
+
+        return view('buyer.shop', compact('shop', 'products', 'categories', 'priceRange', 'avgRating','socialLinks', 'seoData'));
     }
 }

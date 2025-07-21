@@ -1,6 +1,14 @@
 @php use Carbon\Carbon; @endphp
 @extends('layouts.landing.component.app')
 
+@section('title'){{ $seoData['title'] }}@endsection
+@section('description'){{ $seoData['description'] }}@endsection
+@section('keywords'){{ $seoData['keywords'] }}@endsection
+@section('canonical'){{ $seoData['canonical'] }}@endsection
+@section('og_title'){{ $seoData['title'] }}@endsection
+@section('og_description'){{ $seoData['description'] }}@endsection
+@section('og_type'){{ 'website' }}@endsection
+
 @section('content')
     <main class="main">
         <section class="home-slider style-2 position-relative mb-50">
