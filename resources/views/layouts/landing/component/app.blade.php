@@ -7,6 +7,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta property="og:title" content="" />
     <meta property="og:type" content="" />
     <meta property="og:url" content="" />
@@ -74,6 +75,56 @@
         }
     </script>
     @include('layouts.landing.component.toastr')
+    
+    <!-- Location Selector Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const locationSelector = document.getElementById('location-selector');
+            
+            if (locationSelector) {
+                locationSelector.addEventListener('change', function() {
+                    const selectedValue = this.value;
+                    
+                    if (selectedValue === 'manage') {
+                        // Redirect to address management page
+                        window.location.href = '{{ route("addresses.index") }}';
+                    } else if (selectedValue === 'login') {
+                        // Redirect to login page
+                        window.location.href = '{{ route("login") }}';
+                    } else if (selectedValue && selectedValue !== '') {
+                        // Set as primary address via AJAX
+                        @auth
+                        fetch('{{ route("addresses.setPrimary") }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content || '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({ address_id: selectedValue })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                toastr.success('Location updated successfully!');
+                                // Optionally reload the page to update UI
+                                setTimeout(() => {
+                                    window.location.reload();
+                                }, 1000);
+                            } else {
+                                toastr.error(data.error || 'Failed to update location');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            toastr.error('An error occurred while updating location');
+                        });
+                        @endauth
+                    }
+                });
+            }
+        });
+    </script>
+    
     @stack('script')
 </body>
 

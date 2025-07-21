@@ -13,8 +13,8 @@
             </div>
             <div class="mobile-header-content-area">
                 <div class="mobile-search search-style-3 mobile-header-border">
-                    <form action="#">
-                        <input type="text" placeholder="Search for items…" />
+                    <form action="{{ route('products.index') }}" method="GET">
+                        <input type="text" name="search" placeholder="Search for items…" value="{{ request('search') }}" />
                         <button type="submit"><i class="fi-rs-search"></i></button>
                     </form>
                 </div>
@@ -78,10 +78,24 @@
                 </div>
                 <div class="mobile-header-info-wrap">
                     <div class="single-mobile-header-info">
-                        <a href="page-contact.html"><i class="fi-rs-marker"></i> Our location </a>
+                        @if(auth()->user() && auth()->user()->primary_address)
+                            <a href="{{ route('addresses.index') }}">
+                                <i class="fi-rs-marker"></i> 
+                                {{ auth()->user()->primary_address['city'] ?? 'Your Location' }}, {{ auth()->user()->primary_address['state'] ?? '' }}
+                            </a>
+                        @else
+                            <a href="{{ auth()->user() ? route('addresses.index') : route('login') }}">
+                                <i class="fi-rs-marker"></i> 
+                                {{ auth()->user() ? 'Set Your Location' : 'Login to set location' }}
+                            </a>
+                        @endif
                     </div>
                     <div class="single-mobile-header-info">
-                        <a href="page-login.html"><i class="fi-rs-user"></i>Log In / Sign Up </a>
+                        @if(auth()->user())
+                            <a href="{{ route('account') }}"><i class="fi-rs-user"></i>{{ auth()->user()->name }}</a>
+                        @else
+                            <a href="{{ route('login') }}"><i class="fi-rs-user"></i>Log In / Sign Up</a>
+                        @endif
                     </div>
                     <div class="single-mobile-header-info">
                         <a href="#"><i class="fi-rs-headphones"></i>(+01) - 2345 - 6789 </a>
