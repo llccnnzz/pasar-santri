@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\SeoHelper;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Shop;
@@ -55,7 +56,15 @@ class ProductController extends Controller
             ];
         });
 
-        return view('products.index', compact('categories', 'brands', 'tags', 'minPrice', 'maxPrice'));
+        // Prepare SEO data for products listing
+        $seoData = [
+            'title' => 'Products - ' . env('APP_NAME'),
+            'description' => 'Browse our wide selection of quality products from trusted sellers. Find electronics, fashion, home & garden items, and more at competitive prices.',
+            'keywords' => 'products, marketplace, online shopping, electronics, fashion, home garden, deals',
+            'canonical' => route('products.index'),
+        ];
+
+        return view('products.index', compact('categories', 'brands', 'tags', 'minPrice', 'maxPrice', 'seoData'));
     }
 
     public function show(Request $request, Product $product)
@@ -86,6 +95,9 @@ class ProductController extends Controller
                 ->get();
         });
 
-        return view('products.show', compact('product', 'relatedProducts'));
+        // Prepare SEO data
+        $seoData = SeoHelper::generateProductSeo($product);
+
+        return view('products.show', compact('product', 'relatedProducts', 'seoData'));
     }
 }
