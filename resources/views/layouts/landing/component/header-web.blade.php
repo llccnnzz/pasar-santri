@@ -181,7 +181,7 @@
                                 <ul>
                                     @foreach ($categories->take(5) as $category)
                                         <li>
-                                            <a href="shop-grid-right.html">
+                                            <a href="{{ route('products.index', ['category' => $category->slug]) }}">
                                                 <img src="{{ $category->icon->getFullUrl() }}" alt=""/>
                                                 {{ $category['name'] }}
                                             </a>
@@ -191,7 +191,7 @@
                                 <ul class="end">
                                     @foreach ($categories->slice(5, 5) as $category)
                                         <li>
-                                            <a href="shop-grid-right.html">
+                                            <a href="{{ route('products.index', ['category' => $category->slug]) }}">
                                                 <img src="{{ $category->icon->getFullUrl() }}" alt=""/>
                                                 {{ $category['name'] }}
                                             </a>

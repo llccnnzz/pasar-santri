@@ -12,8 +12,25 @@ class Category extends Model implements HasMedia
     use HasUuid, InteractsWithMedia;
 
     protected $fillable = [
-        'name'
+        'name', 'slug'
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+        
+        static::creating(function ($category) {
+            if (empty($category->slug)) {
+                $category->slug = \Illuminate\Support\Str::slug($category->name);
+            }
+        });
+        
+        static::updating(function ($category) {
+            if ($category->isDirty('name') && empty($category->slug)) {
+                $category->slug = \Illuminate\Support\Str::slug($category->name);
+            }
+        });
+    }
 
     public function products() {
         return $this->belongsToMany(Product::class);

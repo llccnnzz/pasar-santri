@@ -14,7 +14,16 @@
             <div class="container">
                 <div class="breadcrumb">
                     <a href="/" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
-                    <span></span> Product
+                    <span></span> 
+                    @if(isset($searchQuery) && isset($selectedCategory) && $searchQuery && $selectedCategory)
+                        Search: "{{ $searchQuery }}" in {{ $selectedCategory->name }}
+                    @elseif(isset($searchQuery) && $searchQuery)
+                        Search: "{{ $searchQuery }}"
+                    @elseif(isset($selectedCategory) && $selectedCategory)
+                        {{ $selectedCategory->name }}
+                    @else
+                        Products
+                    @endif
                 </div>
             </div>
         </div>
@@ -29,7 +38,27 @@
                     </a>
                     <div class="shop-product-fillter-header" style="display: none">
                         <div class="row">
-                            <div class="col-xl-3 col-lg-6 col-md-6 mb-lg-0 mb-md-2 mb-sm-2">
+                            <div class="col-xl-2 col-lg-4 col-md-6 mb-lg-0 mb-md-2 mb-sm-2">
+                                <div class="card">
+                                    <h5 class="mb-30">Search Products</h5>
+                                    <div class="search-wrap">
+                                        <input type="text" 
+                                               id="filter-search-input" 
+                                               class="form-control" 
+                                               placeholder="Search products..."
+                                               value="{{ $searchQuery ?? '' }}">
+                                        <button type="button" class="btn btn-primary btn-sm mt-2 w-100" id="apply-search-filter">
+                                            Search
+                                        </button>
+                                        @if(isset($searchQuery) && $searchQuery)
+                                            <button type="button" class="btn btn-outline-secondary btn-sm mt-1 w-100" id="clear-search-filter">
+                                                Clear Search
+                                            </button>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-2 col-lg-4 col-md-6 mb-lg-0 mb-md-2 mb-sm-2">
                                 <div class="card">
                                     <h5 class="mb-30">By Categories</h5>
                                     <div class="categories-dropdown-wrap font-heading">
@@ -40,7 +69,8 @@
                                                         <input class="form-check-input category-filter me-2 mt-1"
                                                                type="checkbox"
                                                                value="{{ $category['id'] }}"
-                                                               id="checkbox-category-{{ $category['id'] }}">
+                                                               id="checkbox-category-{{ $category['id'] }}"
+                                                               {{ (isset($selectedCategory) && $selectedCategory && $selectedCategory->id == $category['id']) ? 'checked' : '' }}>
                                                         <label class="form-check-label"
                                                                for="checkbox-category-{{ $category['id'] }}">
                                                             {{ $category['name'] }}
@@ -52,7 +82,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-xl-3 col-lg-6 col-md-6 mb-lg-0 mb-md-2 mb-sm-2">
+                            <div class="col-xl-2 col-lg-4 col-md-6 mb-lg-0 mb-md-2 mb-sm-2">
                                 <div class="card">
                                     <h5 class="mb-30">By Brands</h5>
                                     <div class="brands-dropdown-wrap font-heading">
@@ -270,8 +300,26 @@
                 priceRange: { min: null, max: null },
                 sort: 'created_at',
                 perPage: 20,
-                currentPage: 1
+                currentPage: 1,
+                search: ''
             };
+
+            // Initialize state from URL parameters and server data
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            // Set search from URL or server data
+            @if(isset($searchQuery) && $searchQuery)
+                state.search = {!! json_encode($searchQuery) !!};
+            @else
+                if (urlParams.get('search')) {
+                    state.search = urlParams.get('search');
+                }
+            @endif
+
+            // Set category from server data
+            @if(isset($selectedCategory) && $selectedCategory)
+                state.categories.push({!! json_encode($selectedCategory->id) !!});
+            @endif
 
             let debounceTimer = null;
 
@@ -282,6 +330,11 @@
                 state.categories.forEach(cat => params.append('filter[categories][]', cat));
                 state.tags.forEach(tag => params.append('filter[tags][]', tag));
                 state.brands.forEach(brand => params.append('filter[brands][]', brand));
+                
+                // Add search filter
+                if (state.search && state.search.trim() !== '') {
+                    params.set('filter[search]', state.search.trim());
+                }
                 
                 // Add price range filter
                 if (state.priceRange.min || state.priceRange.max) {
@@ -423,6 +476,55 @@
 
             // === Event Listeners ===
             function setupListeners() {
+                // Search filters
+                const applySearchBtn = document.getElementById('apply-search-filter');
+                if (applySearchBtn) {
+                    applySearchBtn.addEventListener('click', () => {
+                        const searchInput = document.getElementById('filter-search-input');
+                        state.search = searchInput.value.trim();
+                        state.currentPage = 1;
+                        
+                        // Update URL to reflect search
+                        const url = new URL(window.location);
+                        if (state.search) {
+                            url.searchParams.set('search', state.search);
+                        } else {
+                            url.searchParams.delete('search');
+                        }
+                        window.history.pushState({}, '', url);
+                        
+                        debouncedFetch();
+                    });
+                }
+
+                // Clear search filter
+                const clearSearchBtn = document.getElementById('clear-search-filter');
+                if (clearSearchBtn) {
+                    clearSearchBtn.addEventListener('click', () => {
+                        const searchInput = document.getElementById('filter-search-input');
+                        searchInput.value = '';
+                        state.search = '';
+                        state.currentPage = 1;
+                        
+                        // Update URL to remove search
+                        const url = new URL(window.location);
+                        url.searchParams.delete('search');
+                        window.history.pushState({}, '', url);
+                        
+                        debouncedFetch();
+                    });
+                }
+
+                // Allow Enter key to trigger search
+                const searchInput = document.getElementById('filter-search-input');
+                if (searchInput) {
+                    searchInput.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') {
+                            document.getElementById('apply-search-filter').click();
+                        }
+                    });
+                }
+
                 // Category checkbox
                 document.querySelectorAll('[id^="checkbox-"]').forEach(el => {
                     el.addEventListener('change', () => {

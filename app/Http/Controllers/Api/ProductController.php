@@ -16,13 +16,18 @@ class ProductController extends Controller
     {
         $query = QueryBuilder::for(Product::class)
             ->select([
-                'id', 'slug', 'name', 'shop_id', 'meta_description', 
-                'price', 'final_price', 'tags', 'stock', 'created_at'
+                'id', 'slug', 'name', 'shop_id', 'meta_description', 'long_description',
+                'price', 'final_price', 'tags', 'stock', 'has_variant', 'created_at'
             ])
             ->allowedFilters([
                 AllowedFilter::callback('categories', function (Builder $query, $value) {
                     $query->whereHas('categories', function (Builder $query) use ($value) {
                         $query->whereIn('categories.id', $value);
+                    });
+                }),
+                AllowedFilter::callback('category_slug', function (Builder $query, $value) {
+                    $query->whereHas('categories', function (Builder $query) use ($value) {
+                        $query->where('categories.slug', $value);
                     });
                 }),
                 AllowedFilter::callback('brands', function (Builder $query, $value) {
@@ -42,6 +47,24 @@ class ProductController extends Controller
                     if (isset($value['max'])) {
                         $query->where('final_price', '<=', $value['max']);
                     }
+                }),
+                AllowedFilter::callback('search', function (Builder $query, $value) {
+                    $searchTerms = explode(' ', $value);
+                    $query->where(function ($q) use ($searchTerms) {
+                        foreach ($searchTerms as $term) {
+                            $q->where(function ($subQuery) use ($term) {
+                                $subQuery->where('name', 'LIKE', "%{$term}%")
+                                    ->orWhere('meta_description', 'LIKE', "%{$term}%")
+                                    ->orWhereJsonContains('tags', $term)
+                                    ->orWhereHas('shop', function ($shopQuery) use ($term) {
+                                        $shopQuery->where('name', 'LIKE', "%{$term}%");
+                                    })
+                                    ->orWhereHas('categories', function ($catQuery) use ($term) {
+                                        $catQuery->where('name', 'LIKE', "%{$term}%");
+                                    });
+                            });
+                        }
+                    });
                 }),
             ])
             ->with(['defaultImage', 'hoverImage', 'shop:id,name,slug'])

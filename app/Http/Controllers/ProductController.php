@@ -16,7 +16,7 @@ class ProductController extends Controller
     {
         // Cache filter data for 1 hour
         $categories = Cache::remember('product_filters_categories', 3600, function () {
-            return Category::select('id', 'name')->get();
+            return Category::select('id', 'name', 'slug')->get();
         });
         
         $brands = Cache::remember('product_filters_brands', 3600, function () {
@@ -56,15 +56,41 @@ class ProductController extends Controller
             ];
         });
 
+        // Handle search and category filtering from URL parameters
+        $searchQuery = $request->get('search');
+        $categorySlug = $request->get('category');
+        $selectedCategory = null;
+        
+        if ($categorySlug) {
+            $selectedCategory = $categories->firstWhere('slug', $categorySlug);
+        }
+
         // Prepare SEO data for products listing
+        $seoTitle = 'Products';
+        $seoDescription = 'Browse our wide selection of quality products from trusted sellers. Find electronics, fashion, home & garden items, and more at competitive prices.';
+        
+        if ($searchQuery) {
+            $seoTitle = "Search results for '{$searchQuery}'";
+            $seoDescription = "Find '{$searchQuery}' products from trusted sellers at competitive prices.";
+        }
+        
+        if ($selectedCategory) {
+            $seoTitle = $selectedCategory->name . ' Products';
+            $seoDescription = "Browse {$selectedCategory->name} products from trusted sellers at competitive prices.";
+        }
+        
+        if ($searchQuery && $selectedCategory) {
+            $seoTitle = "'{$searchQuery}' in {$selectedCategory->name}";
+        }
+
         $seoData = [
-            'title' => 'Products - ' . env('APP_NAME'),
-            'description' => 'Browse our wide selection of quality products from trusted sellers. Find electronics, fashion, home & garden items, and more at competitive prices.',
-            'keywords' => 'products, marketplace, online shopping, electronics, fashion, home garden, deals',
-            'canonical' => route('products.index'),
+            'title' => $seoTitle . ' - ' . env('APP_NAME'),
+            'description' => $seoDescription,
+            'keywords' => 'products, marketplace, online shopping, electronics, fashion, home garden, deals' . ($searchQuery ? ', ' . $searchQuery : '') . ($selectedCategory ? ', ' . $selectedCategory->name : ''),
+            'canonical' => route('products.index', array_filter(['search' => $searchQuery, 'category' => $categorySlug])),
         ];
 
-        return view('products.index', compact('categories', 'brands', 'tags', 'minPrice', 'maxPrice', 'seoData'));
+        return view('products.index', compact('categories', 'brands', 'tags', 'minPrice', 'maxPrice', 'seoData', 'searchQuery', 'selectedCategory'));
     }
 
     public function show(Request $request, Product $product)
