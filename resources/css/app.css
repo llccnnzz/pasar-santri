@@ -46,3 +46,47 @@
     background: #dc3545 !important;
     transform: none !important;
 }
+
+/* Address Management Styles */
+.address-card {
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.address-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+.address-card.border-primary {
+    border-width: 2px !important;
+}
+
+.dashboard-menu .nav-link {
+    color: #666;
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
+}
+
+.dashboard-menu .nav-link:hover,
+.dashboard-menu .nav-link.active {
+    background-color: #3BB77E;
+    color: white;
+}
+
+.dashboard-menu .nav-link i {
+    width: 20px;
+}
+
+/* Location Selector Styles */
+#location-selector option[value="manage"] {
+    color: #3BB77E !important;
+    font-weight: 600;
+}
+
+#location-selector option[value="login"] {
+    color: #666;
+    font-style: italic;
+}

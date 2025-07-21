@@ -22,6 +22,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'addresses',
+        'phone',
     ];
 
     /**
@@ -44,7 +46,86 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'addresses' => 'array',
         ];
+    }
+
+    /**
+     * Get the primary address
+     */
+    public function getPrimaryAddressAttribute()
+    {
+        if (!$this->addresses) {
+            return null;
+        }
+
+        foreach ($this->addresses as $address) {
+            if (isset($address['is_primary']) && $address['is_primary']) {
+                return $address;
+            }
+        }
+
+        // Return first address if no primary set
+        return $this->addresses[0] ?? null;
+    }
+
+    /**
+     * Add a new address
+     */
+    public function addAddress(array $address)
+    {
+        $addresses = $this->addresses ?? [];
+        
+        // If this is set as primary, remove primary from others
+        if (isset($address['is_primary']) && $address['is_primary']) {
+            foreach ($addresses as &$existingAddress) {
+                $existingAddress['is_primary'] = false;
+            }
+        }
+
+        // Add unique ID to address
+        $address['id'] = uniqid();
+        $addresses[] = $address;
+        
+        $this->addresses = $addresses;
+        $this->save();
+    }
+
+    /**
+     * Update an address
+     */
+    public function updateAddress(string $addressId, array $updatedData)
+    {
+        $addresses = $this->addresses ?? [];
+        
+        foreach ($addresses as &$address) {
+            if ($address['id'] === $addressId) {
+                // If setting as primary, remove primary from others
+                if (isset($updatedData['is_primary']) && $updatedData['is_primary']) {
+                    foreach ($addresses as &$otherAddress) {
+                        $otherAddress['is_primary'] = false;
+                    }
+                }
+                
+                $address = array_merge($address, $updatedData);
+                break;
+            }
+        }
+        
+        $this->addresses = $addresses;
+        $this->save();
+    }
+
+    /**
+     * Remove an address
+     */
+    public function removeAddress(string $addressId)
+    {
+        $addresses = $this->addresses ?? [];
+        $addresses = array_filter($addresses, fn($address) => $address['id'] !== $addressId);
+        
+        $this->addresses = array_values($addresses);
+        $this->save();
     }
 
     public function cart()

@@ -30,6 +30,7 @@ class HomeController extends Controller
     public function account(Request $request)
     {
         $currentUser = $request->user();
-        return view('buyer.account', compact('currentUser'));
+        $addresses = $currentUser->addresses ?? [];
+        return view('buyer.account', compact('currentUser', 'addresses'));
     }
 }

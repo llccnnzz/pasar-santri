@@ -14,35 +14,47 @@
                 </div>
                 <div class="header-right">
                     <div class="search-style-2">
-                        <form action="#">
-                            <select class="select-active">
-                                <option>All Categories</option>
+                        <form action="{{ route('products.index') }}" method="GET">
+                            <select class="select-active" name="category">
+                                <option value="">All Categories</option>
                                 @foreach($categories as $category)
-                                    <option>{{$category['name']}}</option>
+                                    <option value="{{ $category['slug'] }}" {{ request('category') == $category['slug'] ? 'selected' : '' }}>
+                                        {{ $category['name'] }}
+                                    </option>
                                 @endforeach
                             </select>
-                            <input type="text" placeholder="Search for items..."/>
+                            <input type="text" name="search" placeholder="Search for items..." value="{{ request('search') }}"/>
+                            <button type="submit"><i class="fi-rs-search"></i></button>
                         </form>
                     </div>
                     <div class="header-action-right">
                         <div class="header-action-2">
                             <div class="search-location">
                                 <form action="#">
-                                    <select class="select-active">
-                                        <option>Your Location</option>
-                                        <option>Alabama</option>
-                                        <option>Alaska</option>
-                                        <option>Arizona</option>
-                                        <option>Delaware</option>
-                                        <option>Florida</option>
-                                        <option>Georgia</option>
-                                        <option>Hawaii</option>
-                                        <option>Indiana</option>
-                                        <option>Maryland</option>
-                                        <option>Nevada</option>
-                                        <option>New Jersey</option>
-                                        <option>New Mexico</option>
-                                        <option>New York</option>
+                                    <select class="select-active" id="location-selector">
+                                        @if(auth()->user() && auth()->user()->primary_address)
+                                            <option value="{{ auth()->user()->primary_address['id'] ?? '' }}">
+                                                {{ auth()->user()->primary_address['city'] ?? 'Your Location' }}, {{ auth()->user()->primary_address['state'] ?? '' }}
+                                            </option>
+                                        @else
+                                            <option value="">Your Location</option>
+                                        @endif
+                                        
+                                        @if(auth()->user() && auth()->user()->addresses)
+                                            @foreach(auth()->user()->addresses as $address)
+                                                @if(!isset($address['is_primary']) || !$address['is_primary'])
+                                                    <option value="{{ $address['id'] }}">
+                                                        {{ $address['city'] }}, {{ $address['state'] }}
+                                                    </option>
+                                                @endif
+                                            @endforeach
+                                        @endif
+                                        
+                                        @if(auth()->user())
+                                            <option value="manage" class="text-primary">+ Manage Addresses</option>
+                                        @else
+                                            <option value="login">Login to set location</option>
+                                        @endif
                                     </select>
                                 </form>
                             </div>
