@@ -42,7 +42,7 @@ class AddressController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
+            return redirect('/me?page=address')->withErrors($validator)->withInput();
         }
 
         $user = auth()->user();
@@ -61,7 +61,7 @@ class AddressController extends Controller
 
         $user->addAddress($addressData);
 
-        return redirect()->back()->with('success', 'Address added successfully!');
+        return redirect('/me?page=address')->with('success', 'Address added successfully!');
     }
 
     /**
@@ -83,7 +83,7 @@ class AddressController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
+            return redirect('/me?page=address')->withErrors($validator)->withInput();
         }
 
         $user = auth()->user();
@@ -97,7 +97,7 @@ class AddressController extends Controller
 
         $user->updateAddress($addressId, $addressData);
 
-        return redirect()->back()->with('success', 'Address updated successfully!');
+        return redirect('/me?page=address')->with('success', 'Address updated successfully!');
     }
 
     /**
@@ -108,7 +108,10 @@ class AddressController extends Controller
         $user = auth()->user();
         $user->removeAddress($addressId);
 
-        return redirect()->back()->with('success', 'Address deleted successfully!');
+        return response()->json([
+            'success' => true,
+            'message' => 'Address deleted successfully!',
+        ]);
     }
 
     /**
