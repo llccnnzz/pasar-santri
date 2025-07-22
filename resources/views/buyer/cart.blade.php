@@ -100,7 +100,8 @@
                             <table class="table table-wishlist">
                                 <thead>
                                     <tr class="main-heading">
-                                        <th scope="col" colspan="2">Product</th>
+                                        <th scope="col">&nbsp;</th>    
+                                        <th scope="col">Product</th>
                                         <th scope="col">Unit Price</th>
                                         <th scope="col">Quantity</th>
                                         <th scope="col">Subtotal</th>
@@ -111,7 +112,7 @@
                                     @foreach($cartItems as $i => $item)
                                     <tr class="{{ $i === 0 ? 'pt-30' : '' }} {{ !$item['is_available'] ? 'out-of-stock' : '' }}" 
                                         data-product-id="{{ $item['id'] }}">
-                                        <td class="image product-thumbnail pt-40">
+                                        <td class="image product-thumbnail pl-40">
                                             <img src="{{ $item['image'] ?? '/assets/imgs/shop/product-1-1.jpg' }}" alt="{{ $item['name'] }}" style="width: 80px; height: 80px; object-fit: cover;">
                                         </td>
                                         <td class="product-des product-name">
