@@ -143,8 +143,6 @@
                                                 Tracking</a></li>
                                         <li><a href="/me/vouchers"><i class="fi fi-rs-label mr-10"></i>My
                                                 Voucher</a></li>
-                                        <li><a href="/me/wishlist"><i class="fi fi-rs-heart mr-10"></i>My Wishlist</a>
-                                        </li>
                                         <li><a href="/me/setting"><i class="fi fi-rs-settings-sliders mr-10"></i>Setting</a>
                                         </li>
                                         @if(auth()->user())
@@ -220,8 +218,8 @@
                     </div>
                 </div>
                 <div class="hotline d-none d-lg-flex">
-                    <img src="/assets/imgs/theme/icons/icon-headphone.svg" alt="hotline"/>
-                    <p>1900 - 888<span>24/7 Support Center</span></p>
+                    <img src="/assets/imgs/theme/icons/phone-call.svg" style="height: 36px; width: 36px;" alt="hotline"/>
+                    <p>0333-8917529<span>24/7 Support Center</span></p>
                 </div>
                 <div class="header-action-icon-2 d-block d-lg-none">
                     <div class="burger-icon burger-icon-white">
@@ -233,55 +231,64 @@
                 <div class="header-action-right d-block d-lg-none">
                     <div class="header-action-2">
                         <div class="header-action-icon-2">
-                            <a href="shop-wishlist.html">
+                            <a href="/wishlist">
                                 <img alt="Nest" src="/assets/imgs/theme/icons/icon-heart.svg"/>
-                                <span class="pro-count white">4</span>
+                                @if (auth()->user() && $wishlistPopUp && count(json_decode($wishlistPopUp->items, true)) > 0)
+                                    <span class="pro-count white">{{ count(json_decode($wishlistPopUp->items, true)) }}</span>
+                                @endif
                             </a>
                         </div>
                         <div class="header-action-icon-2">
-                            <a class="mini-cart-icon" href="shop-cart.html">
+                            <a class="mini-cart-icon" href="/cart">
                                 <img alt="Nest" src="/assets/imgs/theme/icons/icon-cart.svg"/>
-                                <span class="pro-count white">2</span>
+                                @if(auth()->user() && $cartPopUp && count(json_decode($cartPopUp->items, true)) > 0)
+                                    <span class="pro-count blue">{{ count(json_decode($cartPopUp->items, true)) }}</span>
+                                @endif
                             </a>
-                            <div class="cart-dropdown-wrap cart-dropdown-hm2">
-                                <ul>
-                                    <li>
-                                        <div class="shopping-cart-img">
-                                            <a href="shop-product-right.html"><img alt="Nest"
-                                                                                   src="/assets/imgs/shop/thumbnail-3.jpg"/></a>
+                            @if(auth()->user())
+                                <div class="cart-dropdown-wrap cart-dropdown-hm2">
+                                    @if($cartPopUp)
+                                    <ul>
+                                        @foreach(json_decode($cartPopUp->items, true) as $i => $cartPopUpItem)
+                                            @if($i < 2)
+                                                <li>
+                                                    <div class="shopping-cart-img">
+                                                        <a href="/{{ $cartPopUpItem['slug'] }}"><img alt="Nest"
+                                                                                                src="{{ $cartPopUpItem['image'] }}"/></a>
+                                                    </div>
+                                                    <div class="shopping-cart-title">
+                                                        <h4><a href="/{{ $cartPopUpItem['slug'] }}">{{ $cartPopUpItem['name'] }}</a></h4>
+                                                        <h4><span>{{ $cartPopUpItem['quantity'] }} × </span>Rp. {{ number_format($cartPopUpItem['price']) }}</h4>
+                                                    </div>
+                                                    <div class="shopping-cart-delete">
+                                                        <form id="delete-cart-pop-up-{{ $cartPopUpItem['id'] }}" style="display: none" action="/cart/{{ $cartPopUpItem['id'] }}" method="POST">
+                                                            @method('DELETE')
+                                                            @csrf
+                                                        </form>
+                                                        <a href="#" onclick="document.getElementById('delete-cart-pop-up-{{ $cartPopUpItem['id'] }}').submit()"><i class="fi-rs-cross-small"></i></a>
+                                                    </div>
+                                                </li>
+                                            @endif
+                                        @endforeach
+
+                                        @if (count(json_decode($cartPopUp->items, true)) > 2)
+                                            <li><a href="/cart">And {{ count(json_decode($cartPopUp->items, true)) - 2 }} more</a></li>
+                                        @endif
+                                    </ul>
+                                    <div class="shopping-cart-footer">
+                                        <div class="shopping-cart-total">
+                                            <h4>Total <span>Rp. {{ number_format($cartPopUpSubTotal) }}</span></h4>
                                         </div>
-                                        <div class="shopping-cart-title">
-                                            <h4><a href="shop-product-right.html">Plain Striola Shirts</a></h4>
-                                            <h3><span>1 × </span>$800.00</h3>
+                                        <div class="shopping-cart-button">
+                                            <a href="/cart" class="outline">View cart</a>
+                                            <a href="/cart">Checkout</a>
                                         </div>
-                                        <div class="shopping-cart-delete">
-                                            <a href="#"><i class="fi-rs-cross-small"></i></a>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="shopping-cart-img">
-                                            <a href="shop-product-right.html"><img alt="Nest"
-                                                                                   src="/assets/imgs/shop/thumbnail-4.jpg"/></a>
-                                        </div>
-                                        <div class="shopping-cart-title">
-                                            <h4><a href="shop-product-right.html">Macbook Pro 2024</a></h4>
-                                            <h3><span>1 × </span>$3500.00</h3>
-                                        </div>
-                                        <div class="shopping-cart-delete">
-                                            <a href="#"><i class="fi-rs-cross-small"></i></a>
-                                        </div>
-                                    </li>
-                                </ul>
-                                <div class="shopping-cart-footer">
-                                    <div class="shopping-cart-total">
-                                        <h4>Total <span>$383.00</span></h4>
                                     </div>
-                                    <div class="shopping-cart-button">
-                                        <a href="shop-cart.html">View cart</a>
-                                        <a href="shop-checkout.html">Checkout</a>
-                                    </div>
+                                    @else
+                                        <p>No Data</p>
+                                    @endif
                                 </div>
-                            </div>
+                            @endif
                         </div>
                     </div>
                 </div>
