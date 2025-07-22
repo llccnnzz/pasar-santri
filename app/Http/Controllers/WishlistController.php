@@ -71,8 +71,9 @@ class WishlistController extends Controller
         return redirect()->back()->withMessage('Product added to wishlist successfully.');
     }
 
-    public function remove(Request $request, Product $product)
+    public function remove(Request $request, string $productId)
     {
+        $product = Product::findOrFail($productId);
         $currentUser = $request->user();
         $currentUser->load('wishlist');
         $wishlist = $currentUser->wishlist;

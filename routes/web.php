@@ -23,12 +23,14 @@ Route::middleware('auth')->group(function () {
     // Cart management routes
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart', [CartController::class, 'add'])->name('cart.add');
-    Route::delete('/cart/{product:id}', [CartController::class, 'remove'])->name('cart.remove');
+    Route::delete('/cart/{productId}', [CartController::class, 'remove'])->name('cart.remove');
+    Route::patch('/cart/{productId}/update-quantity', [CartController::class, 'updateQuantity'])->name('cart.updateQuantity');
+    Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');    
     
     // Wishlist management routes
     Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
     Route::post('/wishlist', [WishlistController::class, 'add'])->name('wishlist.add');
-    Route::delete('/wishlist/{product:id}', [WishlistController::class, 'remove'])->name('wishlist.remove');
+    Route::delete('/wishlist/{productId}', [WishlistController::class, 'remove'])->name('wishlist.remove');
     
     // Address management routes
     Route::get('/me/addresses', [AddressController::class, 'index'])->name('addresses.index');
