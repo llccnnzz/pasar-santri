@@ -15,7 +15,7 @@ class SeoHelper
                             strip_tags($product->long_description) ?: 
                             'Buy ' . $product->name . ' from ' . $product->shop->name . ' at best price.',
             'keywords' => $product->tags ? implode(', ', $product->tags) : '',
-            'image' => $product->defaultImage ? asset('storage/' . $product->defaultImage->path) : asset('/assets/imgs/theme/no-image.jpg'),
+            'image' => $product->defaultImage ? $product->defaultImage->getFullUrl() : asset('/assets/imgs/theme/no-image.jpg'),
             'url' => request()->url(),
             'price' => $product->final_price,
             'currency' => 'IDR',
