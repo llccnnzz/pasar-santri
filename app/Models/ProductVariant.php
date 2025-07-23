@@ -14,9 +14,15 @@ class ProductVariant extends Model implements HasMedia
     protected $fillable = [
         'product_id',
         'sku',
+        'name',
         'price',
         'final_price',
         'stock',
+        'attributes',
+    ];
+
+    protected $casts = [
+        'attributes' => 'array',
     ];
 
     public function product() {

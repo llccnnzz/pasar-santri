@@ -83,7 +83,7 @@ class ShopController extends Controller
         $perPage = $request->get('per_page', 12);
         $shops = $query->paginate($perPage);
 
-        return view('shops.index', compact('shops'));
+        return view('buyer.shops.index', compact('shops'));
     }
 
     public function show(Request $request, Shop $shop)
@@ -164,6 +164,6 @@ class ShopController extends Controller
             'og_image' => $shop->media->first() ? asset('storage/' . $shop->media->first()->path) : asset('/assets/imgs/theme/logo.png'),
         ];
 
-        return view('buyer.shop', compact('shop', 'products', 'categories', 'priceRange', 'avgRating','socialLinks', 'seoData'));
+        return view('buyer.shops.show', compact('shop', 'products', 'categories', 'priceRange', 'avgRating','socialLinks', 'seoData'));
     }
 }

@@ -5,6 +5,8 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RobotsController;
+use App\Http\Controllers\SellerController;
+use App\Http\Controllers\Seller\InventoryController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\WishlistController;
@@ -39,6 +41,82 @@ Route::middleware('auth')->group(function () {
     Route::delete('/addresses/{addressId}', [AddressController::class, 'destroy'])->name('addresses.destroy');
     Route::post('/addresses/set-primary', [AddressController::class, 'setPrimary'])->name('addresses.setPrimary');
     Route::get('/api/addresses', [AddressController::class, 'getAddresses'])->name('api.addresses');
+
+    Route::group(['prefix' => 'seller', 'middleware' => 'auth'], function () {
+        // Dashboard
+        Route::get('/dashboard', [SellerController::class, 'dashboard'])->name('seller.dashboard');
+        
+        // Product & SKU Management
+        Route::group(['prefix' => 'products'], function () {
+            Route::get('/', [InventoryController::class, 'index'])->name('seller.products.index');
+            Route::get('/create', [InventoryController::class, 'create'])->name('seller.products.create');
+            Route::post('/', [InventoryController::class, 'store'])->name('seller.products.store');
+            Route::get('/{product}', [InventoryController::class, 'show'])->name('seller.products.show');
+            Route::get('/{product}/edit', [InventoryController::class, 'edit'])->name('seller.products.edit');
+            Route::put('/{product}', [InventoryController::class, 'update'])->name('seller.products.update');
+            Route::delete('/{product}', [InventoryController::class, 'destroy'])->name('seller.products.destroy');
+            Route::post('/{product}/variants', [InventoryController::class, 'addVariant'])->name('seller.products.variants.store');
+            Route::delete('/variants/{variant}', [InventoryController::class, 'removeVariant'])->name('seller.products.variants.destroy');
+            Route::post('/bulk-status-update', [InventoryController::class, 'bulkStatusUpdate'])->name('seller.products.bulk-status-update');
+            Route::post('/bulk-delete', [InventoryController::class, 'bulkDelete'])->name('seller.products.bulk-delete');
+        });
+        
+        // Category Management
+        Route::group(['prefix' => 'categories'], function () {
+            Route::get('/', [SellerController::class, 'categoriesList'])->name('seller.categories.index');
+            Route::get('/create', [SellerController::class, 'categoriesCreate'])->name('seller.categories.create');
+            Route::post('/', [SellerController::class, 'categoriesStore'])->name('seller.categories.store');
+            Route::get('/{category}/edit', [SellerController::class, 'categoriesEdit'])->name('seller.categories.edit');
+            Route::put('/{category}', [SellerController::class, 'categoriesUpdate'])->name('seller.categories.update');
+            Route::delete('/{category}', [SellerController::class, 'categoriesDestroy'])->name('seller.categories.destroy');
+        });
+        
+        // Bank Account Management
+        Route::group(['prefix' => 'bank-accounts'], function () {
+            Route::get('/', [SellerController::class, 'bankAccountsList'])->name('seller.bank-accounts.index');
+            Route::get('/create', [SellerController::class, 'bankAccountsCreate'])->name('seller.bank-accounts.create');
+            Route::post('/', [SellerController::class, 'bankAccountsStore'])->name('seller.bank-accounts.store');
+            Route::get('/{account}/edit', [SellerController::class, 'bankAccountsEdit'])->name('seller.bank-accounts.edit');
+            Route::put('/{account}', [SellerController::class, 'bankAccountsUpdate'])->name('seller.bank-accounts.update');
+            Route::delete('/{account}', [SellerController::class, 'bankAccountsDestroy'])->name('seller.bank-accounts.destroy');
+            Route::post('/{account}/set-primary', [SellerController::class, 'setPrimaryBankAccount'])->name('seller.bank-accounts.set-primary');
+        });
+        
+        // Shipping Method Setup
+        Route::group(['prefix' => 'shipping'], function () {
+            Route::get('/', [SellerController::class, 'shippingList'])->name('seller.shipping.index');
+            Route::get('/create', [SellerController::class, 'shippingCreate'])->name('seller.shipping.create');
+            Route::post('/', [SellerController::class, 'shippingStore'])->name('seller.shipping.store');
+            Route::get('/{shipping}/edit', [SellerController::class, 'shippingEdit'])->name('seller.shipping.edit');
+            Route::put('/{shipping}', [SellerController::class, 'shippingUpdate'])->name('seller.shipping.update');
+            Route::delete('/{shipping}', [SellerController::class, 'shippingDestroy'])->name('seller.shipping.destroy');
+            Route::post('/{shipping}/toggle-status', [SellerController::class, 'toggleShippingStatus'])->name('seller.shipping.toggle-status');
+        });
+        
+        // Wallet & Withdraw Flow
+        Route::group(['prefix' => 'wallet'], function () {
+            Route::get('/', [SellerController::class, 'walletDashboard'])->name('seller.wallet.index');
+            Route::get('/transactions', [SellerController::class, 'walletTransactions'])->name('seller.wallet.transactions');
+            Route::get('/withdraw', [SellerController::class, 'walletWithdrawForm'])->name('seller.wallet.withdraw.form');
+            Route::post('/withdraw', [SellerController::class, 'walletWithdrawRequest'])->name('seller.wallet.withdraw.request');
+            Route::get('/withdraw-history', [SellerController::class, 'walletWithdrawHistory'])->name('seller.wallet.withdraw.history');
+            Route::get('/earnings', [SellerController::class, 'walletEarnings'])->name('seller.wallet.earnings');
+        });
+        
+        // Shop Settings
+        Route::group(['prefix' => 'shop'], function () {
+            Route::get('/settings', [SellerController::class, 'shopSettings'])->name('seller.shop.settings');
+            Route::put('/settings', [SellerController::class, 'shopSettingsUpdate'])->name('seller.shop.settings.update');
+        });
+        
+        // Orders Management
+        Route::group(['prefix' => 'orders'], function () {
+            Route::get('/', [SellerController::class, 'ordersList'])->name('seller.orders.index');
+            Route::get('/{order}', [SellerController::class, 'ordersShow'])->name('seller.orders.show');
+            Route::put('/{order}/status', [SellerController::class, 'ordersUpdateStatus'])->name('seller.orders.update-status');
+        });
+    });
+
 });
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');

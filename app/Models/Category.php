@@ -12,7 +12,7 @@ class Category extends Model implements HasMedia
     use HasUuid, InteractsWithMedia;
 
     protected $fillable = [
-        'name', 'slug'
+        'name', 'slug', 'shop_id', 'parent_id'
     ];
 
     protected static function boot()
@@ -34,6 +34,10 @@ class Category extends Model implements HasMedia
 
     public function products() {
         return $this->belongsToMany(Product::class);
+    }
+
+    public function shop() {
+        return $this->belongsTo(Shop::class);
     }
 
     public function parent() {

@@ -17,6 +17,7 @@ class Product extends Model implements HasMedia
         'name',
         'slug',
         'shop_id',
+        'description',
         'meta_description',
         'long_description',
         'tags',
@@ -27,13 +28,21 @@ class Product extends Model implements HasMedia
         'stock',
         'is_featured',
         'is_popular',
+        'status',
+        'meta_title',
+        'meta_keywords',
+        'weight',
+        'dimensions',
+        'brand',
     ];
 
     protected $casts = [
         'tags' => 'array',
         'specification' => 'array',
+        'dimensions' => 'array',
         'is_featured' => 'boolean',
         'is_popular' => 'boolean',
+        'has_variant' => 'boolean',
     ];
 
     // Query Scopes for Performance
@@ -58,6 +67,17 @@ class Product extends Model implements HasMedia
 
     public function categories() {
         return $this->belongsToMany(Category::class);
+    }
+
+    // Accessor to get the first category for display purposes
+    public function getFirstCategoryAttribute() {
+        return $this->categories->first();
+    }
+
+    // Helper method to get primary category name
+    public function getPrimaryCategoryNameAttribute() {
+        $firstCategory = $this->categories->first();
+        return $firstCategory ? $firstCategory->name : 'N/A';
     }
 
     public function getFinalStockAttribute()
