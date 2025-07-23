@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\SellerController;
+use App\Http\Controllers\Seller\InventoryController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\WishlistController;
@@ -47,14 +48,17 @@ Route::middleware('auth')->group(function () {
         
         // Product & SKU Management
         Route::group(['prefix' => 'products'], function () {
-            Route::get('/', [SellerController::class, 'productsList'])->name('seller.products.index');
-            Route::get('/create', [SellerController::class, 'productsCreate'])->name('seller.products.create');
-            Route::post('/', [SellerController::class, 'productsStore'])->name('seller.products.store');
-            Route::get('/{product}/edit', [SellerController::class, 'productsEdit'])->name('seller.products.edit');
-            Route::put('/{product}', [SellerController::class, 'productsUpdate'])->name('seller.products.update');
-            Route::delete('/{product}', [SellerController::class, 'productsDestroy'])->name('seller.products.destroy');
-            Route::post('/{product}/variants', [SellerController::class, 'addVariant'])->name('seller.products.variants.store');
-            Route::delete('/variants/{variant}', [SellerController::class, 'removeVariant'])->name('seller.products.variants.destroy');
+            Route::get('/', [InventoryController::class, 'index'])->name('seller.products.index');
+            Route::get('/create', [InventoryController::class, 'create'])->name('seller.products.create');
+            Route::post('/', [InventoryController::class, 'store'])->name('seller.products.store');
+            Route::get('/{product}', [InventoryController::class, 'show'])->name('seller.products.show');
+            Route::get('/{product}/edit', [InventoryController::class, 'edit'])->name('seller.products.edit');
+            Route::put('/{product}', [InventoryController::class, 'update'])->name('seller.products.update');
+            Route::delete('/{product}', [InventoryController::class, 'destroy'])->name('seller.products.destroy');
+            Route::post('/{product}/variants', [InventoryController::class, 'addVariant'])->name('seller.products.variants.store');
+            Route::delete('/variants/{variant}', [InventoryController::class, 'removeVariant'])->name('seller.products.variants.destroy');
+            Route::post('/bulk-status-update', [InventoryController::class, 'bulkStatusUpdate'])->name('seller.products.bulk-status-update');
+            Route::post('/bulk-delete', [InventoryController::class, 'bulkDelete'])->name('seller.products.bulk-delete');
         });
         
         // Category Management

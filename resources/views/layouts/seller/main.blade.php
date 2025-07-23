@@ -71,7 +71,7 @@
 				
 				<!-- Product & SKU Management -->
 				<li class="{{ request()->routeIs('seller.products.*') ? 'mm-active' : '' }}">
-					<a href="#" class="menu-title">
+					<a href="{{ route('seller.products.index') }}" class="menu-title">
 						<span class="icon"><i data-feather="package"></i></span>
 						<span class="title">Product</span>
 					</a>
@@ -99,9 +99,7 @@
 					<a href="#" class="has-arrow menu-title" aria-expanded="{{ request()->routeIs('seller.orders.*') ? 'true' : 'false' }}">
 						<span class="icon"><i data-feather="shopping-cart"></i></span>
 						<span class="title">Orders</span>
-						@if(Auth::user()->shop && Auth::user()->shop->orders()->where('status', 'pending')->count() > 0)
-							<span class="count bg-danger">{{ Auth::user()->shop->orders()->where('status', 'pending')->count() }}</span>
-						@endif
+						
 					</a>
 					<ul class="sidemenu-second-level">
 						<li><a href="{{ route('seller.orders.index') }}" class="{{ request()->routeIs('seller.orders.index') && !request()->get('status') ? 'active' : '' }}">All Orders</a></li>
