@@ -125,30 +125,8 @@
                     </div>
 
                     <div class="d-sm-flex align-items-center justify-content-between mt-25 text-center">
-                        <span class="fs-15 fw-medium text-dark mb-10 mb-sm-0 d-block">Items Per Page Show 08</span>
-                        <nav aria-label="Page navigation example">
-                            <ul class="pagination pagination-custom m-0 justify-content-center">
-                                <li class="page-item">
-                                    <a class="page-link" href="products.html" aria-label="Previous">
-                                        <i class="ri-arrow-left-s-line"></i>
-                                    </a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link active" href="products.html">1</a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link" href="products.html">2</a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link" href="products.html">3</a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link" href="products.html" aria-label="Next">
-                                        <i class="ri-arrow-right-s-line"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
+                        <span class="fs-15 fw-medium text-dark mb-10 mb-sm-0 d-block">Items Per Page Show 10</span>
+                        {{ $products->withQueryString()->links('layouts.seller.pagination') }}
                     </div>
                 </div>
             </div>
