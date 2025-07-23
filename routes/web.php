@@ -5,8 +5,9 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RobotsController;
-use App\Http\Controllers\SellerController;
+use App\Http\Controllers\Seller\CategoryController;
 use App\Http\Controllers\Seller\InventoryController;
+use App\Http\Controllers\Seller\SellerController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\WishlistController;
@@ -63,12 +64,13 @@ Route::middleware('auth')->group(function () {
         
         // Category Management
         Route::group(['prefix' => 'categories'], function () {
-            Route::get('/', [SellerController::class, 'categoriesList'])->name('seller.categories.index');
-            Route::get('/create', [SellerController::class, 'categoriesCreate'])->name('seller.categories.create');
-            Route::post('/', [SellerController::class, 'categoriesStore'])->name('seller.categories.store');
-            Route::get('/{category}/edit', [SellerController::class, 'categoriesEdit'])->name('seller.categories.edit');
-            Route::put('/{category}', [SellerController::class, 'categoriesUpdate'])->name('seller.categories.update');
-            Route::delete('/{category}', [SellerController::class, 'categoriesDestroy'])->name('seller.categories.destroy');
+            Route::get('/', [CategoryController::class, 'index'])->name('seller.categories.index');
+            Route::get('/create', [CategoryController::class, 'create'])->name('seller.categories.create');
+            Route::post('/', [CategoryController::class, 'store'])->name('seller.categories.store');
+            Route::get('/{category}', [CategoryController::class, 'show'])->name('seller.categories.show');
+            Route::get('/{category}/edit', [CategoryController::class, 'edit'])->name('seller.categories.edit');
+            Route::put('/{category}', [CategoryController::class, 'update'])->name('seller.categories.update');
+            Route::delete('/{category}', [CategoryController::class, 'destroy'])->name('seller.categories.destroy');
         });
         
         // Bank Account Management

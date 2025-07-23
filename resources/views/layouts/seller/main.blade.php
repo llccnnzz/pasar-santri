@@ -87,7 +87,7 @@
 				
 				<!-- Category Management -->
 				<li class="{{ request()->routeIs('seller.categories.*') ? 'mm-active' : '' }}">
-					<a href="#" class="menu-title">
+					<a href="{{ route('seller.categories.index') }}" class="menu-title">
 						<span class="icon"><i data-feather="tag"></i></span>
 						<span class="title">Category Management</span>
 					</a>

@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Seller;
 
+use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Shop;
@@ -23,9 +24,9 @@ class SellerController extends Controller
         // Dashboard statistics
         $stats = [
             'total_products' => $shop ? $shop->products()->count() : 0,
-            'total_orders' => $shop ? $shop->orders()->count() : 0,
-            'pending_orders' => $shop ? $shop->orders()->where('status', 'pending')->count() : 0,
-            'total_earnings' => $shop ? $shop->wallet->balance ?? 0 : 0,
+            'total_orders' => 0,
+            'pending_orders' => 0,
+            'total_earnings' => 0,
         ];
         
         return view('seller.dashboard', compact('stats'));
