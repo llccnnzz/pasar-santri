@@ -127,7 +127,7 @@ class InventoryController extends Controller
             abort(404);
         }
 
-        $product->load(['categories', 'variants']);
+        $product->load(['images', 'categories', 'variants']);
         
         return view('seller.inventory.show', compact('product'));
     }

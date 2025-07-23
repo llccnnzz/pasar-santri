@@ -23,7 +23,7 @@
             <div class="card-title d-flex justify-content-between align-items-center mb-20 pb-20 border-bottom border-color">
                 <h4 class="mb-0">Product Details</h4>
                 <div>
-                    <a href="{{ route('seller.products.edit', $product) }}" class="btn btn-success btn-sm me-2">
+                    <a href="{{ route('seller.products.edit', $product->slug) }}" class="btn btn-success btn-sm me-2">
                         <i data-feather="edit" style="width: 16px; height: 16px;"></i>
                         Edit Product
                     </a>
@@ -41,48 +41,66 @@
             <div class="row align-items-start">
                 <div class="col-xl-5">
                     @php
-                        $images = json_decode($product->images, true);
+                        $images = $product->images;
                     @endphp
                     
-                    @if($images && count($images) > 0)
-                        <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
-                            <div class="carousel-inner">
+                    <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <div class="product-gallery">
+                                    <img class="rounded-3 w-100" src="{{ $product->defaultImage?->getFullUrl() }}" alt="{{ $product->name }}">
+                                </div>
+                            </div>
+                            <div class="carousel-item">
+                                <div class="product-gallery">
+                                    <img class="rounded-3 w-100" src="{{ $product->hoverImage?->getFullUrl() }}" alt="{{ $product->name }}">
+                                </div>
+                            </div>
+                            @if($images && count($images) > 0)
                                 @foreach($images as $index => $image)
-                                <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
+                                <div class="carousel-item">
                                     <div class="product-gallery">
-                                        <img class="rounded-3 w-100" src="{{ asset('storage/' . $image) }}" alt="{{ $product->name }}">
+                                        <img class="rounded-3 w-100" src="{{ $image->getFullUrl() }}" alt="{{ $product->name }}">
                                     </div>
                                 </div>
                                 @endforeach
-                            </div>
-                            @if(count($images) > 1)
-                            <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
-                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            </button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
-                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            </button>
                             @endif
                         </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        </button>
+                    </div>
                         
-                        @if(count($images) > 1)
-                        <div class="row mt-3">
+                    <div class="row mt-3">
+                        <div class="col-3">
+                            <img class="rounded-3 w-100 thumbnail active" 
+                                src="{{ $product->defaultImage?->getFullUrl() }}" 
+                                alt="{{ $product->name }}"
+                                onclick="goToSlide(0)"
+                                style="cursor: pointer; opacity: 1;">
+                        </div>
+                        <div class="col-3">
+                            <img class="rounded-3 w-100 thumbnail" 
+                                src="{{ $product->hoverImage?->getFullUrl() }}" 
+                                alt="{{ $product->name }}"
+                                onclick="goToSlide(1)"
+                                style="cursor: pointer; opacity: 0.6;">
+                        </div>
+                        @if($images && count($images) > 0)
                             @foreach($images as $index => $image)
                             <div class="col-3">
-                                <img class="rounded-3 w-100 thumbnail {{ $index === 0 ? 'active' : '' }}" 
-                                     src="{{ asset('storage/' . $image) }}" 
-                                     alt="{{ $product->name }}"
-                                     onclick="goToSlide({{ $index }})"
-                                     style="cursor: pointer; opacity: {{ $index === 0 ? '1' : '0.6' }};">
+                                <img class="rounded-3 w-100 thumbnail" 
+                                    src="{{ $image->getFullUrl() }}" 
+                                    alt="{{ $product->name }}"
+                                    onclick="goToSlide({{ $index+2 }})"
+                                    style="cursor: pointer; opacity: 0.6;">
                             </div>
                             @endforeach
-                        </div>
                         @endif
-                    @else
-                        <div class="product-gallery">
-                            <img class="rounded-3 w-100" src="{{ asset('admin-assets/assets/images/products/product-1.jpg') }}" alt="{{ $product->name }}">
-                        </div>
-                    @endif
+                    </div>
                 </div>
 
                 <div class="col-xl-7">
@@ -253,7 +271,7 @@
 </div>
 @endsection
 
-@push('scripts')
+@push('script')
 <script>
 function goToSlide(index) {
     const carousel = document.getElementById('productCarousel');

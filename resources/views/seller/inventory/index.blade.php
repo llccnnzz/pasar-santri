@@ -23,13 +23,13 @@
             <h4 class="mb-2 mb-sm-0">Products</h4>
 
             <div class="d-sm-flex align-items-center">
-                <form class="src-form position-relative z-1 me-sm-3 mb-2 mb-sm-0">
-                    <input type="text" class="form-control h-40" placeholder="Search Here">
+                <form action="" class="src-form position-relative z-1 me-sm-3 mb-2 mb-sm-0">
+                    <input type="text" name="search" class="form-control h-40" placeholder="Search Here">
                     <button class="bg-transparent position-absolute position-absolute top-50 end-0 translate-middle border-0 ps-0 pe-1">
                         <i data-feather="search" style="width: 20px;" class="text-body"></i>
                     </button>
                 </form>
-                <a href="create-product.html" class="btn btn-primary w-sm-100">
+                <a href="/seller/products/create" class="btn btn-primary w-sm-100">
                     <i data-feather="plus"></i>
                     Create New
                 </a>

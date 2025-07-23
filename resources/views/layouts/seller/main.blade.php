@@ -22,7 +22,8 @@
 		<!--=== Favicon ===-->
 		<link rel="icon" type="image/png" href="/admin-assets/assets/images/favicon.png">
 		<!--=== Title ===-->
-		<title>Dess - Bootstrap Admin Dashboard HTML Template</title>
+        @stack('head')
+		<title>{{ auth()->user()->shop?->name }} - at Pasar Santri</title>
     </head>
 
     <body>
@@ -210,113 +211,7 @@
 						<div class="col-lg-6 col-sm-6">
 							<div class="header-right-content float-lg-end float-md-end">
 								<ul class="list-unstyled ps-0 mb-0 d-flex justify-content-center justify-content-lg-end justify-content-md-end align-items-center">
-									<li>
-										<div class="dropdown mail languages">
-											<button class="btn btn-secondary border-0 p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-												<img src="/admin-assets/assets/images/country/usa.png" alt="usa">
-											</button>
-											<div class="dropdown-menu dropdown-lg p-0 border-0 box-shadow">
-												<h6 class="dropdown-item-text fs-15 fw-semibold m-0 py-3 border-bottom border-color d-flex justify-content-between align-items-center">
-													Language 
-													<span class="text-white bg-danger fs-12 py-1 px-1 rounded-1 fw-normal">09</span>
-												</h6> 
-												
-												<div class="notification-menu h-400" data-simplebar>
-													<div class=" d-flex justify-content-between">
-														<a href="javascript:;" class="dropdown-item py-3">
-															<div class="d-flex align-items-center">
-																<div class="avatar-md rounded-circle text-center flex-shrink-0">
-																	<img src="/admin-assets/assets/images/country/united-states.png" alt="united-states">
-																</div>
-																<div class="flex-grow-1 ms-2 text-truncate">
-																	<h6 class="my-0 fs-14 fw-medium">English</h6>
-																</div>
-															</div>
-														</a>
-														<a href="javascript:;" class="dropdown-item py-3">
-															<div class="d-flex align-items-center">
-																<div class="avatar-md rounded-circle text-center flex-shrink-0">
-																	<img src="/admin-assets/assets/images/country/canada.png" alt="canada">
-																</div>
-																<div class="flex-grow-1 ms-2 text-truncate">
-																	<h6 class="my-0 fs-14 fw-medium">Canada</h6>
-																</div>
-															</div>
-														</a>
-													</div>
-													<div class=" d-flex justify-content-between">
-														<a href="javascript:;" class="dropdown-item py-3">
-															<div class="d-flex align-items-center">
-																<div class="avatar-md rounded-circle text-center flex-shrink-0">
-																	<img src="/admin-assets/assets/images/country/china.png" alt="china">
-																</div>
-																<div class="flex-grow-1 ms-2 text-truncate">
-																	<h6 class="my-0 fs-14 fw-medium">China</h6>
-																</div>
-															</div>
-														</a>
-														<a href="javascript:;" class="dropdown-item py-3">
-															<div class="d-flex align-items-center">
-																<div class="avatar-md rounded-circle text-center flex-shrink-0">
-																	<img src="/admin-assets/assets/images/country/france.png" alt="france">
-																</div>
-																<div class="flex-grow-1 ms-2 text-truncate">
-																	<h6 class="my-0 fs-14 fw-medium">France</h6>
-																</div>
-															</div>
-														</a>
-													</div>
-													<div class=" d-flex justify-content-between">
-														<a href="javascript:;" class="dropdown-item py-3">
-															<div class="d-flex align-items-center">
-																<div class="avatar-md rounded-circle text-center flex-shrink-0">
-																	<img src="/admin-assets/assets/images/country/germany.png" alt="Germany">
-																</div>
-																<div class="flex-grow-1 ms-2 text-truncate">
-																	<h6 class="my-0 fs-14 fw-medium">Germany</h6>
-																</div>
-															</div>
-														</a>
-														<a href="javascript:;" class="dropdown-item py-3">
-															<div class="d-flex align-items-center">
-																<div class="avatar-md rounded-circle text-center flex-shrink-0">
-																	<img src="/admin-assets/assets/images/country/mexico.png" alt="mexico">
-																</div>
-																<div class="flex-grow-1 ms-2 text-truncate">
-																	<h6 class="my-0 fs-14 fw-medium">Mexico</h6>
-																</div>
-															</div>
-														</a>
-													</div>
-													<div class=" d-flex justify-content-between">
-														<a href="javascript:;" class="dropdown-item py-3">
-															<div class="d-flex align-items-center">
-																<div class="avatar-md rounded-circle text-center flex-shrink-0">
-																	<img src="/admin-assets/assets/images/country/russia.png" alt="russia">
-																</div>
-																<div class="flex-grow-1 ms-2 text-truncate">
-																	<h6 class="my-0 fs-14 fw-medium">Russia</h6>
-																</div>
-															</div>
-														</a>
-														<a href="javascript:;" class="dropdown-item py-3">
-															<div class="d-flex align-items-center">
-																<div class="avatar-md rounded-circle text-center flex-shrink-0">
-																	<img src="/admin-assets/assets/images/country/arabic.png" alt="arabic">
-																</div>
-																<div class="flex-grow-1 ms-2 text-truncate">
-																	<h6 class="my-0 fs-14 fw-medium">Arabic</h6>
-																</div>
-															</div>
-														</a>
-													</div>
-												</div>
-												<a href="javascript:;" class="dropdown-item text-center text-white border-top border-color pt-2 pb-2 d-block bg-primary rounded-bottom fs-15">
-													View all
-												</a>
-											</div>
-										</div>
-									</li>
+								
 
 									<li class="ms-lg-4 ms-md-4 ms-2">
 										<div class="dropdown mail">
@@ -395,146 +290,6 @@
 													</div>
 												</div>
 												<a href="javascript:;" class="dropdown-item text-center text-white border-top border-color py-2 d-block bg-primary rounded-bottom z-1 position-relative fs-15">
-													View all
-												</a>
-											</div>
-										</div>
-									</li>
-
-									<li class="ms-lg-4 ms-md-4 ms-2">
-										<div class="dropdown mail">
-											<button class="btn btn-secondary border-0 p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-												<i data-feather="mail"></i>
-											</button>
-											<div class="dropdown-menu dropdown-lg p-0 border-0 box-shadow">
-												<h6 class="dropdown-item-text fs-15 fw-semibold m-0 py-3 border-bottom border-color d-flex justify-content-between align-items-center">
-													Email 
-													<span class="text-white bg-danger fs-12 py-1 px-1 rounded-1 fw-normal">08</span>
-												</h6> 
-												
-												<div class="notification-menu h-400" data-simplebar>
-													<a href="inbox.html" class="dropdown-item py-3">
-														<small class="float-end ps-2 text-body fs-12">1 min ago</small>
-														<div class="d-flex align-items-center">
-															<div class="avatar-md rounded-circle text-center flex-shrink-0">
-																<i data-feather="shopping-bag"></i>
-															</div>
-															<div class="flex-grow-1 ms-2 text-truncate">
-																<h6 class="my-0 fs-14 fw-medium">Your Order Has Been Shipped</h6>
-																<small class="mb-0 text-body fs-12">Order No: 123456 Has Shipped To Your Delivery Address</small>
-															</div>
-														</div>
-													</a>
-													<a href="inbox.html" class="dropdown-item py-3">
-														<small class="float-end ps-2 text-body fs-12">3 min ago</small>
-														<div class="d-flex align-items-center">
-															<div class="avatar-md rounded-circle text-center flex-shrink-0">
-																<i data-feather="percent"></i>
-															</div>
-															<div class="flex-grow-1 ms-2 text-truncate">
-																<h6 class="my-0 fs-14 fw-medium">Discount Available</h6>
-																<small class="mb-0 text-body fs-12">Discount Available On Selected Products</small>
-															</div>
-														</div>
-													</a>
-													<a href="inbox.html" class="dropdown-item py-3">
-														<small class="float-end ps-2 text-body fs-12">4 min ago</small>
-														<div class="d-flex align-items-center">
-															<div class="avatar-md rounded-circle text-center flex-shrink-0">
-																<i data-feather="user-check"></i>
-															</div>
-															<div class="flex-grow-1 ms-2 text-truncate">
-																<h6 class="my-0 fs-14 fw-medium">Account Has Been Verified</h6>
-																<small class="mb-0 text-body fs-12">Your Account Has Been Verified Sucessfully</small>
-															</div>
-														</div>
-													</a>
-													<a href="inbox.html" class="dropdown-item py-3">
-														<small class="float-end ps-2 text-body fs-12">6 min ago</small>
-														<div class="d-flex align-items-center">
-															<div class="avatar-md rounded-circle text-center flex-shrink-0">
-																<i data-feather="check-circle"></i>
-															</div>
-															<div class="flex-grow-1 ms-2 text-truncate">
-																<h6 class="my-0 fs-14 fw-medium">Order Placed <span class="text-success">ID: #1116773</span></h6>
-																<small class="mb-0 text-body fs-12">Order Placed Successfully</small>
-															</div>
-														</div>
-													</a>
-													<a href="inbox.html" class="dropdown-item py-3">
-														<small class="float-end ps-2 text-body fs-12">8 min ago</small>
-														<div class="d-flex align-items-center">
-															<div class="avatar-md rounded-circle text-center flex-shrink-0">
-																<i data-feather="clock"></i>
-															</div>
-															<div class="flex-grow-1 ms-2 text-truncate">
-																<h6 class="my-0 fs-14 fw-medium">Order Delayed <span class="text-danger">ID: 7731116</span></h6>
-																<small class="mb-0 text-body fs-12">Order Delayed Unfortunately</small>
-															</div>
-														</div>
-													</a>
-													<a href="inbox.html" class="dropdown-item py-3">
-														<small class="float-end ps-2 text-body fs-12">1 min ago</small>
-														<div class="d-flex align-items-center">
-															<div class="avatar-md rounded-circle text-center flex-shrink-0">
-																<i data-feather="shopping-bag"></i>
-															</div>
-															<div class="flex-grow-1 ms-2 text-truncate">
-																<h6 class="my-0 fs-14 fw-medium">Your Order Has Been Shipped</h6>
-																<small class="mb-0 text-body fs-12">Order No: 123456 Has Shipped To Your Delivery Address</small>
-															</div>
-														</div>
-													</a>
-													<a href="inbox.html" class="dropdown-item py-3">
-														<small class="float-end ps-2 text-body fs-12">3 min ago</small>
-														<div class="d-flex align-items-center">
-															<div class="avatar-md rounded-circle text-center flex-shrink-0">
-																<i data-feather="percent"></i>
-															</div>
-															<div class="flex-grow-1 ms-2 text-truncate">
-																<h6 class="my-0 fs-14 fw-medium">Discount Available</h6>
-																<small class="mb-0 text-body fs-12">Discount Available On Selected Products</small>
-															</div>
-														</div>
-													</a>
-													<a href="inbox.html" class="dropdown-item py-3">
-														<small class="float-end ps-2 text-body fs-12">4 min ago</small>
-														<div class="d-flex align-items-center">
-															<div class="avatar-md rounded-circle text-center flex-shrink-0">
-																<i data-feather="user-check"></i>
-															</div>
-															<div class="flex-grow-1 ms-2 text-truncate">
-																<h6 class="my-0 fs-14 fw-medium">Account Has Been Verified</h6>
-																<small class="mb-0 text-body fs-12">Your Account Has Been Verified Sucessfully</small>
-															</div>
-														</div>
-													</a>
-													<a href="inbox.html" class="dropdown-item py-3">
-														<small class="float-end ps-2 text-body fs-12">6 min ago</small>
-														<div class="d-flex align-items-center">
-															<div class="avatar-md rounded-circle text-center flex-shrink-0">
-																<i data-feather="check-circle"></i>
-															</div>
-															<div class="flex-grow-1 ms-2 text-truncate">
-																<h6 class="my-0 fs-14 fw-medium">Order Placed <span class="text-success">ID: #1116773</span></h6>
-																<small class="mb-0 text-body fs-12">Order Placed Successfully</small>
-															</div>
-														</div>
-													</a>
-													<a href="inbox.html" class="dropdown-item py-3">
-														<small class="float-end ps-2 text-body fs-12">8 min ago</small>
-														<div class="d-flex align-items-center">
-															<div class="avatar-md rounded-circle text-center flex-shrink-0">
-																<i data-feather="clock"></i>
-															</div>
-															<div class="flex-grow-1 ms-2 text-truncate">
-																<h6 class="my-0 fs-14 fw-medium">Order Delayed <span class="text-danger">ID: 7731116</span></h6>
-																<small class="mb-0 text-body fs-12">Order Delayed Unfortunately</small>
-															</div>
-														</div>
-													</a>
-												</div>
-												<a href="inbox.html" class="dropdown-item text-center text-white border-top border-color pt-2 pb-2 d-block bg-primary rounded-bottom fs-15">
 													View all
 												</a>
 											</div>
@@ -688,21 +443,20 @@
 													<img class="rounded-circle user" src="/admin-assets/assets/images/user/user.png" alt="user">
 												</div>
 												<div class="flex-grow-1 ms-2 d-none d-xxl-block">
-													<h3 class="fs-14 mb-0">Jacob Smith</h3>
-													<span class="fs-13 text-body">Admin</span>
+													<h3 class="fs-14 mb-0">{{ auth()->user()->name }}</h3>
+													<span class="fs-13 text-body">{{ auth()->user()->shop->name ?? 'Unknown' }}</span>
 												</div>
 											</div>
 											<ul class="dropdown-menu border-0 rounded box-shadow">
 												<li>
 													<div class=" text-center border-bottom border-color pb-10 mb-10 d-xxl-none">
-														<h3 class="fs-14 mb-0">Jacob Smith</h3>
-														<span class="fs-13 text-body">Admin</span>
+														<h3 class="fs-14 mb-0">{{ auth()->user()->name }}</h3>
+														<span class="fs-13 text-body">{{ auth()->user()->role ?? 'Unknown' }}</span>
 													</div>
 												</li>
 												<li>
 													<div class="dropdown-item d-flex align-items-center text-body">
-														<i data-feather="dollar-sign"></i>
-														<span class="ms-2 fs-14 fw-semibold text-dark">45,8745.48</span>
+														Rp. <span class="ms-2 fs-14 fw-semibold text-dark">{{ number_format(auth()->user()->balance) }}</span>
 													</div>
 												</li>
 												<li>
@@ -765,7 +519,7 @@
 			<!--=== Start CopyRight Area ===-->
 			<div class="footer-area bg-white">
 				<div class="footer-content text-center p-4">
-					<p>Copyright © <span class="fw-medium text-primary">Dess</span> Is Proudly Owned by <a href="https://www.templatemonster.com/authors/coderdeves/" class="text-decoration-none fw-medium text-primary">Coder Deves</a></p>
+					<p>Copyright © <span class="fw-medium text-primary">Pasar Santri</span> {{ now()->format('Y') }}</p>
 				</div>
 			</div>
 			<!--=== End CopyRight Area ===-->
@@ -907,5 +661,6 @@
         <script src="/admin-assets/assets/js/amcharts/Animated.js"></script>
 		<script src="/admin-assets/assets/js/apex/ecommerce-chart.js"></script>
 		<script src="/admin-assets/assets/js/custom.js"></script>
+        @stack('script')
     </body>
 </html>
