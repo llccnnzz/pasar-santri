@@ -90,7 +90,7 @@ class ProductController extends Controller
             'canonical' => route('products.index', array_filter(['search' => $searchQuery, 'category' => $categorySlug])),
         ];
 
-        return view('products.index', compact('categories', 'brands', 'tags', 'minPrice', 'maxPrice', 'seoData', 'searchQuery', 'selectedCategory'));
+        return view('buyer.products.index', compact('categories', 'brands', 'tags', 'minPrice', 'maxPrice', 'seoData', 'searchQuery', 'selectedCategory'));
     }
 
     public function show(Request $request, Product $product)
@@ -124,6 +124,6 @@ class ProductController extends Controller
         // Prepare SEO data
         $seoData = SeoHelper::generateProductSeo($product);
 
-        return view('products.show', compact('product', 'relatedProducts', 'seoData'));
+        return view('buyer.products.show', compact('product', 'relatedProducts', 'seoData'));
     }
 }
