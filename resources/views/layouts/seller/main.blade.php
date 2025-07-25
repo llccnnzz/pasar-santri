@@ -661,6 +661,6 @@
         <script src="/admin-assets/assets/js/amcharts/Animated.js"></script>
 		<script src="/admin-assets/assets/js/apex/ecommerce-chart.js"></script>
 		<script src="/admin-assets/assets/js/custom.js"></script>
-        @stack('script')
+        @stack('scripts')
     </body>
 </html>

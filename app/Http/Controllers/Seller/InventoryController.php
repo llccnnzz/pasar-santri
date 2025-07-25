@@ -52,9 +52,11 @@ class InventoryController extends Controller
             return redirect()->route('seller.dashboard')->with('error', 'Please setup your shop first.');
         }
 
-        $categories = Category::where('shop_id', $shop->id)->get();
+        // Get global categories (without shop_id) and local categories (with current shop_id)
+        $globalCategories = Category::whereNull('shop_id')->orderBy('name')->get();
+        $localCategories = Category::where('shop_id', $shop->id)->orderBy('name')->get();
         
-        return view('seller.inventory.create', compact('categories'));
+        return view('seller.inventory.create', compact('globalCategories', 'localCategories'));
     }
 
     /**
@@ -71,11 +73,17 @@ class InventoryController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
+            'long_description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
+            'final_price' => 'nullable|numeric|min:0',
             'stock' => 'required|integer|min:0',
-            'category_id' => 'required|exists:categories,id',
+            'global_categories' => 'required|array|min:1',
+            'global_categories.*' => 'exists:categories,id',
+            'local_categories' => 'nullable|array',
+            'local_categories.*' => 'exists:categories,id',
             'sku' => 'nullable|string|max:100|unique:products,sku',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'product_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'product_gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'meta_title' => 'nullable|string|max:255',
             'meta_keywords' => 'nullable|string',
             'meta_description' => 'nullable|string',
@@ -83,37 +91,109 @@ class InventoryController extends Controller
             'weight' => 'nullable|numeric|min:0',
             'dimensions' => 'nullable|string',
             'brand' => 'nullable|string|max:100',
+            'tags' => 'nullable|string',
+            'specification' => 'nullable|string',
+            'is_featured' => 'boolean',
+            'is_popular' => 'boolean',
         ]);
+
+        // Validate that global categories exist and don't belong to any shop
+        $globalCategoryIds = $validated['global_categories'];
+        $validGlobalCategories = Category::whereIn('id', $globalCategoryIds)
+                                        ->whereNull('shop_id')
+                                        ->pluck('id')
+                                        ->toArray();
+        
+        if (count($validGlobalCategories) !== count($globalCategoryIds)) {
+            return back()->withErrors(['global_categories' => 'One or more selected global categories are invalid.'])
+                        ->withInput();
+        }
+
+        // Validate local categories belong to current shop
+        $localCategoryIds = $validated['local_categories'] ?? [];
+        if (!empty($localCategoryIds)) {
+            $validLocalCategories = Category::whereIn('id', $localCategoryIds)
+                                           ->where('shop_id', $shop->id)
+                                           ->pluck('id')
+                                           ->toArray();
+            
+            if (count($validLocalCategories) !== count($localCategoryIds)) {
+                return back()->withErrors(['local_categories' => 'One or more selected local categories are invalid.'])
+                            ->withInput();
+            }
+        }
 
         // Generate SKU if not provided
         if (!$validated['sku']) {
             $validated['sku'] = strtoupper(substr($shop->name, 0, 3)) . '-' . strtoupper(Str::random(6));
         }
 
-        // Generate slug
+        // Generate slug from name
         $validated['slug'] = Str::slug($validated['name']);
+        $originalSlug = $validated['slug'];
+        $counter = 1;
+        
+        // Ensure slug uniqueness
+        while (Product::where('slug', $validated['slug'])->exists()) {
+            $validated['slug'] = $originalSlug . '-' . $counter;
+            $counter++;
+        }
+
         $validated['shop_id'] = $shop->id;
 
-        // Handle image uploads
-        $images = [];
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
-                $path = $image->store('products', 'public');
-                $images[] = $path;
-            }
+        // Convert tags and specification to arrays if provided
+        if (isset($validated['tags'])) {
+            $validated['tags'] = array_filter(array_map('trim', explode(',', $validated['tags'])));
         }
-        $validated['images'] = json_encode($images);
+        
+        if (isset($validated['specification'])) {
+            $validated['specification'] = array_filter(array_map('trim', explode(',', $validated['specification'])));
+        }
 
-        // Remove category_id from validated data before creating product
-        $categoryId = $validated['category_id'];
-        unset($validated['category_id']);
+        // Remove category arrays from validated data
+        $allCategoryIds = array_merge($globalCategoryIds, $localCategoryIds);
+        unset($validated['global_categories'], $validated['local_categories']);
 
+        // Create the product
         $product = Product::create($validated);
 
-        // Attach the category to the product
-        $product->categories()->attach($categoryId);
+        // Attach all categories (global + local) to the product
+        $product->categories()->attach($allCategoryIds);
 
-        return redirect()->route('seller.products.index')->with('success', 'Product created successfully!');
+        // Handle image uploads using existing relations
+        if ($request->hasFile('product_image')) {
+            $defaultImage = $request->file('product_image');
+            $path = $defaultImage->store('products', 'public');
+            
+            // Create media record for default image
+            $product->media()->create([
+                'file_name' => $defaultImage->getClientOriginalName(),
+                'mime_type' => $defaultImage->getMimeType(),
+                'disk' => 'public',
+                'collection_name' => 'default-image',
+                'name' => 'default-image',
+                'size' => $defaultImage->getSize(),
+            ]);
+        }
+
+        // Handle gallery images
+        if ($request->hasFile('product_gallery')) {
+            foreach ($request->file('product_gallery') as $galleryImage) {
+                $path = $galleryImage->store('products', 'public');
+                
+                // Create media record for gallery image
+                $product->media()->create([
+                    'file_name' => $galleryImage->getClientOriginalName(),
+                    'mime_type' => $galleryImage->getMimeType(),
+                    'disk' => 'public',
+                    'collection_name' => 'image',
+                    'name' => 'gallery-image',
+                    'size' => $galleryImage->getSize(),
+                ]);
+            }
+        }
+
+        return redirect()->route('seller.products.create')->with('success', 'Product created successfully!');
     }
 
     /**
