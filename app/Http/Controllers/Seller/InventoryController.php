@@ -242,10 +242,14 @@ class InventoryController extends Controller
             abort(404);
         }
 
-        $categories = Category::where('shop_id', $shop->id)->get();
-        $product->load(['categories', 'variants']);
+        // Load product with media relations
+        $product->load(['categories', 'variants', 'defaultImage', 'hoverImage', 'images']);
         
-        return view('seller.inventory.edit', compact('product', 'categories'));
+        // Get global categories (without shop_id) and local categories (with shop_id)
+        $globalCategories = Category::whereNull('shop_id')->get();
+        $localCategories = Category::where('shop_id', $shop->id)->get();
+        
+        return view('seller.inventory.edit', compact('product', 'globalCategories', 'localCategories'));
     }
 
     /**
@@ -264,12 +268,18 @@ class InventoryController extends Controller
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
-            'category_id' => 'required|exists:categories,id',
+            'global_categories' => 'required|array|min:1',
+            'global_categories.*' => 'exists:categories,id',
+            'local_categories' => 'nullable|array',
+            'local_categories.*' => 'exists:categories,id',
             'sku' => 'nullable|string|max:100|unique:products,sku,' . $product->id,
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'default_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'hover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'gallery_images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'meta_title' => 'nullable|string|max:255',
             'meta_keywords' => 'nullable|string',
             'meta_description' => 'nullable|string',
+            'long_description' => 'nullable|string',
             'status' => 'required|in:active,inactive',
             'weight' => 'nullable|numeric|min:0',
             'dimensions' => 'nullable|string',
@@ -281,31 +291,55 @@ class InventoryController extends Controller
             $validated['slug'] = Str::slug($validated['name']);
         }
 
-        // Handle image uploads
-        if ($request->hasFile('images')) {
-            // Delete old images
-            $oldImages = json_decode($product->images, true) ?? [];
-            foreach ($oldImages as $oldImage) {
-                Storage::disk('public')->delete($oldImage);
+        // Handle Default Image Upload
+        if ($request->hasFile('default_image')) {
+            // Delete existing default image
+            $existingDefaultImage = $product->defaultImage;
+            if ($existingDefaultImage) {
+                $existingDefaultImage->delete();
             }
-
-            // Upload new images
-            $images = [];
-            foreach ($request->file('images') as $image) {
-                $path = $image->store('products', 'public');
-                $images[] = $path;
-            }
-            $validated['images'] = json_encode($images);
+            
+            $product->addMediaFromRequest('default_image')
+                    ->toMediaCollection('default-image');
         }
 
-        // Remove category_id from validated data before updating product
-        $categoryId = $validated['category_id'];
-        unset($validated['category_id']);
+        // Handle Hover Image Upload
+        if ($request->hasFile('hover_image')) {
+            // Delete existing hover image
+            $existingHoverImage = $product->hoverImage;
+            if ($existingHoverImage) {
+                $existingHoverImage->delete();
+            }
+            
+            $product->addMediaFromRequest('hover_image')
+                    ->toMediaCollection('hover-image');
+        }
+
+        // Handle Gallery Images Upload
+        if ($request->hasFile('gallery_images')) {
+            // Delete existing gallery images
+            $existingGalleryImages = $product->images;
+            foreach ($existingGalleryImages as $image) {
+                $image->delete();
+            }
+            
+            foreach ($request->file('gallery_images') as $file) {
+                $product->addMedia($file)
+                        ->toMediaCollection('image');
+            }
+        }
+
+        // Remove category arrays from validated data before updating product
+        $globalCategories = $validated['global_categories'];
+        $localCategories = $validated['local_categories'] ?? [];
+        unset($validated['global_categories'], $validated['local_categories']);
+        unset($validated['default_image'], $validated['hover_image'], $validated['gallery_images']);
 
         $product->update($validated);
 
-        // Sync the category (this will replace any existing categories)
-        $product->categories()->sync([$categoryId]);
+        // Sync categories (combine global and local categories)
+        $allCategories = array_merge($globalCategories, $localCategories);
+        $product->categories()->sync($allCategories);
 
         return redirect()->route('seller.products.index')->with('success', 'Product updated successfully!');
     }
