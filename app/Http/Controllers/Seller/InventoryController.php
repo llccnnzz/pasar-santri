@@ -82,8 +82,9 @@ class InventoryController extends Controller
             'local_categories' => 'nullable|array',
             'local_categories.*' => 'exists:categories,id',
             'sku' => 'nullable|string|max:100|unique:products,sku',
-            'product_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'product_gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'default_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'hover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'gallery_images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'meta_title' => 'nullable|string|max:255',
             'meta_keywords' => 'nullable|string',
             'meta_description' => 'nullable|string',
@@ -161,13 +162,15 @@ class InventoryController extends Controller
         $product->categories()->attach($allCategoryIds);
 
         // Handle image uploads using existing relations
-        if ($request->hasFile('product_image')) {
-            $defaultImage = $request->file('product_image');
+        
+        // 1. Handle Default Image (required)
+        if ($request->hasFile('default_image')) {
+            $defaultImage = $request->file('default_image');
             $path = $defaultImage->store('products', 'public');
             
-            // Create media record for default image
+            // Create media record for default image using defaultImage() relation
             $product->media()->create([
-                'file_name' => $defaultImage->getClientOriginalName(),
+                'file_name' => $path, // Store the path in file_name
                 'mime_type' => $defaultImage->getMimeType(),
                 'disk' => 'public',
                 'collection_name' => 'default-image',
@@ -176,18 +179,34 @@ class InventoryController extends Controller
             ]);
         }
 
-        // Handle gallery images
-        if ($request->hasFile('product_gallery')) {
-            foreach ($request->file('product_gallery') as $galleryImage) {
+        // 2. Handle Hover Image (optional)
+        if ($request->hasFile('hover_image')) {
+            $hoverImage = $request->file('hover_image');
+            $path = $hoverImage->store('products', 'public');
+            
+            // Create media record for hover image using hoverImage() relation
+            $product->media()->create([
+                'file_name' => $path, // Store the path in file_name
+                'mime_type' => $hoverImage->getMimeType(),
+                'disk' => 'public',
+                'collection_name' => 'hover-image',
+                'name' => 'hover-image',
+                'size' => $hoverImage->getSize(),
+            ]);
+        }
+
+        // 3. Handle Gallery Images (optional, multiple)
+        if ($request->hasFile('gallery_images')) {
+            foreach ($request->file('gallery_images') as $index => $galleryImage) {
                 $path = $galleryImage->store('products', 'public');
                 
-                // Create media record for gallery image
+                // Create media record for gallery image using images() relation
                 $product->media()->create([
-                    'file_name' => $galleryImage->getClientOriginalName(),
+                    'file_name' => $path, // Store the path in file_name
                     'mime_type' => $galleryImage->getMimeType(),
                     'disk' => 'public',
                     'collection_name' => 'image',
-                    'name' => 'gallery-image',
+                    'name' => 'gallery-image-' . ($index + 1),
                     'size' => $galleryImage->getSize(),
                 ]);
             }

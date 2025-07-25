@@ -169,22 +169,46 @@
 
                     <div class="col-lg-12">
                         <div class="form-group mb-25">
-                            <label class="fw-semibold fs-14 text-dark mb-2">Product Image<span class="text-danger">*</span></label>
+                            <label class="fw-semibold fs-14 text-dark mb-2">Default Product Image<span class="text-danger">*</span></label>
                             
                             <div class="file-upload-wrap border-1 rounded-3 mb-10">
                                 <div class="avatar-upload">
                                     <div class="avatar-edit">
-                                        <input type='file' name="product_image" id="imageUpload" accept=".png, .jpg, .jpeg" />
-                                        <label for="imageUpload"></label>
+                                        <input type='file' name="default_image" id="defaultImageUpload" accept=".png, .jpg, .jpeg" required />
+                                        <label for="defaultImageUpload"></label>
                                     </div>
                                 </div>
                             </div>
                             <div class="avatar-upload">
                                 <div class="avatar-preview">
-                                    <div id="imagePreview" style="background-image: url('/admin-assets/assets/images/products/product-11.jpg');"></div>
+                                    <div id="defaultImagePreview" style="background-image: url('/admin-assets/assets/images/products/product-11.jpg');"></div>
                                 </div>
                             </div>
-                            @error('product_image')
+                            @error('default_image')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="col-lg-12">
+                        <div class="form-group mb-25">
+                            <label class="fw-semibold fs-14 text-dark mb-2">Hover Image</label>
+                            <div class="form-text mb-2">Image shown when user hovers over the product</div>
+                            
+                            <div class="file-upload-wrap border-1 rounded-3 mb-10">
+                                <div class="avatar-upload">
+                                    <div class="avatar-edit">
+                                        <input type='file' name="hover_image" id="hoverImageUpload" accept=".png, .jpg, .jpeg" />
+                                        <label for="hoverImageUpload"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="avatar-upload">
+                                <div class="avatar-preview">
+                                    <div id="hoverImagePreview" style="background-image: url('/admin-assets/assets/images/products/product-12.jpg');"></div>
+                                </div>
+                            </div>
+                            @error('hover_image')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
@@ -193,27 +217,28 @@
                     <div class="col-lg-12">
                         <div class="form-group mb-25">
                             <label class="fw-semibold fs-14 text-dark mb-2">Product Gallery</label>
+                            <div class="form-text mb-2">Additional product images for gallery</div>
                             
                             <div class="file-upload-wrap border-1 rounded-3 mb-10">
                                 <div class="avatar-upload">
                                     <div class="avatar-edit">
-                                        <input type='file' name="product_gallery[]" id="imageUpload2" accept=".png, .jpg, .jpeg" multiple />
-                                        <label for="imageUpload2"></label>
+                                        <input type='file' name="gallery_images[]" id="galleryImagesUpload" accept=".png, .jpg, .jpeg" multiple />
+                                        <label for="galleryImagesUpload"></label>
                                     </div>
                                 </div>
                             </div>
                             <div class="avatar-upload d-flex">
                                 <div class="avatar-preview mb-2 mb-sm-0">
-                                    <div id="imagePreview2" style="background-image: url('/admin-assets/assets/images/products/product-13.jpg');"></div>
+                                    <div id="galleryPreview1" style="background-image: url('/admin-assets/assets/images/products/product-13.jpg');"></div>
                                 </div>
                                 <div class="avatar-preview ms-2 mb-2 mb-sm-0">
-                                    <div id="imagePreview3" style="background-image: url('/admin-assets/assets/images/products/product-12.jpg');"></div>
+                                    <div id="galleryPreview2" style="background-image: url('/admin-assets/assets/images/products/product-12.jpg');"></div>
                                 </div>
                                 <div class="avatar-preview ms-2 mb-2 mb-sm-0">
-                                    <div id="imagePreview4" style="background-image: url('/admin-assets/assets/images/products/product-11.jpg');"></div>
+                                    <div id="galleryPreview3" style="background-image: url('/admin-assets/assets/images/products/product-11.jpg');"></div>
                                 </div>
                             </div>
-                            @error('product_gallery')
+                            @error('gallery_images')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
@@ -557,17 +582,53 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    document.getElementById('imageUpload').addEventListener('change', function() {
-        readURL(this, 'imagePreview');
+    // Default image preview
+    document.getElementById('defaultImageUpload').addEventListener('change', function() {
+        readURL(this, 'defaultImagePreview');
+    });
+    
+    // Hover image preview
+    document.getElementById('hoverImageUpload').addEventListener('change', function() {
+        readURL(this, 'hoverImagePreview');
+    });
+    
+    // Gallery images preview
+    document.getElementById('galleryImagesUpload').addEventListener('change', function() {
+        const files = this.files;
+        const previewIds = ['galleryPreview1', 'galleryPreview2', 'galleryPreview3'];
+        
+        // Reset previews
+        previewIds.forEach(id => {
+            document.getElementById(id).style.backgroundImage = '';
+        });
+        
+        // Show new previews
+        Array.from(files).slice(0, 3).forEach((file, index) => {
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById(previewIds[index]).style.backgroundImage = `url('${e.target.result}')`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
     });
     
     // Form validation
     document.getElementById('productForm').addEventListener('submit', function(e) {
         const globalCategories = document.querySelectorAll('input[name="global_categories[]"]:checked');
+        const defaultImage = document.getElementById('defaultImageUpload').files.length;
         
         if (globalCategories.length === 0) {
             e.preventDefault();
             alert('Please select at least one global category.');
+            return false;
+        }
+        
+        if (defaultImage === 0) {
+            e.preventDefault();
+            alert('Please upload a default product image.');
+            document.getElementById('defaultImageUpload').focus();
             return false;
         }
         
