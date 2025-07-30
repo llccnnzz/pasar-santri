@@ -3,7 +3,41 @@
 @section('title', 'Wallet Dashboard')
 
 @section('content')
-<div class="container-xxl flex-grow-1 container-p-y">
+    <!--=== Start Section Title Area ===-->
+    <div class="section-title d-sm-flex justify-content-between align-items-center mb-24 text-center">
+        <h4 class="text-dark mb-0">Wallet Balance</h4>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 mt-2 mt-sm-0 justify-content-center">
+                <li class="breadcrumb-item fs-14"><a class="text-decoration-none" href="{{ route('seller.dashboard') }}">Dashboard</a></li>
+                <li class="breadcrumb-item fs-14">Financial</li>
+                <li class="breadcrumb-item fs-14 text-primary" aria-current="page">Wallet</li>
+            </ol>
+        </nav>
+    </div>
+    <!--=== End Section Title Area ===-->
+
+    @if(session('success'))
+        <div class="alert alert-success border-0 mb-4" role="alert">
+            <div class="d-flex align-items-center">
+                <i data-feather="check-circle" class="me-2"></i>
+                <div class="flex-grow-1">
+                    {{ session('success') }}
+                </div>
+            </div>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger border-0 mb-4" role="alert">
+            <div class="d-flex align-items-center">
+                <i data-feather="alert-circle" class="me-2"></i>
+                <div class="flex-grow-1">
+                    {{ session('error') }}
+                </div>
+            </div>
+        </div>
+    @endif
+
     <!-- Wallet Balance Overview Cards -->
     <div class="status-area">
         <div class="row justify-content-center">
@@ -19,7 +53,7 @@
                             </div>
                             <div class="flex-grow-1 ms-3">
                                 <span class="d-block mb-1">Available Balance</span>
-                                <h3 class="fs-25">{{ $balance->formatted_available_balance }}</h3>
+                                <h3 class="fs-25">Rp {{ number_format($balance->available_balance, 0, ',', '.') }}</h3>
                                 <p class="fw-medium fs-13">Ready for withdrawal <span class="badge bg-success-transparent text-success mx-1"><i data-feather="check-circle" class="me-1" style="width: 12px;"></i>Settled</span></p>
                             </div>
                         </div>
@@ -39,7 +73,7 @@
                             </div>
                             <div class="flex-grow-1 ms-3">
                                 <span class="d-block mb-1">Pending Balance</span>
-                                <h3 class="fs-25">{{ $balance->formatted_pending_balance }}</h3>
+                                <h3 class="fs-25">Rp {{ number_format($balance->pending_in, 0, ',', '.') }}</h3>
                                 <p class="fw-medium fs-13">Settlement in progress <span class="badge bg-warning-transparent text-warning mx-1"><i data-feather="clock" class="me-1" style="width: 12px;"></i>H+1</span></p>
                             </div>
                         </div>
@@ -59,11 +93,11 @@
                             </div>
                             <div class="flex-grow-1 ms-3">
                                 <span class="d-block mb-1">Total Balance</span>
-                                <h3 class="fs-25">{{ $balance->formatted_total_balance }}</h3>
+                                <h3 class="fs-25">Rp {{ number_format($balance->total_balance, 0, ',', '.') }}</h3>
                                 <p class="fw-medium fs-13">
-                                    <span class="badge bg-primary-transparent text-primary mx-1">
-                                        <i data-feather="wallet" class="me-1" style="width: 12px;"></i>Combined
-                                    </span>
+                                            <span class="badge bg-primary-transparent text-primary mx-1">
+                                                <i data-feather="wallet" class="me-1" style="width: 12px;"></i>Combined
+                                            </span>
                                 </p>
                             </div>
                         </div>
@@ -73,336 +107,378 @@
         </div>
     </div>
 
-    @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            {{ session('error') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
-
-    <!-- Quick Actions -->
-    <div class="row justify-content-center mb-4">
-        <div class="col-12">
-            <div class="card rounded-3 border-0 mb-24">
-                <div class="card-body p-25">
-                    <h5 class="mb-3">
-                        <i data-feather="zap" class="me-2"></i>Quick Actions
-                    </h5>
-                    
-                    <div class="d-flex gap-2 flex-wrap">
-                        @if($balance->available_balance > 0)
-                            <a href="{{ route('seller.wallet.withdraw.form') }}" class="btn btn-primary">
-                                <i data-feather="send" style="width: 16px;" class="me-1"></i>
-                                Withdraw Funds
-                            </a>
-                        @else
-                            <button type="button" class="btn btn-outline-secondary" disabled>
-                                <i data-feather="send" style="width: 16px;" class="me-1"></i>
-                                No Funds Available
-                            </button>
-                        @endif
-                        
-                        <a href="{{ route('seller.wallet.transactions') }}" class="btn btn-outline-primary">
-                            <i data-feather="list" style="width: 16px;" class="me-1"></i>
-                            View All Transactions
-                        </a>
-                        
-                        <a href="{{ route('seller.wallet.withdraw.history') }}" class="btn btn-outline-secondary">
-                            <i data-feather="clock" style="width: 16px;" class="me-1"></i>
-                            Withdrawal History
-                        </a>
-                        
-                        <a href="{{ route('seller.wallet.earnings') }}" class="btn btn-outline-success">
-                            <i data-feather="trending-up" style="width: 16px;" class="me-1"></i>
-                            Earnings Report
-                        </a>
-                    </div>
-                </div>
+    <!-- Withdraw Section -->
+    <div class="card rounded-3 border-0 mb-24">
+        <div class="card-body p-25">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">
+                    <i data-feather="send" class="me-2"></i>Quick Withdrawal
+                </h5>
+                @if($bankAccounts->isEmpty())
+                    <a href="{{ route('seller.bank-accounts.create') }}" class="btn btn-sm btn-outline-primary">
+                        <i data-feather="plus" style="width: 16px;" class="me-1"></i>Add Bank Account
+                    </a>
+                @endif
             </div>
-        </div>
-    </div>
 
-    <!-- Recent Transactions -->
-    <div class="row justify-content-center">
-        <div class="col-12">
-            <div class="card rounded-3 border-0 mb-24">
-                <div class="card-body p-25">
-                    <div class="card-title d-flex align-items-center justify-content-between mb-20 pb-20 border-bottom border-color">
-                        <h4 class="mb-0">
-                            <i data-feather="activity" class="me-2"></i>Recent Transactions
-                        </h4>
-                        <a href="{{ route('seller.wallet.transactions') }}" class="btn btn-sm btn-outline-primary">
-                            View All
-                        </a>
-                    </div>
-
-                    @if($recentTransactions->count() > 0)
-                        <div class="table-wrapper">
-                            <div class="table-responsive">
-                                <table class="table align-middle table-bordered">
-                                    <thead class="text-dark">
-                                        <tr>
-                                            <th scope="col">Date</th>
-                                            <th scope="col">Type</th>
-                                            <th scope="col">Amount</th>
-                                            <th scope="col">Bank/Source</th>
-                                            <th scope="col">Reference</th>
-                                            <th scope="col">Status</th>
-                                            <th scope="col">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="text-body">
-                                        @foreach($recentTransactions as $transaction)
-                                            <tr>
-                                                <td>{{ $transaction->created_at->format('d-m-Y') }}</td>
-                                                <td>
-                                                    <span class="badge {{ $transaction->type_badge_class }} fw-normal py-1 px-2 fs-12 rounded-1">
-                                                        <i data-feather="{{ $transaction->type === 'in' ? 'arrow-down-right' : 'arrow-up-right' }}" style="width: 12px;" class="me-1"></i>
-                                                        {{ $transaction->type_label }}
-                                                    </span>
-                                                </td>
-                                                <td class="fw-medium {{ $transaction->type === 'in' ? 'text-success' : 'text-danger' }}">
-                                                    {{ $transaction->formatted_amount }}
-                                                </td>
-                                                <td>
-                                                    @if($transaction->shopBank)
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="bg-primary rounded-1 d-flex align-items-center justify-content-center me-2" style="width: 30px; height: 30px;">
-                                                                <span class="text-white fw-bold" style="font-size: 10px;">{{ $transaction->shopBank->bank_code }}</span>
-                                                            </div>
-                                                            <span>{{ $transaction->shopBank->bank_name }} - {{ $transaction->shopBank->formatted_account_number }}</span>
-                                                        </div>
-                                                    @else
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="bg-success rounded-1 d-flex align-items-center justify-content-center me-2" style="width: 30px; height: 30px;">
-                                                                <i data-feather="shopping-bag" style="width: 16px; color: white;"></i>
-                                                            </div>
-                                                            <span>Order Settlement</span>
-                                                        </div>
-                                                    @endif
-                                                </td>
-                                                <td><code>{{ $transaction->reference ?: '#' . $transaction->id }}</code></td>
-                                                <td>
-                                                    <span class="badge {{ $transaction->status_badge_class }} fw-normal py-1 px-2 fs-12 rounded-1">
-                                                        {{ ucfirst($transaction->status) }}
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <button class="btn btn-sm btn-outline-primary" 
-                                                            onclick="viewTransactionDetails({{ $transaction->id }})"
-                                                            data-bs-toggle="tooltip" 
-                                                            title="View Details">
-                                                        <i data-feather="eye" style="width: 14px;"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
+            @if($bankAccounts->isEmpty())
+                <div class="alert alert-warning">
+                    <i data-feather="alert-triangle" class="me-2"></i>
+                    You need to add a bank account before you can make withdrawals.
+                    <a href="{{ route('seller.bank-accounts.create') }}" class="alert-link">Add one now</a>.
+                </div>
+            @elseif($balance->available_balance <= 0)
+                <div class="alert alert-info">
+                    <i data-feather="info" class="me-2"></i>
+                    No available balance for withdrawal. Complete some orders to build up your balance.
+                </div>
+            @else
+                <form action="{{ route('seller.wallet.withdraw.request') }}" method="POST" id="withdrawForm">
+                    @csrf
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="amount" class="form-label">Withdrawal Amount</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">Rp</span>
+                                    <input type="number" 
+                                           class="form-control @error('amount') is-invalid @enderror" 
+                                           id="amount" 
+                                           name="amount"
+                                           placeholder="0" 
+                                           min="10000"
+                                           max="{{ $balance->available_balance }}"
+                                           value="{{ old('amount') }}">
+                                    @error('amount')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <small class="text-muted">Max: Rp {{ number_format($balance->available_balance, 0, ',', '.') }} (Available Balance)</small>
                             </div>
                         </div>
-                    @else
-                        <div class="text-center py-5">
-                            <i data-feather="activity" style="width: 64px; height: 64px; stroke: #8c9097;" class="mb-3"></i>
-                            <h6 class="text-muted mb-2">No Transactions Yet</h6>
-                            <p class="text-muted">Your transaction history will appear here once you start earning.</p>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="shop_bank_id" class="form-label">Bank Destination</label>
+                                <select class="form-select @error('shop_bank_id') is-invalid @enderror" id="shop_bank_id" name="shop_bank_id">
+                                    <option value="">Select Bank Account</option>
+                                    @foreach($bankAccounts as $bankAccount)
+                                        <option value="{{ $bankAccount->id }}" 
+                                                data-bank="{{ $bankAccount->bank_name }}" 
+                                                data-account="****{{ substr($bankAccount->account_number, -4) }}"
+                                                {{ old('shop_bank_id') == $bankAccount->id ? 'selected' : '' }}>
+                                            {{ $bankAccount->bank_name }} - ****{{ substr($bankAccount->account_number, -4) }}
+                                            @if($bankAccount->is_default) (Primary) @endif
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('shop_bank_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
                         </div>
-                    @endif
-                </div>
-            </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="note" class="form-label">Note (Optional)</label>
+                                <input type="text" 
+                                       class="form-control @error('note') is-invalid @enderror" 
+                                       id="note" 
+                                       name="note"
+                                       placeholder="Withdrawal note..."
+                                       value="{{ old('note') }}"
+                                       maxlength="255">
+                                @error('note')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i data-feather="send" style="width: 16px;" class="me-1"></i>
+                            Request Withdrawal
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" onclick="clearWithdrawForm()">
+                            <i data-feather="x" style="width: 16px;" class="me-1"></i>
+                            Clear
+                        </button>
+                    </div>
+                </form>
+            @endif
         </div>
     </div>
-</div>
 
-<!-- Transaction Details Modal -->
-<div class="modal fade" id="transactionModal" tabindex="-1" aria-labelledby="transactionModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="transactionModalLabel">Transaction Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- Balance History Section -->
+    <div class="card rounded-3 border-0 mb-24 table-edit-area">
+        <div class="card-body text-body p-25">
+            <div class="card-title d-flex align-items-center justify-content-between mb-20 pb-20 border-bottom border-color">
+                <h4 class="mb-0">
+                    <i data-feather="list" class="me-2"></i>Recent Transactions
+                </h4>
+                <div class="d-flex gap-2">
+                    <a href="{{ route('seller.wallet.transactions') }}" class="btn btn-outline-primary btn-sm">
+                        <i data-feather="eye" style="width: 14px;" class="me-1"></i>View All
+                    </a>
+                </div>
             </div>
-            <div class="modal-body" id="transactionDetails">
-                <div class="text-center">
-                    <div class="spinner-border" role="status">
-                        <span class="visually-hidden">Loading...</span>
+
+            <div class="table-wrapper">
+                <div class="member">
+                    <div class="global-table-area">
+                        <div class="table-responsive overflow-auto" style="max-height: 600px;" data-simplebar>
+                            <table class="table align-middle table-bordered">
+                                <thead class="text-dark">
+                                <tr>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Type</th>
+                                    <th scope="col">Amount</th>
+                                    <th scope="col">Bank/Source</th>
+                                    <th scope="col">Reference</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Details</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody class="text-body">
+                                @forelse($recentTransactions as $transaction)
+                                    <tr>
+                                        <td>{{ $transaction->created_at->format('d-m-Y') }}</td>
+                                        <td>
+                                            <span class="badge {{ $transaction->type === 'in' ? 'bg-success-transparent text-success' : 'bg-danger-transparent text-danger' }} fw-normal py-1 px-2 fs-12 rounded-1">
+                                                <i data-feather="{{ $transaction->type === 'in' ? 'arrow-down-right' : 'arrow-up-right' }}" style="width: 12px;" class="me-1"></i>
+                                                {{ $transaction->type === 'in' ? 'Income' : 'Withdrawal' }}
+                                            </span>
+                                        </td>
+                                        <td class="fw-medium {{ $transaction->type === 'in' ? 'text-success' : 'text-danger' }}">
+                                            {{ $transaction->formatted_amount }}
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="bg-{{ $transaction->type === 'in' ? 'primary' : ($transaction->shopBank ? 'info' : 'secondary') }} rounded-1 d-flex align-items-center justify-content-center me-2" style="width: 30px; height: 30px;">
+                                                    @if($transaction->type === 'in')
+                                                        <i data-feather="shopping-bag" style="width: 16px; color: white;"></i>
+                                                    @elseif($transaction->shopBank)
+                                                        <span class="text-white fw-bold" style="font-size: 10px;">{{ strtoupper(substr($transaction->shopBank->bank_code, 0, 3)) }}</span>
+                                                    @else
+                                                        <i data-feather="help-circle" style="width: 16px; color: white;"></i>
+                                                    @endif
+                                                </div>
+                                                <span>
+                                                    @if($transaction->type === 'in')
+                                                        {{ $transaction->details['type'] ?? 'Order Settlement' }}
+                                                    @elseif($transaction->shopBank)
+                                                        {{ $transaction->shopBank->bank_name }} - ****{{ substr($transaction->shopBank->account_number, -4) }}
+                                                    @else
+                                                        Unknown Source
+                                                    @endif
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td><code>{{ $transaction->reference ?? '#N/A' }}</code></td>
+                                        <td>
+                                            @php
+                                                $statusColor = match($transaction->status) {
+                                                    'completed' => 'success',
+                                                    'pending' => 'warning', 
+                                                    'failed' => 'danger',
+                                                    default => 'secondary'
+                                                };
+                                            @endphp
+                                            <span class="badge bg-{{ $statusColor }}-transparent text-{{ $statusColor }} fw-normal py-1 px-2 fs-12 rounded-1">
+                                                {{ ucfirst($transaction->status) }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            @if($transaction->details && isset($transaction->details['note']))
+                                                {{ $transaction->details['note'] }}
+                                            @elseif($transaction->type === 'in')
+                                                {{ $transaction->details['description'] ?? 'Sales income' }}
+                                            @else
+                                                {{ $transaction->details['type'] ?? 'Manual withdrawal' }}
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <div class="d-flex gap-1">
+                                                <a href="{{ route('seller.wallet.transaction.details', $transaction->id) }}" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="View Details">
+                                                    <i data-feather="eye" style="width: 14px;"></i>
+                                                </a>
+                                                @if($transaction->status === 'failed' && $transaction->type === 'out')
+                                                    <button class="btn btn-sm btn-outline-warning" data-bs-toggle="tooltip" title="Retry" onclick="retryWithdrawal({{ $transaction->id }})">
+                                                        <i data-feather="refresh-cw" style="width: 14px;"></i>
+                                                    </button>
+                                                @endif
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="8" class="text-center py-4">
+                                            <div class="d-flex flex-column align-items-center">
+                                                <i data-feather="inbox" style="width: 48px; height: 48px; color: #ccc;" class="mb-2"></i>
+                                                <span class="text-muted">No transactions found</span>
+                                                <small class="text-muted">Your transaction history will appear here</small>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+
+                        @if($recentTransactions->count() > 0)
+                            <div class="d-sm-flex align-items-center justify-content-between mt-25 text-center">
+                                <span class="fs-15 fw-medium text-dark mb-10 mb-sm-0 d-block">Showing recent {{ $recentTransactions->count() }} transactions</span>
+                                <a href="{{ route('seller.wallet.transactions') }}" class="btn btn-outline-primary btn-sm">
+                                    <i data-feather="arrow-right" style="width: 14px;" class="me-1"></i>
+                                    View All Transactions
+                                </a>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 @endsection
 
 @push('scripts')
-<script>
-    // View transaction details
-    function viewTransactionDetails(transactionId) {
-        const modal = new bootstrap.Modal(document.getElementById('transactionModal'));
-        const detailsContainer = document.getElementById('transactionDetails');
-        
-        // Show loading
-        detailsContainer.innerHTML = `
-            <div class="text-center">
-                <div class="spinner-border" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-            </div>
-        `;
-        
-        modal.show();
-        
-        // Fetch transaction details
-        fetch(`{{ route('seller.wallet.transaction.details', '') }}/${transactionId}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    detailsContainer.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
-                    return;
-                }
-                
-                const transaction = data.transaction;
-                const typeIcon = transaction.type === 'in' ? 'arrow-down-right' : 'arrow-up-right';
-                const typeColor = transaction.type === 'in' ? 'success' : 'danger';
-                
-                detailsContainer.innerHTML = `
-                    <div class="row">
-                        <div class="col-md-6">
-                            <strong>Type:</strong><br>
-                            <span class="badge bg-${typeColor}-transparent text-${typeColor}">
-                                <i data-feather="${typeIcon}" style="width: 12px;"></i> ${transaction.type === 'in' ? 'Income' : 'Withdrawal'}
-                            </span>
-                        </div>
-                        <div class="col-md-6">
-                            <strong>Amount:</strong><br>
-                            <span class="fw-bold text-${typeColor}">${data.formatted_amount}</span>
-                        </div>
-                        <div class="col-md-6 mt-3">
-                            <strong>Status:</strong><br>
-                            <span class="badge bg-secondary">${transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}</span>
-                        </div>
-                        <div class="col-md-6 mt-3">
-                            <strong>Date:</strong><br>
-                            ${data.formatted_date}
-                        </div>
-                        <div class="col-12 mt-3">
-                            <strong>Reference:</strong><br>
-                            <code>${transaction.reference || '#' + transaction.id}</code>
-                        </div>
-                        ${transaction.details ? `
-                            <div class="col-12 mt-3">
-                                <strong>Details:</strong><br>
-                                <pre class="bg-light p-2 rounded">${JSON.stringify(transaction.details, null, 2)}</pre>
-                            </div>
-                        ` : ''}
-                    </div>
-                `;
-                
-                // Re-initialize feather icons
-                if (typeof feather !== 'undefined') {
-                    feather.replace();
-                }
-            })
-            .catch(error => {
-                detailsContainer.innerHTML = `<div class="alert alert-danger">Failed to load transaction details.</div>`;
-            });
-    }
-    
-    // Initialize feather icons and tooltips when DOM loads
-    document.addEventListener('DOMContentLoaded', function() {
-        if (typeof feather !== 'undefined') {
-            feather.replace();
+    <script>
+        // Clear withdrawal form
+        function clearWithdrawForm() {
+            const form = document.getElementById('withdrawForm');
+            if (form) {
+                form.reset();
+            }
         }
-        
-        // Initialize Bootstrap tooltips
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl);
-        });
-        
-        // Auto-hide alerts after 5 seconds
-        setTimeout(function() {
-            const alerts = document.querySelectorAll('.alert');
-            alerts.forEach(function(alert) {
-                if (alert) {
-                    alert.style.opacity = '0';
-                    alert.style.transition = 'opacity 0.5s ease';
-                    setTimeout(() => {
-                        if (alert.parentNode) {
-                            alert.parentNode.removeChild(alert);
-                        }
-                    }, 500);
+
+        // Retry withdrawal functionality
+        function retryWithdrawal(transactionId) {
+            if (confirm('Are you sure you want to retry this withdrawal?')) {
+                // Here you could implement retry logic
+                // For now, just show a message
+                showNotification('Retry functionality will be implemented soon', 'info');
+            }
+        }
+
+        // Notification system
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show position-fixed`;
+            notification.style.top = '20px';
+            notification.style.right = '20px';
+            notification.style.zIndex = '9999';
+            notification.style.minWidth = '300px';
+
+            const icon = type === 'success' ? 'check-circle' : type === 'error' ? 'x-circle' : 'info';
+
+            notification.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i data-feather="${icon}" class="me-2" style="width: 18px;"></i>
+                    <span>${message}</span>
+                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+
+            document.body.appendChild(notification);
+
+            // Replace feather icons
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
                 }
+            }, 5000);
+
+            return notification;
+        }
+
+        // Quick amount buttons
+        function setQuickAmount(amount) {
+            const amountInput = document.getElementById('amount');
+            if (amountInput) {
+                amountInput.value = amount;
+            }
+        }
+
+        // Form validation
+        function validateWithdrawForm() {
+            const amount = document.getElementById('amount');
+            const bankSelect = document.getElementById('shop_bank_id');
+            
+            if (!amount || !amount.value || parseFloat(amount.value) <= 0) {
+                showNotification('Please enter a valid withdrawal amount', 'error');
+                return false;
+            }
+
+            if (!bankSelect || !bankSelect.value) {
+                showNotification('Please select a bank account', 'error');
+                return false;
+            }
+
+            const maxAmount = parseFloat(amount.getAttribute('max'));
+            if (parseFloat(amount.value) > maxAmount) {
+                showNotification('Withdrawal amount exceeds available balance', 'error');
+                return false;
+            }
+
+            return true;
+        }
+
+        // Initialize feather icons and tooltips when DOM loads
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+
+            // Initialize Bootstrap tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
             });
-        }, 5000);
-        
-        console.log('Wallet dashboard loaded successfully');
-    });
-</script>
+
+            // Add quick amount buttons if form exists
+            const amountInput = document.getElementById('amount');
+            if (amountInput) {
+                const maxAmount = parseFloat(amountInput.getAttribute('max'));
+                const quickAmounts = [100000, 500000, 1000000];
+                
+                // Add max amount if it's different from predefined amounts
+                if (maxAmount > 0 && !quickAmounts.includes(maxAmount)) {
+                    quickAmounts.push(maxAmount);
+                }
+
+                const buttonsHtml = quickAmounts
+                    .filter(amount => amount <= maxAmount && amount > 0)
+                    .map(amount =>
+                        `<button type="button" class="btn btn-sm btn-outline-secondary me-1 mb-1" onclick="setQuickAmount(${amount})">
+                            Rp ${amount.toLocaleString('id-ID')}
+                        </button>`
+                    ).join('');
+
+                if (buttonsHtml) {
+                    const quickButtonsContainer = document.createElement('div');
+                    quickButtonsContainer.className = 'mt-2';
+                    quickButtonsContainer.innerHTML = `<small class="text-muted d-block mb-1">Quick amounts:</small>${buttonsHtml}`;
+                    amountInput.parentNode.appendChild(quickButtonsContainer);
+                }
+            }
+
+            // Add form submission validation
+            const withdrawForm = document.getElementById('withdrawForm');
+            if (withdrawForm) {
+                withdrawForm.addEventListener('submit', function(e) {
+                    if (!validateWithdrawForm()) {
+                        e.preventDefault();
+                    }
+                });
+            }
+
+            console.log('Wallet balance view loaded successfully');
+        });
+    </script>
 @endpush
 
-@push('head')
-<style>
-    /* Include the same styles from test-view */
-    .status-card {
-        transition: all 0.3s ease;
-        border: 1px solid #e9ecef;
-    }
-    
-    .status-card:hover {
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-        transform: translateY(-2px);
-    }
-    
-    .icon {
-        width: 50px;
-        height: 50px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 8px;
-    }
-    
-    .bg-success-transparent { background-color: rgba(40, 167, 69, 0.1); }
-    .bg-warning-transparent { background-color: rgba(255, 193, 7, 0.1); }
-    .bg-primary-transparent { background-color: rgba(93, 135, 255, 0.1); }
-    .bg-danger-transparent { background-color: rgba(220, 53, 69, 0.1); }
-    .bg-info-transparent { background-color: rgba(13, 202, 240, 0.1); }
-    
-    .table-responsive { border-radius: 8px; }
-    .table th {
-        background-color: #f8f9fa;
-        border-color: #dee2e6;
-        font-weight: 600;
-        font-size: 0.875rem;
-    }
-    .table td { border-color: #dee2e6; vertical-align: middle; }
-    
-    .badge { font-size: 0.75rem; padding: 0.35em 0.65em; }
-    .btn { border-radius: 6px; }
-    .btn-sm { padding: 0.25rem 0.5rem; }
-    .alert { border-radius: 8px; }
-    .card {
-        border: 1px solid #e9ecef;
-        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-    }
-    .border-color { border-color: #e9ecef !important; }
-    
-    .fs-25 { font-size: 1.5625rem !important; }
-    .fs-15 { font-size: 0.9375rem !important; }
-    .fs-13 { font-size: 0.8125rem !important; }
-    .fs-12 { font-size: 0.75rem !important; }
-    
-    .mb-24 { margin-bottom: 1.5rem !important; }
-    .p-25 { padding: 1.5625rem !important; }
-    .mb-20 { margin-bottom: 1.25rem !important; }
-    .pb-20 { padding-bottom: 1.25rem !important; }
-</style>
-@endpush
