@@ -78,12 +78,12 @@
 					</a>
 				</li>
 
-                <li class="{{ request()->routeIs('seller.sku.*') ? 'mm-active' : '' }}">
+                <!-- <li class="{{ request()->routeIs('seller.sku.*') ? 'mm-active' : '' }}">
 					<a href="#" class="menu-title">
 						<span class="icon"><i data-feather="archive"></i></span>
 						<span class="title">SKU Management</span>
 					</a>
-				</li>
+				</li> -->
 				
 				<!-- Category Management -->
 				<li class="{{ request()->routeIs('seller.categories.*') ? 'mm-active' : '' }}">
@@ -116,7 +116,7 @@
 				<li class="{{ request()->routeIs('seller.shipping.*') ? 'mm-active' : '' }}">
 					<a href="#" class="menu-title">
 						<span class="icon"><i data-feather="truck"></i></span>
-						<span class="title">Shipping Methods</span>
+						<span class="title">Shipping Methods (soon)</span>
 					</a>
 				</li>
 
@@ -135,7 +135,7 @@
 				
 				<!-- Bank Account Management -->
 				<li class="{{ request()->routeIs('seller.bank-accounts.*') ? 'mm-active' : '' }}">
-					<a href="#" class="menu-title">
+					<a href="{{ route('seller.bank-accounts.index') }}" class="menu-title">
 						<span class="icon"><i data-feather="credit-card"></i></span>
 						<span class="title">Bank Accounts</span>
 					</a>
@@ -147,7 +147,7 @@
 				<li class="{{ request()->routeIs('seller.shop.*') ? 'mm-active' : '' }}">
 					<a href="{{ route('seller.shop.settings') }}" class="menu-title">
 						<span class="icon"><i data-feather="settings"></i></span>
-						<span class="title">Shop Settings</span>
+						<span class="title">Shop Settings (soon)</span>
 					</a>
 				</li>
 				
@@ -155,7 +155,7 @@
 				<li>
 					<a href="#" class="menu-title">
 						<span class="icon"><i data-feather="user"></i></span>
-						<span class="title">Profile Settings</span>
+						<span class="title">Profile Settings (soon)</span>
 					</a>
 				</li>
 				
@@ -163,7 +163,7 @@
 				<li>
 					<a href="#" class="has-arrow menu-title" aria-expanded="false">
 						<span class="icon"><i data-feather="help-circle"></i></span>
-						<span class="title">Support & Help</span>
+						<span class="title">Support & Help (soon)</span>
 					</a>
 					<ul class="sidemenu-second-level">
 						<li><a href="#">Help Center</a></li>

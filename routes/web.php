@@ -75,13 +75,14 @@ Route::middleware('auth')->group(function () {
         
         // Bank Account Management
         Route::group(['prefix' => 'bank-accounts'], function () {
-            Route::get('/', [SellerController::class, 'bankAccountsList'])->name('seller.bank-accounts.index');
-            Route::get('/create', [SellerController::class, 'bankAccountsCreate'])->name('seller.bank-accounts.create');
-            Route::post('/', [SellerController::class, 'bankAccountsStore'])->name('seller.bank-accounts.store');
-            Route::get('/{account}/edit', [SellerController::class, 'bankAccountsEdit'])->name('seller.bank-accounts.edit');
-            Route::put('/{account}', [SellerController::class, 'bankAccountsUpdate'])->name('seller.bank-accounts.update');
-            Route::delete('/{account}', [SellerController::class, 'bankAccountsDestroy'])->name('seller.bank-accounts.destroy');
-            Route::post('/{account}/set-primary', [SellerController::class, 'setPrimaryBankAccount'])->name('seller.bank-accounts.set-primary');
+            Route::get('/', [App\Http\Controllers\Seller\ShopBankController::class, 'index'])->name('seller.bank-accounts.index');
+            Route::get('/create', [App\Http\Controllers\Seller\ShopBankController::class, 'create'])->name('seller.bank-accounts.create');
+            Route::post('/', [App\Http\Controllers\Seller\ShopBankController::class, 'store'])->name('seller.bank-accounts.store');
+            Route::get('/{bankAccount}', [App\Http\Controllers\Seller\ShopBankController::class, 'show'])->name('seller.bank-accounts.show');
+            Route::get('/{bankAccount}/edit', [App\Http\Controllers\Seller\ShopBankController::class, 'edit'])->name('seller.bank-accounts.edit');
+            Route::put('/{bankAccount}', [App\Http\Controllers\Seller\ShopBankController::class, 'update'])->name('seller.bank-accounts.update');
+            Route::delete('/{bankAccount}', [App\Http\Controllers\Seller\ShopBankController::class, 'destroy'])->name('seller.bank-accounts.destroy');
+            Route::post('/{bankAccount}/set-primary', [App\Http\Controllers\Seller\ShopBankController::class, 'setPrimary'])->name('seller.bank-accounts.set-primary');
         });
         
         // Shipping Method Setup

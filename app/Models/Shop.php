@@ -45,4 +45,14 @@ class Shop extends Model implements HasMedia
     {
         return $this->getFirstMedia('logo');
     }
+
+    public function banks()
+    {
+        return $this->hasMany(ShopBank::class);
+    }
+
+    public function defaultBank()
+    {
+        return $this->hasOne(ShopBank::class)->where('is_default', true);
+    }
 }
