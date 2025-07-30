@@ -19,7 +19,7 @@ class InventoryController extends Controller
     public function index(Request $request)
     {
         $shop = Auth::user()->shop;
-        
+
         if (!$shop) {
             return redirect()->route('seller.dashboard')->with('error', 'Please setup your shop first.');
         }
@@ -30,9 +30,9 @@ class InventoryController extends Controller
         if ($request->has('search') && $request->search) {
             $searchTerm = $request->search;
             $query->where(function($q) use ($searchTerm) {
-                $q->where('name', 'like', '%' . $searchTerm . '%')
-                  ->orWhere('sku', 'like', '%' . $searchTerm . '%')
-                  ->orWhere('description', 'like', '%' . $searchTerm . '%');
+                $q->where('name', 'ilike', '%' . $searchTerm . '%')
+                  ->orWhere('sku', 'ilike', '%' . $searchTerm . '%')
+                  ->orWhere('description', 'ilike', '%' . $searchTerm . '%');
             });
         }
 
@@ -47,7 +47,7 @@ class InventoryController extends Controller
     public function create()
     {
         $shop = Auth::user()->shop;
-        
+
         if (!$shop) {
             return redirect()->route('seller.dashboard')->with('error', 'Please setup your shop first.');
         }
@@ -55,7 +55,7 @@ class InventoryController extends Controller
         // Get global categories (without shop_id) and local categories (with current shop_id)
         $globalCategories = Category::whereNull('shop_id')->orderBy('name')->get();
         $localCategories = Category::where('shop_id', $shop->id)->orderBy('name')->get();
-        
+
         return view('seller.inventory.create', compact('globalCategories', 'localCategories'));
     }
 
@@ -65,7 +65,7 @@ class InventoryController extends Controller
     public function store(Request $request)
     {
         $shop = Auth::user()->shop;
-        
+
         if (!$shop) {
             return redirect()->route('seller.dashboard')->with('error', 'Please setup your shop first.');
         }
@@ -104,7 +104,7 @@ class InventoryController extends Controller
                                         ->whereNull('shop_id')
                                         ->pluck('id')
                                         ->toArray();
-        
+
         if (count($validGlobalCategories) !== count($globalCategoryIds)) {
             return back()->withErrors(['global_categories' => 'One or more selected global categories are invalid.'])
                         ->withInput();
@@ -117,7 +117,7 @@ class InventoryController extends Controller
                                            ->where('shop_id', $shop->id)
                                            ->pluck('id')
                                            ->toArray();
-            
+
             if (count($validLocalCategories) !== count($localCategoryIds)) {
                 return back()->withErrors(['local_categories' => 'One or more selected local categories are invalid.'])
                             ->withInput();
@@ -133,7 +133,7 @@ class InventoryController extends Controller
         $validated['slug'] = Str::slug($validated['name']);
         $originalSlug = $validated['slug'];
         $counter = 1;
-        
+
         // Ensure slug uniqueness
         while (Product::where('slug', $validated['slug'])->exists()) {
             $validated['slug'] = $originalSlug . '-' . $counter;
@@ -146,7 +146,7 @@ class InventoryController extends Controller
         if (isset($validated['tags'])) {
             $validated['tags'] = array_filter(array_map('trim', explode(',', $validated['tags'])));
         }
-        
+
         if (isset($validated['specification'])) {
             $validated['specification'] = array_filter(array_map('trim', explode(',', $validated['specification'])));
         }
@@ -162,12 +162,12 @@ class InventoryController extends Controller
         $product->categories()->attach($allCategoryIds);
 
         // Handle image uploads using existing relations
-        
+
         // 1. Handle Default Image (required)
         if ($request->hasFile('default_image')) {
             $defaultImage = $request->file('default_image');
             $path = $defaultImage->store('products', 'public');
-            
+
             // Create media record for default image using defaultImage() relation
             $product->media()->create([
                 'file_name' => $path, // Store the path in file_name
@@ -183,7 +183,7 @@ class InventoryController extends Controller
         if ($request->hasFile('hover_image')) {
             $hoverImage = $request->file('hover_image');
             $path = $hoverImage->store('products', 'public');
-            
+
             // Create media record for hover image using hoverImage() relation
             $product->media()->create([
                 'file_name' => $path, // Store the path in file_name
@@ -199,7 +199,7 @@ class InventoryController extends Controller
         if ($request->hasFile('gallery_images')) {
             foreach ($request->file('gallery_images') as $index => $galleryImage) {
                 $path = $galleryImage->store('products', 'public');
-                
+
                 // Create media record for gallery image using images() relation
                 $product->media()->create([
                     'file_name' => $path, // Store the path in file_name
@@ -221,13 +221,13 @@ class InventoryController extends Controller
     public function show(Product $product)
     {
         $shop = Auth::user()->shop;
-        
+
         if (!$shop || $product->shop_id !== $shop->id) {
             abort(404);
         }
 
         $product->load(['images', 'categories', 'variants']);
-        
+
         return view('seller.inventory.show', compact('product'));
     }
 
@@ -237,18 +237,18 @@ class InventoryController extends Controller
     public function edit(Product $product)
     {
         $shop = Auth::user()->shop;
-        
+
         if (!$shop || $product->shop_id !== $shop->id) {
             abort(404);
         }
 
         // Load product with media relations
         $product->load(['categories', 'variants', 'defaultImage', 'hoverImage', 'images']);
-        
+
         // Get global categories (without shop_id) and local categories (with shop_id)
         $globalCategories = Category::whereNull('shop_id')->get();
         $localCategories = Category::where('shop_id', $shop->id)->get();
-        
+
         return view('seller.inventory.edit', compact('product', 'globalCategories', 'localCategories'));
     }
 
@@ -258,7 +258,7 @@ class InventoryController extends Controller
     public function update(Request $request, Product $product)
     {
         $shop = Auth::user()->shop;
-        
+
         if (!$shop || $product->shop_id !== $shop->id) {
             abort(404);
         }
@@ -298,7 +298,7 @@ class InventoryController extends Controller
             if ($existingDefaultImage) {
                 $existingDefaultImage->delete();
             }
-            
+
             $product->addMediaFromRequest('default_image')
                     ->toMediaCollection('default-image');
         }
@@ -310,7 +310,7 @@ class InventoryController extends Controller
             if ($existingHoverImage) {
                 $existingHoverImage->delete();
             }
-            
+
             $product->addMediaFromRequest('hover_image')
                     ->toMediaCollection('hover-image');
         }
@@ -322,7 +322,7 @@ class InventoryController extends Controller
             foreach ($existingGalleryImages as $image) {
                 $image->delete();
             }
-            
+
             foreach ($request->file('gallery_images') as $file) {
                 $product->addMedia($file)
                         ->toMediaCollection('image');
@@ -350,7 +350,7 @@ class InventoryController extends Controller
     public function destroy(Product $product)
     {
         $shop = Auth::user()->shop;
-        
+
         if (!$shop || $product->shop_id !== $shop->id) {
             abort(404);
         }
@@ -376,7 +376,7 @@ class InventoryController extends Controller
     public function addVariant(Request $request, Product $product)
     {
         $shop = Auth::user()->shop;
-        
+
         if (!$shop || $product->shop_id !== $shop->id) {
             abort(404);
         }
@@ -409,7 +409,7 @@ class InventoryController extends Controller
     {
         $shop = Auth::user()->shop;
         $product = $variant->product;
-        
+
         if (!$shop || $product->shop_id !== $shop->id) {
             abort(404);
         }
@@ -425,7 +425,7 @@ class InventoryController extends Controller
     public function bulkStatusUpdate(Request $request)
     {
         $shop = Auth::user()->shop;
-        
+
         if (!$shop) {
             return response()->json(['error' => 'Shop not found'], 404);
         }
@@ -449,7 +449,7 @@ class InventoryController extends Controller
     public function bulkDelete(Request $request)
     {
         $shop = Auth::user()->shop;
-        
+
         if (!$shop) {
             return response()->json(['error' => 'Shop not found'], 404);
         }

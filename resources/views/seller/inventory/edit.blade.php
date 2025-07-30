@@ -16,27 +16,8 @@
 </div>
 <!--=== End Section Title Area ===-->
 
-@if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        {{ session('success') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-@endif
-
-@if($errors->any())
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <h6>Please fix the following errors:</h6>
-        <ul class="mb-0">
-            @foreach($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-@endif
-
 <!--=== Start Create Product Area ===-->
-<form action="{{ route('seller.products.update', $product) }}" method="POST" enctype="multipart/form-data" id="productForm">
+<form action="{{ route('seller.products.update', $product->slug) }}" method="POST" enctype="multipart/form-data" id="productForm">
 @csrf
 @method('PUT')
 <div class="row justify-content-center">
@@ -52,8 +33,8 @@
                         <div class="form-group mb-25">
                             <label class="fw-semibold fs-14 text-dark mb-2">Product Title<span class="text-danger">*</span></label>
                             <div class="form-floating">
-                                <input type="text" class="form-control @error('name') is-invalid @enderror" 
-                                       name="name" id="floatingInput" value="{{ old('name', $product->name) }}" 
+                                <input type="text" class="form-control @error('name') is-invalid @enderror"
+                                       name="name" id="floatingInput" value="{{ old('name', $product->name) }}"
                                        placeholder="Enter Product Title" required>
                                 <label class="text-body fs-12" for="floatingInput">Enter Product Title</label>
                                 @error('name')
@@ -66,7 +47,7 @@
                     <div class="col-lg-12">
                         <div class="form-group mb-25">
                             <label class="fw-semibold fs-14 text-dark mb-2">Features<span class="text-danger">*</span></label>
-                            
+
                             <div class="wysiwyg-wrap">
                                 <div class="text-wysiwyg mb-25">
                                     <div id="wysiwyg">
@@ -171,7 +152,7 @@
                     <div class="col-lg-12">
                         <div class="form-group mb-25">
                             <label class="fw-semibold fs-14 text-dark mb-2">Default Product Image<span class="text-danger">*</span></label>
-                            
+
                             <div class="file-upload-wrap border-1 rounded-3 mb-10">
                                 <div class="avatar-upload">
                                     <div class="avatar-edit">
@@ -198,7 +179,7 @@
                         <div class="form-group mb-25">
                             <label class="fw-semibold fs-14 text-dark mb-2">Hover Image</label>
                             <div class="form-text mb-2">Image shown when user hovers over the product</div>
-                            
+
                             <div class="file-upload-wrap border-1 rounded-3 mb-10">
                                 <div class="avatar-upload">
                                     <div class="avatar-edit">
@@ -225,7 +206,7 @@
                         <div class="form-group mb-25">
                             <label class="fw-semibold fs-14 text-dark mb-2">Product Gallery</label>
                             <div class="form-text mb-2">Additional product images for gallery</div>
-                            
+
                             <div class="file-upload-wrap border-1 rounded-3 mb-10">
                                 <div class="avatar-upload">
                                     <div class="avatar-edit">
@@ -266,8 +247,8 @@
                         <div class="form-group mb-25">
                             <label class="fw-semibold fs-14 text-dark mb-2">Product Price<span class="text-danger">*</span></label>
                             <div class="form-floating">
-                                <input type="number" step="0.01" min="0" class="form-control @error('price') is-invalid @enderror" 
-                                       name="price" id="floatingInput2" value="{{ old('price', $product->price) }}" 
+                                <input type="number" step="0.01" min="0" class="form-control @error('price') is-invalid @enderror"
+                                       name="price" id="floatingInput2" value="{{ old('price', $product->price) }}"
                                        placeholder="Enter Product Price" required>
                                 <label class="text-body fs-12" for="floatingInput2">Enter Product Price</label>
                                 @error('price')
@@ -281,8 +262,8 @@
                         <div class="form-group mb-25">
                             <label class="fw-semibold fs-14 text-dark mb-2">Sale Price</label>
                             <div class="form-floating">
-                                <input type="number" step="0.01" min="0" class="form-control @error('final_price') is-invalid @enderror" 
-                                       name="final_price" id="finalPrice" value="{{ old('final_price', $product->final_price) }}" 
+                                <input type="number" step="0.01" min="0" class="form-control @error('final_price') is-invalid @enderror"
+                                       name="final_price" id="finalPrice" value="{{ old('final_price', $product->final_price) }}"
                                        placeholder="Enter Sale Price">
                                 <label class="text-body fs-12" for="finalPrice">Enter Sale Price</label>
                                 @error('final_price')
@@ -296,8 +277,8 @@
                         <div class="form-group mb-25">
                             <label class="fw-semibold fs-14 text-dark mb-2">Product SKU Number</label>
                             <div class="form-floating">
-                                <input type="text" class="form-control @error('sku') is-invalid @enderror" 
-                                       name="sku" id="floatingInput3" value="{{ old('sku', $product->sku) }}" 
+                                <input type="text" class="form-control @error('sku') is-invalid @enderror"
+                                       name="sku" id="floatingInput3" value="{{ old('sku', $product->sku) }}"
                                        placeholder="Enter SKU">
                                 <label class="text-body fs-12" for="floatingInput3">Enter SKU Number</label>
                                 @error('sku')
@@ -311,8 +292,8 @@
                         <div class="form-group mb-25">
                             <label class="fw-semibold fs-14 text-dark mb-2">Product Brand</label>
                             <div class="form-floating">
-                                <input type="text" class="form-control @error('brand') is-invalid @enderror" 
-                                       name="brand" id="brandInput" value="{{ old('brand', $product->brand) }}" 
+                                <input type="text" class="form-control @error('brand') is-invalid @enderror"
+                                       name="brand" id="brandInput" value="{{ old('brand', $product->brand) }}"
                                        placeholder="Enter Brand">
                                 <label class="text-body fs-12" for="brandInput">Enter Brand</label>
                                 @error('brand')
@@ -326,8 +307,8 @@
                         <div class="form-group mb-25">
                             <label class="fw-semibold fs-14 text-dark mb-2">Product Weight (kg)</label>
                             <div class="form-floating">
-                                <input type="number" step="0.01" min="0" class="form-control @error('weight') is-invalid @enderror" 
-                                       name="weight" id="weightInput" value="{{ old('weight', $product->weight) }}" 
+                                <input type="number" step="0.01" min="0" class="form-control @error('weight') is-invalid @enderror"
+                                       name="weight" id="weightInput" value="{{ old('weight', $product->weight) }}"
                                        placeholder="Enter Weight">
                                 <label class="text-body fs-12" for="weightInput">Enter Weight</label>
                                 @error('weight')
@@ -341,8 +322,8 @@
                         <div class="form-group mb-25">
                             <label class="fw-semibold fs-14 text-dark mb-2">Product In Stocks<span class="text-danger">*</span></label>
                             <div class="form-floating">
-                                <input type="number" min="0" class="form-control @error('stock') is-invalid @enderror" 
-                                       name="stock" id="floatingInput4" value="{{ old('stock', $product->stock) }}" 
+                                <input type="number" min="0" class="form-control @error('stock') is-invalid @enderror"
+                                       name="stock" id="floatingInput4" value="{{ old('stock', $product->stock) }}"
                                        placeholder="Enter Stocks Number" required>
                                 <label class="text-body fs-12" for="floatingInput4">Enter Stocks Number</label>
                                 @error('stock')
@@ -356,8 +337,8 @@
                         <div class="form-group mb-25">
                             <label class="fw-semibold fs-14 text-dark mb-2">Product Long Description</label>
                             <div class="form-floating">
-                                <textarea class="form-control text-area @error('long_description') is-invalid @enderror" 
-                                          name="long_description" id="floatingInput7" 
+                                <textarea class="form-control text-area @error('long_description') is-invalid @enderror"
+                                          name="long_description" id="floatingInput7"
                                           placeholder="Enter Product Long Description" cols="30" rows="10">{{ old('long_description', $product->long_description) }}</textarea>
                                 <label class="text-body fs-12" for="floatingInput7">Enter Product Long Description</label>
                                 @error('long_description')
@@ -370,17 +351,17 @@
                     <div class="col-lg-12">
                         <div class="form-group mb-25">
                             <label class="fw-semibold fs-14 text-dark mb-2">Status<span class="text-danger">*</span></label>
-                            
+
                             <div class="d-flex align-items-center">
                                 <div class="form-check d-flex align-items-center me-4">
-                                    <input class="form-check-input" type="radio" name="status" value="active" 
+                                    <input class="form-check-input" type="radio" name="status" value="active"
                                            id="flexRadioDefault1" {{ old('status', $product->status) == 'active' ? 'checked' : '' }}>
                                     <label class="form-check-label position-relative fs-14 fw-medium ms-2" for="flexRadioDefault1" style="top: 1px;">
                                         Active
                                     </label>
                                 </div>
                                 <div class="form-check d-flex align-items-center me-4">
-                                    <input class="form-check-input" type="radio" name="status" value="inactive" 
+                                    <input class="form-check-input" type="radio" name="status" value="inactive"
                                            id="flexRadioDefault2" {{ old('status', $product->status) == 'inactive' ? 'checked' : (old('status') ? '' : ($product->status == 'inactive' ? 'checked' : '')) }}>
                                     <label class="form-check-label position-relative fs-14 fw-medium ms-2" for="flexRadioDefault2" style="top: 1px;">
                                         Inactive
@@ -397,14 +378,14 @@
                         <div class="form-group mb-25">
                             <div class="d-flex align-items-center">
                                 <div class="form-check d-flex align-items-center me-4">
-                                    <input class="form-check-input" type="checkbox" name="is_featured" value="1" 
+                                    <input class="form-check-input" type="checkbox" name="is_featured" value="1"
                                            id="isFeatured" {{ old('is_featured', $product->is_featured) ? 'checked' : '' }}>
                                     <label class="form-check-label position-relative fs-14 fw-medium ms-2" for="isFeatured" style="top: 1px;">
                                         Featured Product
                                     </label>
                                 </div>
                                 <div class="form-check d-flex align-items-center">
-                                    <input class="form-check-input" type="checkbox" name="is_popular" value="1" 
+                                    <input class="form-check-input" type="checkbox" name="is_popular" value="1"
                                            id="isPopular" {{ old('is_popular', $product->is_popular) ? 'checked' : '' }}>
                                     <label class="form-check-label position-relative fs-14 fw-medium ms-2" for="isPopular" style="top: 1px;">
                                         Popular Product
@@ -438,7 +419,7 @@
                     <div style="max-height: 200px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 0.375rem; padding: 10px;">
                         @foreach($globalCategories as $category)
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="global_categories[]" 
+                                <input class="form-check-input" type="checkbox" name="global_categories[]"
                                        value="{{ $category->id }}" id="global_cat_{{ $category->id }}"
                                        {{ in_array($category->id, old('global_categories', $product->categories->pluck('id')->toArray())) ? 'checked' : '' }}>
                                 <label class="form-check-label" style="margin-top: 5px; margin-left: 10px" for="global_cat_{{ $category->id }}">
@@ -459,7 +440,7 @@
                     <div style="max-height: 200px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 0.375rem; padding: 10px;">
                         @foreach($localCategories as $category)
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="local_categories[]" 
+                                <input class="form-check-input" type="checkbox" name="local_categories[]"
                                        value="{{ $category->id }}" id="local_cat_{{ $category->id }}"
                                        {{ in_array($category->id, old('local_categories', $product->categories->pluck('id')->toArray())) ? 'checked' : '' }}>
                                 <label class="form-check-label" style="margin-top: 5px; margin-left: 10px" for="local_cat_{{ $category->id }}">
@@ -476,7 +457,7 @@
                 <div class="form-group mb-25">
                     <label class="fw-semibold fs-14 text-dark mb-2">Your Shop Categories</label>
                     <p class="text-muted">
-                        No shop categories yet. 
+                        No shop categories yet.
                         <a href="{{ route('seller.categories.create') }}" target="_blank">Create one</a>
                     </p>
                 </div>
@@ -485,8 +466,8 @@
                 <div class="form-group">
                     <label class="fw-semibold fs-14 text-dark mb-2">Tags</label>
                     <div class="form-floating">
-                        <input type="text" class="form-control @error('tags') is-invalid @enderror" 
-                               name="tags" id="tagsInput" value="{{ old('tags') }}" 
+                        <input type="text" class="form-control @error('tags') is-invalid @enderror"
+                               name="tags" id="tagsInput" value="{{ old('tags') }}"
                                placeholder="tag1, tag2, tag3">
                         <label class="text-body fs-12" for="tagsInput">Enter tags separated by commas</label>
                         @error('tags')
@@ -502,12 +483,12 @@
                 <div class="card-title mb-20 pb-20 border-bottom border-color">
                     <h4 class="mb-2 mb-sm-0">Product Meta Data</h4>
                 </div>
-                
+
                 <div class="form-group mb-25">
                     <label class="fw-semibold fs-14 text-dark mb-2">Product Meta Title</label>
                     <div class="form-floating">
-                        <input type="text" class="form-control @error('meta_title') is-invalid @enderror" 
-                               name="meta_title" id="floatingInput8" value="{{ old('meta_title', $product->meta_title) }}" 
+                        <input type="text" class="form-control @error('meta_title') is-invalid @enderror"
+                               name="meta_title" id="floatingInput8" value="{{ old('meta_title', $product->meta_title) }}"
                                placeholder="Enter Product Meta Title">
                         <label class="text-body fs-12" for="floatingInput8">Enter Product Meta Title</label>
                         @error('meta_title')
@@ -519,8 +500,8 @@
                 <div class="form-group mb-25">
                     <label class="fw-semibold fs-14 text-dark mb-2">Product Meta Keywords</label>
                     <div class="form-floating">
-                        <input type="text" class="form-control @error('meta_keywords') is-invalid @enderror" 
-                               name="meta_keywords" id="floatingInput9" value="{{ old('meta_keywords', $product->meta_keywords) }}" 
+                        <input type="text" class="form-control @error('meta_keywords') is-invalid @enderror"
+                               name="meta_keywords" id="floatingInput9" value="{{ old('meta_keywords', $product->meta_keywords) }}"
                                placeholder="Enter Product Meta Keywords">
                         <label class="text-body fs-12" for="floatingInput9">Enter Product Meta Keywords</label>
                         @error('meta_keywords')
@@ -532,8 +513,8 @@
                 <div class="form-group">
                     <label class="fw-semibold fs-14 text-dark mb-2">Product Meta Description</label>
                     <div class="form-floating">
-                        <textarea class="form-control text-area @error('meta_description') is-invalid @enderror" 
-                                  name="meta_description" id="floatingInput10" 
+                        <textarea class="form-control text-area @error('meta_description') is-invalid @enderror"
+                                  name="meta_description" id="floatingInput10"
                                   placeholder="Enter Product Meta Description" cols="30" rows="10">{{ old('meta_description', $product->meta_description) }}</textarea>
                         <label class="text-body fs-12" for="floatingInput10">Enter Product Meta Description</label>
                         @error('meta_description')
@@ -554,23 +535,23 @@ document.addEventListener('DOMContentLoaded', function() {
     // WYSIWYG Editor functionality
     const editor = document.getElementById('editor');
     const hiddenDescription = document.getElementById('hiddenDescription');
-    
+
     // Update hidden textarea when editor content changes
     editor.addEventListener('input', function() {
         hiddenDescription.value = editor.innerHTML;
     });
-    
+
     // Initialize hidden textarea with editor content
     if (editor.innerHTML.trim() !== '') {
         hiddenDescription.value = editor.innerHTML;
     }
-    
+
     // WYSIWYG commands
     document.querySelectorAll('[data-cmd]').forEach(button => {
         button.addEventListener('click', function(e) {
             e.preventDefault();
             const cmd = this.getAttribute('data-cmd');
-            
+
             if (cmd === 'createlink' || cmd === 'insertimage') {
                 const url = prompt(`Please enter the ${cmd === 'createlink' ? 'link URL' : 'image URL'}:`);
                 if (url) {
@@ -583,12 +564,12 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 document.execCommand(cmd, false, null);
             }
-            
+
             // Update hidden textarea
             hiddenDescription.value = editor.innerHTML;
         });
     });
-    
+
     // Image preview functionality
     function readURL(input, previewId) {
         if (input.files && input.files[0]) {
@@ -599,27 +580,27 @@ document.addEventListener('DOMContentLoaded', function() {
             reader.readAsDataURL(input.files[0]);
         }
     }
-    
+
     // Default image preview
     document.getElementById('defaultImageUpload').addEventListener('change', function() {
         readURL(this, 'defaultImagePreview');
     });
-    
+
     // Hover image preview
     document.getElementById('hoverImageUpload').addEventListener('change', function() {
         readURL(this, 'hoverImagePreview');
     });
-    
+
     // Gallery images preview
     document.getElementById('galleryImagesUpload').addEventListener('change', function() {
         const files = this.files;
         const previewIds = ['galleryPreview1', 'galleryPreview2', 'galleryPreview3'];
-        
+
         // Reset previews
         previewIds.forEach(id => {
             document.getElementById(id).style.backgroundImage = '';
         });
-        
+
         // Show new previews
         Array.from(files).slice(0, 3).forEach((file, index) => {
             if (file.type.startsWith('image/')) {
@@ -631,18 +612,18 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-    
+
     // Form validation
     document.getElementById('productForm').addEventListener('submit', function(e) {
         const globalCategories = document.querySelectorAll('input[name="global_categories[]"]:checked');
         const defaultImage = document.getElementById('defaultImageUpload').files.length;
-        
+
         if (globalCategories.length === 0) {
             e.preventDefault();
             alert('Please select at least one global category.');
             return false;
         }
-        
+
         // For edit mode, default image is only required if none exists and none is being uploaded
         const existingDefaultImage = {{ $product->defaultImage ? 'true' : 'false' }};
         if (!existingDefaultImage && defaultImage === 0) {
@@ -651,12 +632,12 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('defaultImageUpload').focus();
             return false;
         }
-        
+
         // Update description from editor before submit
         const editor = document.getElementById('editor');
         const hiddenDescription = document.getElementById('hiddenDescription');
         hiddenDescription.value = editor.innerHTML;
-        
+
         if (!hiddenDescription.value.trim() || hiddenDescription.value.trim() === '<p>Type product description</p>') {
             e.preventDefault();
             alert('Please enter product description.');
@@ -664,7 +645,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return false;
         }
     });
-    
+
     // Auto-hide alerts after 5 seconds
     setTimeout(function() {
         const alerts = document.querySelectorAll('.alert');
@@ -679,4 +660,3 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 @endpush
 @endsection
-                                              
