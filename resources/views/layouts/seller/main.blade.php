@@ -78,12 +78,12 @@
 					</a>
 				</li>
 
-                <li class="{{ request()->routeIs('seller.sku.*') ? 'mm-active' : '' }}">
+                <!-- <li class="{{ request()->routeIs('seller.sku.*') ? 'mm-active' : '' }}">
 					<a href="#" class="menu-title">
 						<span class="icon"><i data-feather="archive"></i></span>
 						<span class="title">SKU Management</span>
 					</a>
-				</li>
+				</li> -->
 				
 				<!-- Category Management -->
 				<li class="{{ request()->routeIs('seller.categories.*') ? 'mm-active' : '' }}">
@@ -124,18 +124,15 @@
 				
 				<!-- Wallet & Withdraw Flow -->
 				<li class="{{ request()->routeIs('seller.wallet.*') ? 'mm-active' : '' }}">
-					<a href="#" class="menu-title">
+					<a href="{{ route('seller.wallet.index') }}" class="menu-title">
 						<span class="icon"><i data-feather="credit-card"></i></span>
 						<span class="title">Seller Wallet</span>
-						@if(Auth::user()->wallet && Auth::user()->wallet->balance > 0)
-							<span class="count bg-success">Rp {{ number_format(Auth::user()->wallet->balance) }}</span>
-						@endif
 					</a>
 				</li>
 				
 				<!-- Bank Account Management -->
 				<li class="{{ request()->routeIs('seller.bank-accounts.*') ? 'mm-active' : '' }}">
-					<a href="#" class="menu-title">
+					<a href="{{ route('seller.bank-accounts.index') }}" class="menu-title">
 						<span class="icon"><i data-feather="credit-card"></i></span>
 						<span class="title">Bank Accounts</span>
 					</a>
@@ -143,11 +140,20 @@
 
 				<li><span class="cat">SETTINGS</span></li>
 				
+				<!-- Test View for Development -->
+				<li class="{{ request()->routeIs('seller.test-view') ? 'mm-active' : '' }}">
+					<a href="{{ route('seller.test-view') }}" class="menu-title">
+						<span class="icon"><i data-feather="code"></i></span>
+						<span class="title">Test View</span>
+						<span class="badge bg-warning ms-2">DEV</span>
+					</a>
+				</li>
+				
 				<!-- Shop Settings -->
 				<li class="{{ request()->routeIs('seller.shop.*') ? 'mm-active' : '' }}">
 					<a href="{{ route('seller.shop.settings') }}" class="menu-title">
 						<span class="icon"><i data-feather="settings"></i></span>
-						<span class="title">Shop Settings</span>
+						<span class="title">Shop Settings (soon)</span>
 					</a>
 				</li>
 				
@@ -155,7 +161,7 @@
 				<li>
 					<a href="#" class="menu-title">
 						<span class="icon"><i data-feather="user"></i></span>
-						<span class="title">Profile Settings</span>
+						<span class="title">Profile Settings (soon)</span>
 					</a>
 				</li>
 				
@@ -163,7 +169,7 @@
 				<li>
 					<a href="#" class="has-arrow menu-title" aria-expanded="false">
 						<span class="icon"><i data-feather="help-circle"></i></span>
-						<span class="title">Support & Help</span>
+						<span class="title">Support & Help (soon)</span>
 					</a>
 					<ul class="sidemenu-second-level">
 						<li><a href="#">Help Center</a></li>
@@ -661,6 +667,6 @@
         <script src="/admin-assets/assets/js/amcharts/Animated.js"></script>
 		<script src="/admin-assets/assets/js/apex/ecommerce-chart.js"></script>
 		<script src="/admin-assets/assets/js/custom.js"></script>
-        @stack('script')
+        @stack('scripts')
     </body>
 </html>

@@ -16,7 +16,7 @@ class CategoryController extends Controller
     public function index(Request $request)
     {
         $shop = Auth::user()->shop;
-        
+
         if (!$shop) {
             return redirect()->route('seller.dashboard')->with('error', 'Please setup your shop first.');
         }
@@ -43,7 +43,7 @@ class CategoryController extends Controller
     public function create()
     {
         $shop = Auth::user()->shop;
-        
+
         if (!$shop) {
             return redirect()->route('seller.dashboard')->with('error', 'Please setup your shop first.');
         }
@@ -57,7 +57,7 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $shop = Auth::user()->shop;
-        
+
         if (!$shop) {
             return redirect()->route('seller.dashboard')->with('error', 'Please setup your shop first.');
         }
@@ -93,7 +93,7 @@ class CategoryController extends Controller
     public function show(Category $category)
     {
         $shop = Auth::user()->shop;
-        
+
         if (!$shop || $category->shop_id !== $shop->id) {
             abort(404);
         }
@@ -109,7 +109,7 @@ class CategoryController extends Controller
     public function edit(Category $category)
     {
         $shop = Auth::user()->shop;
-        
+
         if (!$shop || $category->shop_id !== $shop->id) {
             abort(404);
         }
@@ -123,7 +123,7 @@ class CategoryController extends Controller
     public function update(Request $request, Category $category)
     {
         $shop = Auth::user()->shop;
-        
+
         if (!$shop || $category->shop_id !== $shop->id) {
             abort(404);
         }
@@ -160,14 +160,14 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
         $shop = Auth::user()->shop;
-        
+
         if (!$shop || $category->shop_id !== $shop->id) {
             abort(404);
         }
 
         // Check if category has products
         $productsCount = $category->products()->where('shop_id', $shop->id)->count();
-        
+
         if ($productsCount > 0) {
             return redirect()->route('seller.categories.index')
                            ->with('error', 'Cannot delete category. It has ' . $productsCount . ' products associated with it.');

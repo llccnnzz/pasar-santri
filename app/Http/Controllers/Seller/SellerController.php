@@ -9,7 +9,6 @@ use App\Models\Shop;
 use App\Models\BankAccount;
 use App\Models\ShippingMethod;
 use App\Models\Order;
-use App\Models\Wallet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Auth;
@@ -178,30 +177,33 @@ class SellerController extends Controller
         return redirect()->route('seller.shipping.index')->with('success', 'Shipping method deleted successfully');
     }
 
+    // Old wallet methods - replaced by WalletController
+    /*
     // Wallet & Withdraw Flow
     public function walletDashboard(Request $request)
     {
         $seller = Auth::user();
-        $wallet = $seller->wallet ?? new Wallet();
-        $recentTransactions = $wallet->transactions()->latest()->take(10)->get();
+        $shopBalance = $seller->shop->balance ?? new ShopBalance();
+        $recentTransactions = $shopBalance->transactions()->latest()->take(10)->get();
         
-        return view('seller.wallet.index', compact('wallet', 'recentTransactions'));
+        return view('seller.wallet.index', compact('shopBalance', 'recentTransactions'));
     }
 
     public function walletTransactions(Request $request)
     {
         $seller = Auth::user();
-        $transactions = $seller->wallet ? $seller->wallet->transactions()->paginate(20) : collect();
+        $shopBalance = $seller->shop->balance;
+        $transactions = $shopBalance ? $shopBalance->transactions()->paginate(20) : collect();
         return view('seller.wallet.transactions', compact('transactions'));
     }
 
     public function walletWithdrawForm()
     {
         $seller = Auth::user();
-        $wallet = $seller->wallet;
+        $shopBalance = $seller->shop->balance;
         $bankAccounts = BankAccount::where('user_id', $seller->id)->get();
         
-        return view('seller.wallet.withdraw.form', compact('wallet', 'bankAccounts'));
+        return view('seller.wallet.withdraw.form', compact('shopBalance', 'bankAccounts'));
     }
 
     public function walletWithdrawRequest(Request $request)
@@ -223,6 +225,7 @@ class SellerController extends Controller
         $earnings = $seller->earnings()->with('order')->latest()->paginate(15);
         return view('seller.wallet.earnings', compact('earnings'));
     }
+    */
 
     // Shop Settings
     public function shopSettings()

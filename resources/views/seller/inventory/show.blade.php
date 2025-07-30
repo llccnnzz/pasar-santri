@@ -271,7 +271,7 @@
 </div>
 @endsection
 
-@push('script')
+@push('scripts')
 <script>
 function goToSlide(index) {
     const carousel = document.getElementById('productCarousel');

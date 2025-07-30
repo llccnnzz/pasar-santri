@@ -8,8 +8,8 @@
     <h4 class="text-dark mb-0">Products</h4>
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb mb-0 mt-2 mt-sm-0 justify-content-center">
-            <li class="breadcrumb-item fs-14"><a class="text-decoration-none" href="index.html">Dashboard</a></li>
-            <li class="breadcrumb-item fs-14">Pages</li>
+            <li class="breadcrumb-item fs-14"><a class="text-decoration-none" href="/seller/dashboard">Seller Dashboard</a></li>
+{{--            <li class="breadcrumb-item fs-14">Pages</li>--}}
             <li class="breadcrumb-item fs-14 text-primary" aria-current="page">Products</li>
         </ol>
     </nav>
@@ -23,13 +23,13 @@
             <h4 class="mb-2 mb-sm-0">Products</h4>
 
             <div class="d-sm-flex align-items-center">
-                <form action="" class="src-form position-relative z-1 me-sm-3 mb-2 mb-sm-0">
-                    <input type="text" name="search" class="form-control h-40" placeholder="Search Here">
+                <form action="{{ route('seller.products.index') }}" method="GET" class="src-form position-relative z-1 me-sm-3 mb-2 mb-sm-0">
+                    <input type="text" name="search" value="{{ request('search') }}" class="form-control h-40" placeholder="Search Here">
                     <button class="bg-transparent position-absolute position-absolute top-50 end-0 translate-middle border-0 ps-0 pe-1">
                         <i data-feather="search" style="width: 20px;" class="text-body"></i>
                     </button>
                 </form>
-                <a href="/seller/products/create" class="btn btn-primary w-sm-100">
+                <a href="{{ route('seller.products.create') }}" class="btn btn-primary w-sm-100">
                     <i data-feather="plus"></i>
                     Create New
                 </a>
@@ -64,7 +64,7 @@
                                 </tr>
                             </thead>
                             <tbody class="text-body o-sortable">
-                                @foreach ($products as $product)
+                                @forelse ($products as $product)
                                 <tr>
                                     <td>
                                         <div class="d-flex align-items-center">
@@ -119,7 +119,28 @@
                                         </button>
                                     </td>
                                 </tr>
-                                @endforeach
+                                @empty
+                                    <tr>
+                                        <td colspan="8" class="text-center py-4">
+                                            <div class="empty-state">
+                                                <i class="bx bx-category-alt" style="font-size: 48px; color: #ccc;"></i>
+                                                <h6 class="mt-2 text-muted">No products found</h6>
+                                                <p class="text-muted">
+                                                    @if(request('search'))
+                                                        No products match your search criteria.
+                                                    @else
+                                                        Start by creating your first product.
+                                                    @endif
+                                                </p>
+                                                @if(!request('search'))
+                                                    <a href="{{ route('seller.product.create') }}" class="btn btn-primary">
+                                                        <i class="bx bx-plus me-1"></i>Create Product
+                                                    </a>
+                                                @endif
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
