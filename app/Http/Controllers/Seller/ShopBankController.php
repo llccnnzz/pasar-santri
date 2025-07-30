@@ -16,7 +16,7 @@ class ShopBankController extends Controller
     public function index(Request $request)
     {
         $shop = Auth::user()->shop;
-        
+
         if (!$shop) {
             return redirect()->route('seller.dashboard')->with('error', 'Please setup your shop first.');
         }
@@ -27,9 +27,9 @@ class ShopBankController extends Controller
         if ($request->has('search') && $request->search) {
             $searchTerm = $request->search;
             $query->where(function($q) use ($searchTerm) {
-                $q->where('bank_name', 'like', '%' . $searchTerm . '%')
-                  ->orWhere('bank_code', 'like', '%' . $searchTerm . '%')
-                  ->orWhere('account_number', 'like', '%' . $searchTerm . '%');
+                $q->where('bank_name', 'ilike', '%' . $searchTerm . '%')
+                  ->orWhere('bank_code', 'ilike', '%' . $searchTerm . '%')
+                  ->orWhere('account_number', 'ilike', '%' . $searchTerm . '%');
             });
         }
 
@@ -44,7 +44,7 @@ class ShopBankController extends Controller
     public function create()
     {
         $shop = Auth::user()->shop;
-        
+
         if (!$shop) {
             return redirect()->route('seller.dashboard')->with('error', 'Please setup your shop first.');
         }
@@ -58,7 +58,7 @@ class ShopBankController extends Controller
     public function store(Request $request)
     {
         $shop = Auth::user()->shop;
-        
+
         if (!$shop) {
             return redirect()->route('seller.dashboard')->with('error', 'Please setup your shop first.');
         }
@@ -102,7 +102,7 @@ class ShopBankController extends Controller
     public function show(ShopBank $bankAccount)
     {
         $shop = Auth::user()->shop;
-        
+
         if (!$shop || $bankAccount->shop_id !== $shop->id) {
             abort(404);
         }
@@ -116,7 +116,7 @@ class ShopBankController extends Controller
     public function edit(ShopBank $bankAccount)
     {
         $shop = Auth::user()->shop;
-        
+
         if (!$shop || $bankAccount->shop_id !== $shop->id) {
             abort(404);
         }
@@ -130,7 +130,7 @@ class ShopBankController extends Controller
     public function update(Request $request, ShopBank $bankAccount)
     {
         $shop = Auth::user()->shop;
-        
+
         if (!$shop || $bankAccount->shop_id !== $shop->id) {
             abort(404);
         }
@@ -168,7 +168,7 @@ class ShopBankController extends Controller
     public function destroy(ShopBank $bankAccount)
     {
         $shop = Auth::user()->shop;
-        
+
         if (!$shop || $bankAccount->shop_id !== $shop->id) {
             abort(404);
         }
@@ -196,7 +196,7 @@ class ShopBankController extends Controller
     public function setPrimary(ShopBank $bankAccount)
     {
         $shop = Auth::user()->shop;
-        
+
         if (!$shop || $bankAccount->shop_id !== $shop->id) {
             abort(404);
         }

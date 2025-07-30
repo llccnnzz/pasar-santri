@@ -11,6 +11,7 @@ class ShopBank extends Model
         'shop_id',
         'bank_code',
         'bank_name', 
+        'custom_bank_name',
         'account_number',
         'is_default',
     ];

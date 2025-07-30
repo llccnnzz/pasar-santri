@@ -28,25 +28,57 @@
 
                         <div class="row">
                             <div class="col-lg-12">
-                                <!-- Bank Name -->
+                                <!-- Bank Selection -->
                                 <div class="mb-3">
-                                    <label for="bank_name" class="form-label">Bank Name <span class="text-danger">*</span></label>
-                                    <input type="text" 
-                                           class="form-control @error('bank_name') is-invalid @enderror" 
-                                           id="bank_name" 
-                                           name="bank_name" 
-                                           value="{{ old('bank_name') }}"
-                                           placeholder="Enter bank name (e.g., Bank Mandiri, BCA, BNI)"
-                                           required>
+                                    <label for="bank_name" class="form-label">Select Bank <span class="text-danger">*</span></label>
+                                    <select class="form-select @error('bank_name') is-invalid @enderror" 
+                                            id="bank_name" 
+                                            name="bank_name" 
+                                            required>
+                                        <option value="">Choose a bank...</option>
+                                        <option value="BCA" data-code="BCA" data-logo="bca.png" {{ old('bank_name') == 'BCA' ? 'selected' : '' }}>Bank Central Asia (BCA)</option>
+                                        <option value="BNI" data-code="BNI" data-logo="bni.png" {{ old('bank_name') == 'BNI' ? 'selected' : '' }}>Bank Negara Indonesia (BNI)</option>
+                                        <option value="BRI" data-code="BRI" data-logo="bri.png" {{ old('bank_name') == 'BRI' ? 'selected' : '' }}>Bank Rakyat Indonesia (BRI)</option>
+                                        <option value="BSI" data-code="BSI" data-logo="bsi.png" {{ old('bank_name') == 'BSI' ? 'selected' : '' }}>Bank Syariah Indonesia (BSI)</option>
+                                        <option value="BTN" data-code="BTN" data-logo="btn.png" {{ old('bank_name') == 'BTN' ? 'selected' : '' }}>Bank Tabungan Negara (BTN)</option>
+                                        <option value="CIMB" data-code="CIMB" data-logo="cimb.png" {{ old('bank_name') == 'CIMB' ? 'selected' : '' }}>CIMB Niaga</option>
+                                        <option value="CITY" data-code="CITY" data-logo="city.png" {{ old('bank_name') == 'CITY' ? 'selected' : '' }}>Citibank</option>
+                                        <option value="DBS" data-code="DBS" data-logo="dbs.png" {{ old('bank_name') == 'DBS' ? 'selected' : '' }}>DBS Bank</option>
+                                        <option value="MANDIRI" data-code="MANDIRI" data-logo="mandiri.png" {{ old('bank_name') == 'MANDIRI' ? 'selected' : '' }}>Bank Mandiri</option>
+                                        <option value="OCBC" data-code="OCBC" data-logo="ocbc.png" {{ old('bank_name') == 'OCBC' ? 'selected' : '' }}>OCBC NISP</option>
+                                        <option value="PERMATA" data-code="PERMATA" data-logo="permata.png" {{ old('bank_name') == 'PERMATA' ? 'selected' : '' }}>Bank Permata</option>
+                                        <option value="SMBC" data-code="SMBC" data-logo="smbc.png" {{ old('bank_name') == 'SMBC' ? 'selected' : '' }}>Sumitomo Mitsui Banking Corporation</option>
+                                        <option value="UOB" data-code="UOB" data-logo="uob.png" {{ old('bank_name') == 'UOB' ? 'selected' : '' }}>United Overseas Bank</option>
+                                        <option value="OTHER" data-code="OTHER" data-logo="" {{ old('bank_name') == 'OTHER' ? 'selected' : '' }}>Other Bank</option>
+                                    </select>
                                     @error('bank_name')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                     <div class="form-text">
-                                        Full name of the bank institution
+                                        Select your bank from the list or choose "Other" for unlisted banks
+                                    </div>
+                                    
+                                    <!-- Bank Logo Preview -->
+                                    <div id="bank-logo-preview" class="mt-2" style="display: none;">
+                                        <img id="bank-logo-img" src="" alt="Bank Logo" style="height: 40px; width: auto;">
                                     </div>
                                 </div>
 
-                                <!-- Bank Code -->
+                                <!-- Custom Bank Name (shown when "Other" is selected) -->
+                                <div class="mb-3" id="custom-bank-name" style="display: none;">
+                                    <label for="custom_bank_name" class="form-label">Bank Name <span class="text-danger">*</span></label>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="custom_bank_name" 
+                                           name="custom_bank_name" 
+                                           value="{{ old('custom_bank_name') }}"
+                                           placeholder="Enter bank name">
+                                    <div class="form-text">
+                                        Enter the full name of your bank
+                                    </div>
+                                </div>
+
+                                <!-- Bank Code (Auto-filled) -->
                                 <div class="mb-3">
                                     <label for="bank_code" class="form-label">Bank Code <span class="text-danger">*</span></label>
                                     <input type="text" 
@@ -54,14 +86,15 @@
                                            id="bank_code" 
                                            name="bank_code" 
                                            value="{{ old('bank_code') }}"
-                                           placeholder="Enter bank code (e.g., BCA, BNI, MANDIRI)"
+                                           placeholder="Bank code will be auto-filled"
                                            maxlength="10"
-                                           required>
+                                           required
+                                           readonly>
                                     @error('bank_code')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                     <div class="form-text">
-                                        Short bank code or abbreviation
+                                        Bank code is automatically filled based on selected bank
                                     </div>
                                 </div>
 
@@ -162,14 +195,70 @@
 
 @push('scripts')
 <script>
-    // Auto-format bank code to uppercase
-    document.getElementById('bank_code').addEventListener('input', function(e) {
-        e.target.value = e.target.value.toUpperCase();
+    // Bank selection handler
+    document.getElementById('bank_name').addEventListener('change', function(e) {
+        const selectedOption = e.target.selectedOptions[0];
+        const bankCode = selectedOption.getAttribute('data-code');
+        const bankLogo = selectedOption.getAttribute('data-logo');
+        const customBankDiv = document.getElementById('custom-bank-name');
+        const bankCodeInput = document.getElementById('bank_code');
+        const logoPreview = document.getElementById('bank-logo-preview');
+        const logoImg = document.getElementById('bank-logo-img');
+        
+        // Handle "Other" bank selection
+        if (e.target.value === 'OTHER') {
+            customBankDiv.style.display = 'block';
+            document.getElementById('custom_bank_name').required = true;
+            bankCodeInput.value = '';
+            bankCodeInput.readOnly = false;
+            bankCodeInput.placeholder = 'Enter bank code';
+            logoPreview.style.display = 'none';
+        } else if (e.target.value) {
+            customBankDiv.style.display = 'none';
+            document.getElementById('custom_bank_name').required = false;
+            bankCodeInput.value = bankCode;
+            bankCodeInput.readOnly = true;
+            bankCodeInput.placeholder = 'Bank code auto-filled';
+            
+            // Show bank logo
+            if (bankLogo) {
+                logoImg.src = '/admin-assets/assets/images/bank/' + bankLogo;
+                logoPreview.style.display = 'block';
+            } else {
+                logoPreview.style.display = 'none';
+            }
+        } else {
+            customBankDiv.style.display = 'none';
+            document.getElementById('custom_bank_name').required = false;
+            bankCodeInput.value = '';
+            bankCodeInput.readOnly = false;
+            bankCodeInput.placeholder = 'Bank code will be auto-filled';
+            logoPreview.style.display = 'none';
+        }
     });
     
     // Only allow numbers for account number
     document.getElementById('account_number').addEventListener('input', function(e) {
         e.target.value = e.target.value.replace(/[^0-9]/g, '');
+    });
+    
+    // Handle custom bank name input
+    document.getElementById('custom_bank_name').addEventListener('input', function(e) {
+        if (document.getElementById('bank_name').value === 'OTHER') {
+            // Auto-generate bank code from custom name
+            const customName = e.target.value.toUpperCase();
+            const bankCodeInput = document.getElementById('bank_code');
+            
+            // Extract first letters or meaningful abbreviation
+            let code = '';
+            const words = customName.split(' ');
+            for (let word of words) {
+                if (word.length > 0) {
+                    code += word.charAt(0);
+                }
+            }
+            bankCodeInput.value = code.substring(0, 10); // Limit to 10 characters
+        }
     });
 </script>
 @endpush
