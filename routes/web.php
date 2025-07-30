@@ -84,6 +84,11 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{bankAccount}', [App\Http\Controllers\Seller\ShopBankController::class, 'destroy'])->name('seller.bank-accounts.destroy');
             Route::post('/{bankAccount}/set-primary', [App\Http\Controllers\Seller\ShopBankController::class, 'setPrimary'])->name('seller.bank-accounts.set-primary');
         });
+
+        // Test View Route for Development
+        Route::get('/test-view', function () {
+            return view('seller.test-view');
+        })->name('seller.test-view');
         
         // Shipping Method Setup
         Route::group(['prefix' => 'shipping'], function () {
@@ -98,12 +103,13 @@ Route::middleware('auth')->group(function () {
         
         // Wallet & Withdraw Flow
         Route::group(['prefix' => 'wallet'], function () {
-            Route::get('/', [SellerController::class, 'walletDashboard'])->name('seller.wallet.index');
-            Route::get('/transactions', [SellerController::class, 'walletTransactions'])->name('seller.wallet.transactions');
-            Route::get('/withdraw', [SellerController::class, 'walletWithdrawForm'])->name('seller.wallet.withdraw.form');
-            Route::post('/withdraw', [SellerController::class, 'walletWithdrawRequest'])->name('seller.wallet.withdraw.request');
-            Route::get('/withdraw-history', [SellerController::class, 'walletWithdrawHistory'])->name('seller.wallet.withdraw.history');
-            Route::get('/earnings', [SellerController::class, 'walletEarnings'])->name('seller.wallet.earnings');
+            Route::get('/', [App\Http\Controllers\Seller\WalletController::class, 'index'])->name('seller.wallet.index');
+            Route::get('/transactions', [App\Http\Controllers\Seller\WalletController::class, 'transactions'])->name('seller.wallet.transactions');
+            Route::get('/withdraw', [App\Http\Controllers\Seller\WalletController::class, 'withdrawForm'])->name('seller.wallet.withdraw.form');
+            Route::post('/withdraw', [App\Http\Controllers\Seller\WalletController::class, 'withdrawRequest'])->name('seller.wallet.withdraw.request');
+            Route::get('/withdraw-history', [App\Http\Controllers\Seller\WalletController::class, 'withdrawHistory'])->name('seller.wallet.withdraw.history');
+            Route::get('/earnings', [App\Http\Controllers\Seller\WalletController::class, 'earnings'])->name('seller.wallet.earnings');
+            Route::get('/transaction/{id}', [App\Http\Controllers\Seller\WalletController::class, 'transactionDetails'])->name('seller.wallet.transaction.details');
         });
         
         // Shop Settings

@@ -116,7 +116,7 @@
 				<li class="{{ request()->routeIs('seller.shipping.*') ? 'mm-active' : '' }}">
 					<a href="#" class="menu-title">
 						<span class="icon"><i data-feather="truck"></i></span>
-						<span class="title">Shipping Methods (soon)</span>
+						<span class="title">Shipping Methods</span>
 					</a>
 				</li>
 
@@ -124,12 +124,9 @@
 				
 				<!-- Wallet & Withdraw Flow -->
 				<li class="{{ request()->routeIs('seller.wallet.*') ? 'mm-active' : '' }}">
-					<a href="#" class="menu-title">
+					<a href="{{ route('seller.wallet.index') }}" class="menu-title">
 						<span class="icon"><i data-feather="credit-card"></i></span>
 						<span class="title">Seller Wallet</span>
-						@if(Auth::user()->wallet && Auth::user()->wallet->balance > 0)
-							<span class="count bg-success">Rp {{ number_format(Auth::user()->wallet->balance) }}</span>
-						@endif
 					</a>
 				</li>
 				
@@ -142,6 +139,15 @@
 				</li>
 
 				<li><span class="cat">SETTINGS</span></li>
+				
+				<!-- Test View for Development -->
+				<li class="{{ request()->routeIs('seller.test-view') ? 'mm-active' : '' }}">
+					<a href="{{ route('seller.test-view') }}" class="menu-title">
+						<span class="icon"><i data-feather="code"></i></span>
+						<span class="title">Test View</span>
+						<span class="badge bg-warning ms-2">DEV</span>
+					</a>
+				</li>
 				
 				<!-- Shop Settings -->
 				<li class="{{ request()->routeIs('seller.shop.*') ? 'mm-active' : '' }}">
