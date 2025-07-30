@@ -153,7 +153,7 @@
 				<li class="{{ request()->routeIs('seller.shop.*') ? 'mm-active' : '' }}">
 					<a href="{{ route('seller.shop.settings') }}" class="menu-title">
 						<span class="icon"><i data-feather="settings"></i></span>
-						<span class="title">Shop Settings (soon)</span>
+						<span class="title">Shop Settings</span>
 					</a>
 				</li>
 				

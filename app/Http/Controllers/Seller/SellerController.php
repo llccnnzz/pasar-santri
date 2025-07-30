@@ -227,16 +227,107 @@ class SellerController extends Controller
     }
     */
 
+    // Shop Setup
+    public function shopSetup()
+    {
+        // If user already has a shop, redirect to settings
+        if (Auth::user()->shop) {
+            return redirect()->route('seller.shop.settings');
+        }
+        
+        return view('seller.shop.setup');
+    }
+
+    public function shopSetupStore(Request $request)
+    {
+        // If user already has a shop, redirect to settings
+        if (Auth::user()->shop) {
+            return redirect()->route('seller.shop.settings');
+        }
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:shops,name',
+            'slug' => 'required|string|max:255|unique:shops,slug',
+            'description' => 'nullable|string|max:1000',
+            'address' => 'nullable|string|max:500',
+            'phone' => 'nullable|string|max:20',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        ]);
+
+        $validated['user_id'] = Auth::id();
+        $validated['is_open'] = true; // Default to open
+
+        // Create the shop
+        $shop = Shop::create($validated);
+
+        // Handle logo upload
+        if ($request->hasFile('logo')) {
+            $shop->addMediaFromRequest('logo')
+                ->toMediaCollection('logo');
+        }
+
+        return redirect()->route('seller.shop.settings')->with('success', 'Your shop has been created successfully! You can now configure additional settings.');
+    }
+
     // Shop Settings
     public function shopSettings()
     {
         $shop = Auth::user()->shop;
+        
+        if (!$shop) {
+            return redirect()->route('seller.shop.setup')->with('info', 'Please setup your shop first.');
+        }
+        
         return view('seller.shop.settings', compact('shop'));
     }
 
     public function shopSettingsUpdate(Request $request)
     {
-        // Implementation for shop settings update
+        $shop = Auth::user()->shop;
+        
+        if (!$shop) {
+            return redirect()->route('seller.shop.setup')->with('info', 'Please setup your shop first.');
+        }
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:shops,name,' . $shop->id,
+            'slug' => 'required|string|max:255|unique:shops,slug,' . $shop->id,
+            'description' => 'nullable|string|max:1000',
+            'address' => 'nullable|string|max:500',
+            'phone' => 'nullable|string|max:20',
+            'is_open' => 'boolean',
+            'social_links' => 'nullable|array',
+            'social_links.facebook' => 'nullable|url',
+            'social_links.instagram' => 'nullable|url',
+            'social_links.twitter' => 'nullable|url',
+            'social_links.website' => 'nullable|url',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        ]);
+
+        // Handle social links
+        $socialLinks = [];
+        if ($request->filled('social_links')) {
+            foreach ($request->social_links as $platform => $url) {
+                if (!empty($url)) {
+                    $socialLinks[$platform] = $url;
+                }
+            }
+        }
+        $validated['social_links'] = $socialLinks;
+
+        // Handle logo upload
+        if ($request->hasFile('logo')) {
+            // Delete old logo
+            $shop->clearMediaCollection('logo');
+            
+            // Add new logo
+            $shop->addMediaFromRequest('logo')
+                ->toMediaCollection('logo');
+        }
+
+        // Update shop data
+        $shop->update($validated);
+
         return redirect()->route('seller.shop.settings')->with('success', 'Shop settings updated successfully');
     }
 

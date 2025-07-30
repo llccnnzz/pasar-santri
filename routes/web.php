@@ -114,6 +114,8 @@ Route::middleware('auth')->group(function () {
         
         // Shop Settings
         Route::group(['prefix' => 'shop'], function () {
+            Route::get('/setup', [SellerController::class, 'shopSetup'])->name('seller.shop.setup');
+            Route::post('/setup', [SellerController::class, 'shopSetupStore'])->name('seller.shop.setup.store');
             Route::get('/settings', [SellerController::class, 'shopSettings'])->name('seller.shop.settings');
             Route::put('/settings', [SellerController::class, 'shopSettingsUpdate'])->name('seller.shop.settings.update');
         });
