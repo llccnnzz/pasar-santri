@@ -17,9 +17,6 @@ class ShopBankController extends Controller
     {
         $shop = Auth::user()->shop;
 
-        if (!$shop) {
-            return redirect()->route('seller.dashboard')->with('error', 'Please setup your shop first.');
-        }
 
         $query = ShopBank::where('shop_id', $shop->id);
 
@@ -45,9 +42,6 @@ class ShopBankController extends Controller
     {
         $shop = Auth::user()->shop;
 
-        if (!$shop) {
-            return redirect()->route('seller.dashboard')->with('error', 'Please setup your shop first.');
-        }
 
         return view('seller.bank-accounts.create');
     }
@@ -59,9 +53,6 @@ class ShopBankController extends Controller
     {
         $shop = Auth::user()->shop;
 
-        if (!$shop) {
-            return redirect()->route('seller.dashboard')->with('error', 'Please setup your shop first.');
-        }
 
         $validated = $request->validate([
             'bank_code' => 'required|string|max:10',
@@ -81,9 +72,6 @@ class ShopBankController extends Controller
         $validated['is_default'] = $request->boolean('is_default');
 
         // If this is the first bank account, make it default
-        if (!$shop->banks()->exists()) {
-            $validated['is_default'] = true;
-        }
 
         $bankAccount = ShopBank::create($validated);
 
@@ -103,9 +91,6 @@ class ShopBankController extends Controller
     {
         $shop = Auth::user()->shop;
 
-        if (!$shop || $bankAccount->shop_id !== $shop->id) {
-            abort(404);
-        }
 
         return view('seller.bank-accounts.show', compact('bankAccount'));
     }
@@ -117,9 +102,6 @@ class ShopBankController extends Controller
     {
         $shop = Auth::user()->shop;
 
-        if (!$shop || $bankAccount->shop_id !== $shop->id) {
-            abort(404);
-        }
 
         return view('seller.bank-accounts.edit', compact('bankAccount'));
     }
@@ -131,9 +113,6 @@ class ShopBankController extends Controller
     {
         $shop = Auth::user()->shop;
 
-        if (!$shop || $bankAccount->shop_id !== $shop->id) {
-            abort(404);
-        }
 
         $validated = $request->validate([
             'bank_code' => 'required|string|max:10',
@@ -169,9 +148,6 @@ class ShopBankController extends Controller
     {
         $shop = Auth::user()->shop;
 
-        if (!$shop || $bankAccount->shop_id !== $shop->id) {
-            abort(404);
-        }
 
         // Check if this is the default account and there are other accounts
         if ($bankAccount->is_default && $shop->banks()->count() > 1) {
@@ -197,9 +173,6 @@ class ShopBankController extends Controller
     {
         $shop = Auth::user()->shop;
 
-        if (!$shop || $bankAccount->shop_id !== $shop->id) {
-            abort(404);
-        }
 
         $bankAccount->setAsDefault();
 

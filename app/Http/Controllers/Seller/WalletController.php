@@ -19,10 +19,6 @@ class WalletController extends Controller
     public function index()
     {
         $shop = Auth::user()->shop;
-        
-        if (!$shop) {
-            return redirect()->route('seller.dashboard')->with('error', 'Please setup your shop first.');
-        }
 
         // Get or create shop balance
         $balance = ShopBalance::firstOrCreate(
@@ -46,7 +42,7 @@ class WalletController extends Controller
 
         return view('seller.wallet.index', compact(
             'balance',
-            'recentTransactions', 
+            'recentTransactions',
             'bankAccounts'
         ));
     }
@@ -57,10 +53,7 @@ class WalletController extends Controller
     public function transactions(Request $request)
     {
         $shop = Auth::user()->shop;
-        
-        if (!$shop) {
-            return redirect()->route('seller.dashboard')->with('error', 'Please setup your shop first.');
-        }
+
 
         $query = ShopBalanceLog::where('shop_id', $shop->id)->with('shopBank');
 
@@ -101,10 +94,7 @@ class WalletController extends Controller
     public function withdrawForm()
     {
         $shop = Auth::user()->shop;
-        
-        if (!$shop) {
-            return redirect()->route('seller.dashboard')->with('error', 'Please setup your shop first.');
-        }
+
 
         $balance = ShopBalance::where('shop_id', $shop->id)->first();
         $bankAccounts = ShopBank::where('shop_id', $shop->id)->get();
@@ -123,10 +113,7 @@ class WalletController extends Controller
     public function withdrawRequest(Request $request)
     {
         $shop = Auth::user()->shop;
-        
-        if (!$shop) {
-            return redirect()->route('seller.dashboard')->with('error', 'Please setup your shop first.');
-        }
+
 
         $request->validate([
             'amount' => 'required|numeric|min:10000|max:50000000', // Min 10K, Max 50M IDR
@@ -135,7 +122,7 @@ class WalletController extends Controller
         ]);
 
         $balance = ShopBalance::where('shop_id', $shop->id)->first();
-        
+
         if (!$balance || $balance->balance < $request->amount) {
             return back()->withErrors(['amount' => 'Insufficient available balance.']);
         }
@@ -187,10 +174,7 @@ class WalletController extends Controller
     public function withdrawHistory(Request $request)
     {
         $shop = Auth::user()->shop;
-        
-        if (!$shop) {
-            return redirect()->route('seller.dashboard')->with('error', 'Please setup your shop first.');
-        }
+
 
         $query = ShopBalanceLog::where('shop_id', $shop->id)
             ->where('type', 'out')
@@ -212,10 +196,7 @@ class WalletController extends Controller
     public function earnings(Request $request)
     {
         $shop = Auth::user()->shop;
-        
-        if (!$shop) {
-            return redirect()->route('seller.dashboard')->with('error', 'Please setup your shop first.');
-        }
+
 
         $query = ShopBalanceLog::where('shop_id', $shop->id)
             ->where('type', 'in');
@@ -237,7 +218,7 @@ class WalletController extends Controller
 
         return view('seller.wallet.earnings', compact(
             'totalEarnings',
-            'pendingEarnings', 
+            'pendingEarnings',
             'thisMonthEarnings',
             'recentEarnings'
         ));
@@ -249,7 +230,7 @@ class WalletController extends Controller
     public function transactionDetails($id)
     {
         $shop = Auth::user()->shop;
-        
+
         $transaction = ShopBalanceLog::where('shop_id', $shop->id)
             ->where('id', $id)
             ->with('shopBank')

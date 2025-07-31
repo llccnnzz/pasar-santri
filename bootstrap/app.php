@@ -12,7 +12,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->alias([
+            'has.shop' => \App\Http\Middleware\HasShop::class,
+            'has.approved.kyc' => \App\Http\Middleware\HasApprovedKyc::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

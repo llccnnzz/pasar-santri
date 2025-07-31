@@ -3,14 +3,9 @@
 namespace App\Http\Controllers\Seller;
 
 use App\Http\Controllers\Controller;
-use App\Models\Category;
-use App\Models\Product;
 use App\Models\Shop;
-use App\Models\BankAccount;
-use App\Models\ShippingMethod;
-use App\Models\Order;
+use App\Models\KycApplication;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Auth;
 
 class SellerController extends Controller
@@ -19,7 +14,7 @@ class SellerController extends Controller
     {
         $seller = Auth::user();
         $shop = $seller->shop;
-        
+
         // Dashboard statistics
         $stats = [
             'total_products' => $shop ? $shop->products()->count() : 0,
@@ -27,118 +22,8 @@ class SellerController extends Controller
             'pending_orders' => 0,
             'total_earnings' => 0,
         ];
-        
+
         return view('seller.dashboard', compact('stats'));
-    }
-
-    // Product & SKU Management
-    public function productsList(Request $request)
-    {
-        $shop = Auth::user()->shop;
-        $products = $shop ? $shop->products()->with('category', 'images')->paginate(15) : collect();
-        return view('seller.products.index', compact('products'));
-    }
-
-    public function productsCreate()
-    {
-        $categories = Category::where('status', 'active')->get();
-        return view('seller.products.create', compact('categories'));
-    }
-
-    public function productsStore(Request $request)
-    {
-        // Implementation for product creation
-        return redirect()->route('seller.products.index')->with('success', 'Product created successfully');
-    }
-
-    public function productsEdit(Product $product)
-    {
-        $categories = Category::where('status', 'active')->get();
-        return view('seller.products.edit', compact('product', 'categories'));
-    }
-
-    public function productsUpdate(Request $request, Product $product)
-    {
-        // Implementation for product update
-        return redirect()->route('seller.products.index')->with('success', 'Product updated successfully');
-    }
-
-    public function productsDestroy(Product $product)
-    {
-        // Implementation for product deletion
-        return redirect()->route('seller.products.index')->with('success', 'Product deleted successfully');
-    }
-
-    // Category Management
-    public function categoriesList(Request $request)
-    {
-        $shop = Auth::user()->shop;
-        $categories = $shop ? $shop->categories()->paginate(15) : collect();
-        return view('seller.categories.index', compact('categories'));
-    }
-
-    public function categoriesCreate()
-    {
-        return view('seller.categories.create');
-    }
-
-    public function categoriesStore(Request $request)
-    {
-        // Implementation for category creation
-        return redirect()->route('seller.categories.index')->with('success', 'Category created successfully');
-    }
-
-    public function categoriesEdit($category)
-    {
-        return view('seller.categories.edit', compact('category'));
-    }
-
-    public function categoriesUpdate(Request $request, $category)
-    {
-        // Implementation for category update
-        return redirect()->route('seller.categories.index')->with('success', 'Category updated successfully');
-    }
-
-    public function categoriesDestroy($category)
-    {
-        // Implementation for category deletion
-        return redirect()->route('seller.categories.index')->with('success', 'Category deleted successfully');
-    }
-
-    // Bank Account Management
-    public function bankAccountsList(Request $request)
-    {
-        $seller = Auth::user();
-        $bankAccounts = BankAccount::where('user_id', $seller->id)->get();
-        return view('seller.bank-accounts.index', compact('bankAccounts'));
-    }
-
-    public function bankAccountsCreate()
-    {
-        return view('seller.bank-accounts.create');
-    }
-
-    public function bankAccountsStore(Request $request)
-    {
-        // Implementation for bank account creation
-        return redirect()->route('seller.bank-accounts.index')->with('success', 'Bank account added successfully');
-    }
-
-    public function bankAccountsEdit($account)
-    {
-        return view('seller.bank-accounts.edit', compact('account'));
-    }
-
-    public function bankAccountsUpdate(Request $request, $account)
-    {
-        // Implementation for bank account update
-        return redirect()->route('seller.bank-accounts.index')->with('success', 'Bank account updated successfully');
-    }
-
-    public function bankAccountsDestroy($account)
-    {
-        // Implementation for bank account deletion
-        return redirect()->route('seller.bank-accounts.index')->with('success', 'Bank account deleted successfully');
     }
 
     // Shipping Method Setup
@@ -177,66 +62,123 @@ class SellerController extends Controller
         return redirect()->route('seller.shipping.index')->with('success', 'Shipping method deleted successfully');
     }
 
-    // Old wallet methods - replaced by WalletController
-    /*
-    // Wallet & Withdraw Flow
-    public function walletDashboard(Request $request)
+    // Shop Setup
+    public function shopSetup()
     {
-        $seller = Auth::user();
-        $shopBalance = $seller->shop->balance ?? new ShopBalance();
-        $recentTransactions = $shopBalance->transactions()->latest()->take(10)->get();
-        
-        return view('seller.wallet.index', compact('shopBalance', 'recentTransactions'));
+        $user = Auth::user();
+
+        // If user already has a shop, redirect to settings
+        if ($user->shop) {
+            return redirect()->route('seller.shop.settings');
+        }
+
+        // Check if user has approved KYC
+        $approvedKyc = KycApplication::where('user_id', $user->id)
+            ->where('status', 'approved')
+            ->exists();
+
+        if (!$approvedKyc) {
+            return redirect()->route('kyc.index')
+                ->with('error', 'You must complete and get your KYC verification approved before setting up your shop.');
+        }
+
+        return view('seller.shop.setup');
     }
 
-    public function walletTransactions(Request $request)
+    public function shopSetupStore(Request $request)
     {
-        $seller = Auth::user();
-        $shopBalance = $seller->shop->balance;
-        $transactions = $shopBalance ? $shopBalance->transactions()->paginate(20) : collect();
-        return view('seller.wallet.transactions', compact('transactions'));
-    }
+        $user = Auth::user();
 
-    public function walletWithdrawForm()
-    {
-        $seller = Auth::user();
-        $shopBalance = $seller->shop->balance;
-        $bankAccounts = BankAccount::where('user_id', $seller->id)->get();
-        
-        return view('seller.wallet.withdraw.form', compact('shopBalance', 'bankAccounts'));
-    }
+        // If user already has a shop, redirect to settings
+        if ($user->shop) {
+            return redirect()->route('seller.shop.settings');
+        }
 
-    public function walletWithdrawRequest(Request $request)
-    {
-        // Implementation for withdraw request
-        return redirect()->route('seller.wallet.index')->with('success', 'Withdraw request submitted successfully');
-    }
+        // Check if user has approved KYC
+        $approvedKyc = KycApplication::where('user_id', $user->id)
+            ->where('status', 'approved')
+            ->exists();
 
-    public function walletWithdrawHistory()
-    {
-        $seller = Auth::user();
-        $withdrawHistory = $seller->withdrawRequests()->latest()->paginate(15);
-        return view('seller.wallet.withdraw.history', compact('withdrawHistory'));
-    }
+        if (!$approvedKyc) {
+            return redirect()->route('kyc.index')
+                ->with('error', 'You must complete and get your KYC verification approved before setting up your shop.');
+        }
 
-    public function walletEarnings()
-    {
-        $seller = Auth::user();
-        $earnings = $seller->earnings()->with('order')->latest()->paginate(15);
-        return view('seller.wallet.earnings', compact('earnings'));
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:shops,name',
+            'slug' => 'required|string|max:255|unique:shops,slug',
+            'description' => 'nullable|string|max:1000',
+            'address' => 'nullable|string|max:500',
+            'phone' => 'nullable|string|max:20',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        ]);
+
+        $validated['user_id'] = Auth::id();
+        $validated['is_open'] = true; // Default to open
+
+        // Create the shop
+        $shop = Shop::create($validated);
+
+        // Handle logo upload
+        if ($request->hasFile('logo')) {
+            $shop->addMediaFromRequest('logo')
+                ->toMediaCollection('logo');
+        }
+
+        return redirect()->route('seller.shop.settings')->with('success', 'Your shop has been created successfully! You can now configure additional settings.');
     }
-    */
 
     // Shop Settings
     public function shopSettings()
     {
         $shop = Auth::user()->shop;
+
         return view('seller.shop.settings', compact('shop'));
     }
 
     public function shopSettingsUpdate(Request $request)
     {
-        // Implementation for shop settings update
+        $shop = Auth::user()->shop;
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:shops,name,' . $shop->id,
+            'slug' => 'required|string|max:255|unique:shops,slug,' . $shop->id,
+            'description' => 'nullable|string|max:1000',
+            'address' => 'nullable|string|max:500',
+            'phone' => 'nullable|string|max:20',
+            'is_open' => 'boolean',
+            'social_links' => 'nullable|array',
+            'social_links.facebook' => 'nullable|url',
+            'social_links.instagram' => 'nullable|url',
+            'social_links.twitter' => 'nullable|url',
+            'social_links.website' => 'nullable|url',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        ]);
+
+        // Handle social links
+        $socialLinks = [];
+        if ($request->filled('social_links')) {
+            foreach ($request->social_links as $platform => $url) {
+                if (!empty($url)) {
+                    $socialLinks[$platform] = $url;
+                }
+            }
+        }
+        $validated['social_links'] = $socialLinks;
+
+        // Handle logo upload
+        if ($request->hasFile('logo')) {
+            // Delete old logo
+            $shop->clearMediaCollection('logo');
+
+            // Add new logo
+            $shop->addMediaFromRequest('logo')
+                ->toMediaCollection('logo');
+        }
+
+        // Update shop data
+        $shop->update($validated);
+
         return redirect()->route('seller.shop.settings')->with('success', 'Shop settings updated successfully');
     }
 

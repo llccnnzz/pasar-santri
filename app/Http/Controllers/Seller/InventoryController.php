@@ -20,10 +20,6 @@ class InventoryController extends Controller
     {
         $shop = Auth::user()->shop;
 
-        if (!$shop) {
-            return redirect()->route('seller.dashboard')->with('error', 'Please setup your shop first.');
-        }
-
         $query = Product::where('shop_id', $shop->id)->with(['categories', 'variants']);
 
         // Search functionality - search in name, sku, and description
@@ -48,10 +44,6 @@ class InventoryController extends Controller
     {
         $shop = Auth::user()->shop;
 
-        if (!$shop) {
-            return redirect()->route('seller.dashboard')->with('error', 'Please setup your shop first.');
-        }
-
         // Get global categories (without shop_id) and local categories (with current shop_id)
         $globalCategories = Category::whereNull('shop_id')->orderBy('name')->get();
         $localCategories = Category::where('shop_id', $shop->id)->orderBy('name')->get();
@@ -65,10 +57,6 @@ class InventoryController extends Controller
     public function store(Request $request)
     {
         $shop = Auth::user()->shop;
-
-        if (!$shop) {
-            return redirect()->route('seller.dashboard')->with('error', 'Please setup your shop first.');
-        }
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',

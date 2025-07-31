@@ -133,7 +133,7 @@
                                                     @endif
                                                 </p>
                                                 @if(!request('search'))
-                                                    <a href="{{ route('seller.product.create') }}" class="btn btn-primary">
+                                                    <a href="{{ route('seller.products.create') }}" class="btn btn-primary">
                                                         <i class="bx bx-plus me-1"></i>Create Product
                                                     </a>
                                                 @endif

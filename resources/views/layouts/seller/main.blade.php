@@ -140,6 +140,33 @@
 
 				<li><span class="cat">SETTINGS</span></li>
 				
+				<!-- KYC Verification -->
+				<li class="{{ request()->routeIs('kyc.*') ? 'mm-active' : '' }}">
+					<a href="{{ route('kyc.index') }}" class="menu-title">
+						<span class="icon"><i data-feather="user-check"></i></span>
+						<span class="title">KYC Verification</span>
+						@php
+							$user = auth()->user();
+							$kycStatus = null;
+							if ($user) {
+								$latestKyc = \App\Models\KycApplication::where('user_id', $user->id)->latest()->first();
+								$kycStatus = $latestKyc ? $latestKyc->status : null;
+							}
+						@endphp
+						@if($kycStatus === 'approved')
+							<span class="badge bg-success ms-2">Approved</span>
+						@elseif($kycStatus === 'pending')
+							<span class="badge bg-warning ms-2">Pending</span>
+						@elseif($kycStatus === 'under_review')
+							<span class="badge bg-info ms-2">Review</span>
+						@elseif($kycStatus === 'rejected')
+							<span class="badge bg-danger ms-2">Rejected</span>
+						@else
+							<span class="badge bg-secondary ms-2">Required</span>
+						@endif
+					</a>
+				</li>
+				
 				<!-- Test View for Development -->
 				<li class="{{ request()->routeIs('seller.test-view') ? 'mm-active' : '' }}">
 					<a href="{{ route('seller.test-view') }}" class="menu-title">
@@ -153,7 +180,7 @@
 				<li class="{{ request()->routeIs('seller.shop.*') ? 'mm-active' : '' }}">
 					<a href="{{ route('seller.shop.settings') }}" class="menu-title">
 						<span class="icon"><i data-feather="settings"></i></span>
-						<span class="title">Shop Settings (soon)</span>
+						<span class="title">Shop Settings</span>
 					</a>
 				</li>
 				
