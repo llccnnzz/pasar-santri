@@ -7,7 +7,10 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\Seller\CategoryController;
 use App\Http\Controllers\Seller\InventoryController;
+use App\Http\Controllers\Seller\KycController;
 use App\Http\Controllers\Seller\SellerController;
+use App\Http\Controllers\Seller\ShopBankController;
+use App\Http\Controllers\Seller\WalletController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\WishlistController;
@@ -44,8 +47,18 @@ Route::middleware('auth')->group(function () {
     Route::get('/api/addresses', [AddressController::class, 'getAddresses'])->name('api.addresses');
 
     Route::group(['prefix' => 'seller', 'middleware' => ['auth']], function () {
-        // Shop Setup (no middleware required)
-        Route::group(['prefix' => 'shop'], function () {
+        // KYC Management (no middleware required, but required before shop setup)
+        Route::group(['prefix' => 'kyc'], function () {
+            Route::get('/', [KycController::class, 'index'])->name('kyc.index');
+            Route::get('/create', [KycController::class, 'create'])->name('kyc.create');
+            Route::post('/', [KycController::class, 'store'])->name('kyc.store');
+            Route::get('/{kyc}', [KycController::class, 'show'])->name('kyc.show');
+            Route::get('/{kyc}/reapply', [KycController::class, 'reapply'])->name('kyc.reapply');
+            Route::put('/{kyc}/reapply', [KycController::class, 'updateReapplication'])->name('kyc.update-reapplication');
+        });
+
+        // Shop Setup (requires approved KYC)
+        Route::group(['prefix' => 'shop', 'middleware' => ['has.approved.kyc']], function () {
             Route::get('/setup', [SellerController::class, 'shopSetup'])->name('seller.shop.setup');
             Route::post('/setup', [SellerController::class, 'shopSetupStore'])->name('seller.shop.setup.store');
         });
@@ -83,14 +96,14 @@ Route::middleware('auth')->group(function () {
 
             // Bank Account Management
             Route::group(['prefix' => 'bank-accounts'], function () {
-                Route::get('/', [App\Http\Controllers\Seller\ShopBankController::class, 'index'])->name('seller.bank-accounts.index');
-                Route::get('/create', [App\Http\Controllers\Seller\ShopBankController::class, 'create'])->name('seller.bank-accounts.create');
-                Route::post('/', [App\Http\Controllers\Seller\ShopBankController::class, 'store'])->name('seller.bank-accounts.store');
-                Route::get('/{bankAccount}', [App\Http\Controllers\Seller\ShopBankController::class, 'show'])->name('seller.bank-accounts.show');
-                Route::get('/{bankAccount}/edit', [App\Http\Controllers\Seller\ShopBankController::class, 'edit'])->name('seller.bank-accounts.edit');
-                Route::put('/{bankAccount}', [App\Http\Controllers\Seller\ShopBankController::class, 'update'])->name('seller.bank-accounts.update');
-                Route::delete('/{bankAccount}', [App\Http\Controllers\Seller\ShopBankController::class, 'destroy'])->name('seller.bank-accounts.destroy');
-                Route::post('/{bankAccount}/set-primary', [App\Http\Controllers\Seller\ShopBankController::class, 'setPrimary'])->name('seller.bank-accounts.set-primary');
+                Route::get('/', [ShopBankController::class, 'index'])->name('seller.bank-accounts.index');
+                Route::get('/create', [ShopBankController::class, 'create'])->name('seller.bank-accounts.create');
+                Route::post('/', [ShopBankController::class, 'store'])->name('seller.bank-accounts.store');
+                Route::get('/{bankAccount}', [ShopBankController::class, 'show'])->name('seller.bank-accounts.show');
+                Route::get('/{bankAccount}/edit', [ShopBankController::class, 'edit'])->name('seller.bank-accounts.edit');
+                Route::put('/{bankAccount}', [ShopBankController::class, 'update'])->name('seller.bank-accounts.update');
+                Route::delete('/{bankAccount}', [ShopBankController::class, 'destroy'])->name('seller.bank-accounts.destroy');
+                Route::post('/{bankAccount}/set-primary', [ShopBankController::class, 'setPrimary'])->name('seller.bank-accounts.set-primary');
             });
 
             // Test View Route for Development
@@ -111,13 +124,13 @@ Route::middleware('auth')->group(function () {
 
             // Wallet & Withdraw Flow
             Route::group(['prefix' => 'wallet'], function () {
-                Route::get('/', [App\Http\Controllers\Seller\WalletController::class, 'index'])->name('seller.wallet.index');
-                Route::get('/transactions', [App\Http\Controllers\Seller\WalletController::class, 'transactions'])->name('seller.wallet.transactions');
-                Route::get('/withdraw', [App\Http\Controllers\Seller\WalletController::class, 'withdrawForm'])->name('seller.wallet.withdraw.form');
-                Route::post('/withdraw', [App\Http\Controllers\Seller\WalletController::class, 'withdrawRequest'])->name('seller.wallet.withdraw.request');
-                Route::get('/withdraw-history', [App\Http\Controllers\Seller\WalletController::class, 'withdrawHistory'])->name('seller.wallet.withdraw.history');
-                Route::get('/earnings', [App\Http\Controllers\Seller\WalletController::class, 'earnings'])->name('seller.wallet.earnings');
-                Route::get('/transaction/{id}', [App\Http\Controllers\Seller\WalletController::class, 'transactionDetails'])->name('seller.wallet.transaction.details');
+                Route::get('/', [WalletController::class, 'index'])->name('seller.wallet.index');
+                Route::get('/transactions', [WalletController::class, 'transactions'])->name('seller.wallet.transactions');
+                Route::get('/withdraw', [WalletController::class, 'withdrawForm'])->name('seller.wallet.withdraw.form');
+                Route::post('/withdraw', [WalletController::class, 'withdrawRequest'])->name('seller.wallet.withdraw.request');
+                Route::get('/withdraw-history', [WalletController::class, 'withdrawHistory'])->name('seller.wallet.withdraw.history');
+                Route::get('/earnings', [WalletController::class, 'earnings'])->name('seller.wallet.earnings');
+                Route::get('/transaction/{id}', [WalletController::class, 'transactionDetails'])->name('seller.wallet.transaction.details');
             });
 
             // Shop Settings (require existing shop)
