@@ -274,20 +274,12 @@ class SellerController extends Controller
     {
         $shop = Auth::user()->shop;
         
-        if (!$shop) {
-            return redirect()->route('seller.shop.setup')->with('info', 'Please setup your shop first.');
-        }
-        
         return view('seller.shop.settings', compact('shop'));
     }
 
     public function shopSettingsUpdate(Request $request)
     {
         $shop = Auth::user()->shop;
-        
-        if (!$shop) {
-            return redirect()->route('seller.shop.setup')->with('info', 'Please setup your shop first.');
-        }
 
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:shops,name,' . $shop->id,

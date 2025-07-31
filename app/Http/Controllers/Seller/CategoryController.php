@@ -17,10 +17,6 @@ class CategoryController extends Controller
     {
         $shop = Auth::user()->shop;
 
-        if (!$shop) {
-            return redirect()->route('seller.dashboard')->with('error', 'Please setup your shop first.');
-        }
-
         $query = Category::where('shop_id', $shop->id);
 
         // Search functionality
@@ -42,12 +38,6 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        $shop = Auth::user()->shop;
-
-        if (!$shop) {
-            return redirect()->route('seller.dashboard')->with('error', 'Please setup your shop first.');
-        }
-
         return view('seller.categories.create');
     }
 
@@ -57,10 +47,6 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $shop = Auth::user()->shop;
-
-        if (!$shop) {
-            return redirect()->route('seller.dashboard')->with('error', 'Please setup your shop first.');
-        }
 
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:categories,name,NULL,id,shop_id,' . $shop->id,
@@ -94,7 +80,7 @@ class CategoryController extends Controller
     {
         $shop = Auth::user()->shop;
 
-        if (!$shop || $category->shop_id !== $shop->id) {
+        if ($category->shop_id !== $shop->id) {
             abort(404);
         }
 
@@ -110,7 +96,7 @@ class CategoryController extends Controller
     {
         $shop = Auth::user()->shop;
 
-        if (!$shop || $category->shop_id !== $shop->id) {
+        if ($category->shop_id !== $shop->id) {
             abort(404);
         }
 
@@ -124,7 +110,7 @@ class CategoryController extends Controller
     {
         $shop = Auth::user()->shop;
 
-        if (!$shop || $category->shop_id !== $shop->id) {
+        if ($category->shop_id !== $shop->id) {
             abort(404);
         }
 
@@ -161,7 +147,7 @@ class CategoryController extends Controller
     {
         $shop = Auth::user()->shop;
 
-        if (!$shop || $category->shop_id !== $shop->id) {
+        if ($category->shop_id !== $shop->id) {
             abort(404);
         }
 
