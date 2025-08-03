@@ -24,6 +24,17 @@ class User extends Authenticatable
         'password',
         'addresses',
         'phone',
+        'profile_photo',
+        'date_of_birth',
+        'gender',
+        'bio',
+        'withdrawal_pin',
+        'withdrawal_pin_verified_at',
+        'pin_last_changed_at',
+        'password_changed_at',
+        'login_attempts',
+        'last_login_at',
+        'notification_preferences',
     ];
 
     /**
@@ -34,6 +45,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'withdrawal_pin',
     ];
 
     /**
@@ -47,6 +59,12 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'addresses' => 'array',
+            'date_of_birth' => 'date',
+            'withdrawal_pin_verified_at' => 'datetime',
+            'pin_last_changed_at' => 'datetime',
+            'password_changed_at' => 'datetime',
+            'last_login_at' => 'datetime',
+            'notification_preferences' => 'array',
         ];
     }
 
@@ -141,5 +159,76 @@ class User extends Authenticatable
     public function shop()
     {
         return $this->hasOne(Shop::class);
+    }
+
+    /**
+     * Set withdrawal PIN with hashing
+     */
+    public function setWithdrawalPin(string $pin)
+    {
+        // Validate PIN is 6 digits
+        if (!preg_match('/^\d{6}$/', $pin)) {
+            throw new \InvalidArgumentException('Withdrawal PIN must be 6 digits');
+        }
+
+        $this->withdrawal_pin = bcrypt($pin);
+        $this->pin_last_changed_at = now();
+        $this->save();
+    }
+
+    /**
+     * Verify withdrawal PIN
+     */
+    public function verifyWithdrawalPin(string $pin): bool
+    {
+        if (!$this->withdrawal_pin) {
+            return false;
+        }
+
+        return password_verify($pin, $this->withdrawal_pin);
+    }
+
+    /**
+     * Check if withdrawal PIN is set
+     */
+    public function hasWithdrawalPin(): bool
+    {
+        return !empty($this->withdrawal_pin);
+    }
+
+    /**
+     * Mark withdrawal PIN as verified
+     */
+    public function markPinAsVerified()
+    {
+        $this->withdrawal_pin_verified_at = now();
+        $this->save();
+    }
+
+    /**
+     * Check if PIN was recently verified (within 30 minutes)
+     */
+    public function isPinRecentlyVerified(): bool
+    {
+        if (!$this->withdrawal_pin_verified_at) {
+            return false;
+        }
+
+        return $this->withdrawal_pin_verified_at->diffInMinutes(now()) <= 30;
+    }
+
+    /**
+     * Get default notification preferences
+     */
+    public function getNotificationPreferences(): array
+    {
+        return $this->notification_preferences ?? [
+            'email_orders' => true,
+            'email_marketing' => false,
+            'sms_orders' => false,
+            'sms_security' => true,
+            'push_orders' => true,
+            'push_marketing' => false,
+        ];
     }
 }
