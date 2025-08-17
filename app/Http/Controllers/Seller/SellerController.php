@@ -1,24 +1,25 @@
 <?php
-
 namespace App\Http\Controllers\Seller;
 
-use App\Http\Controllers\Controller;
 use App\Models\Shop;
-use App\Models\KycApplication;
 use Illuminate\Http\Request;
+use App\Models\KycApplication;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\ShopSetupStoreRequest;
+use App\Http\Requests\ShopSettingsUpdateRequest;
 
 class SellerController extends Controller
 {
     public function dashboard(Request $request)
     {
         $seller = Auth::user();
-        $shop = $seller->shop;
+        $shop   = $seller->shop;
 
         // Dashboard statistics
         $stats = [
             'total_products' => $shop ? $shop->products()->count() : 0,
-            'total_orders' => 0,
+            'total_orders'   => 0,
             'pending_orders' => 0,
             'total_earnings' => 0,
         ];
@@ -29,7 +30,7 @@ class SellerController extends Controller
     // Shipping Method Setup
     public function shippingList(Request $request)
     {
-        $shop = Auth::user()->shop;
+        $shop            = Auth::user()->shop;
         $shippingMethods = $shop ? $shop->shippingMethods()->get() : collect();
         return view('seller.shipping.index', compact('shippingMethods'));
     }
@@ -77,7 +78,7 @@ class SellerController extends Controller
             ->where('status', 'approved')
             ->exists();
 
-        if (!$approvedKyc) {
+        if (! $approvedKyc) {
             return redirect()->route('kyc.index')
                 ->with('error', 'You must complete and get your KYC verification approved before setting up your shop.');
         }
@@ -85,7 +86,7 @@ class SellerController extends Controller
         return view('seller.shop.setup');
     }
 
-    public function shopSetupStore(Request $request)
+    public function shopSetupStore(ShopSetupStoreRequest $request)
     {
         $user = Auth::user();
 
@@ -99,22 +100,15 @@ class SellerController extends Controller
             ->where('status', 'approved')
             ->exists();
 
-        if (!$approvedKyc) {
+        if (! $approvedKyc) {
             return redirect()->route('kyc.index')
                 ->with('error', 'You must complete and get your KYC verification approved before setting up your shop.');
         }
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:shops,name',
-            'slug' => 'required|string|max:255|unique:shops,slug',
-            'description' => 'nullable|string|max:1000',
-            'address' => 'nullable|string|max:500',
-            'phone' => 'nullable|string|max:20',
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-        ]);
-
-        $validated['user_id'] = Auth::id();
-        $validated['is_open'] = true; // Default to open
+        // Get the validated data directly from $request
+        $validated            = $request->validated();
+        $validated['user_id'] = $user->id;
+        $validated['is_open'] = true;
 
         // Create the shop
         $shop = Shop::create($validated);
@@ -136,34 +130,23 @@ class SellerController extends Controller
         return view('seller.shop.settings', compact('shop'));
     }
 
-    public function shopSettingsUpdate(Request $request)
+    public function shopSettingsUpdate(ShopSettingsUpdateRequest $request)
     {
         $shop = Auth::user()->shop;
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:shops,name,' . $shop->id,
-            'slug' => 'required|string|max:255|unique:shops,slug,' . $shop->id,
-            'description' => 'nullable|string|max:1000',
-            'address' => 'nullable|string|max:500',
-            'phone' => 'nullable|string|max:20',
-            'is_open' => 'boolean',
-            'social_links' => 'nullable|array',
-            'social_links.facebook' => 'nullable|url',
-            'social_links.instagram' => 'nullable|url',
-            'social_links.twitter' => 'nullable|url',
-            'social_links.website' => 'nullable|url',
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-        ]);
+        // Get the validated data directly from the request
+        $validated = $request->validated();
 
         // Handle social links
         $socialLinks = [];
         if ($request->filled('social_links')) {
             foreach ($request->social_links as $platform => $url) {
-                if (!empty($url)) {
+                if (! empty($url)) {
                     $socialLinks[$platform] = $url;
                 }
             }
         }
+
         $validated['social_links'] = $socialLinks;
 
         // Handle logo upload
@@ -185,7 +168,7 @@ class SellerController extends Controller
     // Orders Management
     public function ordersList(Request $request)
     {
-        $shop = Auth::user()->shop;
+        $shop   = Auth::user()->shop;
         $orders = $shop ? $shop->orders()->with('user', 'items.product')->latest()->paginate(15) : collect();
         return view('seller.orders.index', compact('orders'));
     }

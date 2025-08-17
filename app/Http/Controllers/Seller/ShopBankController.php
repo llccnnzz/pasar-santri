@@ -2,21 +2,19 @@
 
 namespace App\Http\Controllers\Seller;
 
-use App\Http\Controllers\Controller;
 use App\Models\ShopBank;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\ShopBankStoreRequest;
+use App\Http\Requests\ShopBankUpdateRequest;
 
 class ShopBankController extends Controller
 {
-    /**
-     * Display a listing of the shop bank accounts.
-     */
     public function index(Request $request)
     {
         $shop = Auth::user()->shop;
-
 
         $query = ShopBank::where('shop_id', $shop->id);
 
@@ -35,9 +33,6 @@ class ShopBankController extends Controller
         return view('seller.bank-accounts.index', compact('bankAccounts'));
     }
 
-    /**
-     * Show the form for creating a new bank account.
-     */
     public function create()
     {
         $shop = Auth::user()->shop;
@@ -46,27 +41,12 @@ class ShopBankController extends Controller
         return view('seller.bank-accounts.create');
     }
 
-    /**
-     * Store a newly created bank account in storage.
-     */
-    public function store(Request $request)
+    public function store(ShopBankStoreRequest $request)
     {
         $shop = Auth::user()->shop;
 
 
-        $validated = $request->validate([
-            'bank_code' => 'required|string|max:10',
-            'bank_name' => 'required|string|max:255',
-            'account_number' => [
-                'required',
-                'string',
-                'max:50',
-                Rule::unique('shop_banks')->where(function ($query) use ($shop) {
-                    return $query->where('shop_id', $shop->id);
-                }),
-            ],
-            'is_default' => 'nullable|boolean',
-        ]);
+        $validated = $request->validated();
 
         $validated['shop_id'] = $shop->id;
         $validated['is_default'] = $request->boolean('is_default');
@@ -84,9 +64,6 @@ class ShopBankController extends Controller
                         ->with('success', 'Bank account added successfully!');
     }
 
-    /**
-     * Display the specified bank account.
-     */
     public function show(ShopBank $bankAccount)
     {
         $shop = Auth::user()->shop;
@@ -95,9 +72,6 @@ class ShopBankController extends Controller
         return view('seller.bank-accounts.show', compact('bankAccount'));
     }
 
-    /**
-     * Show the form for editing the specified bank account.
-     */
     public function edit(ShopBank $bankAccount)
     {
         $shop = Auth::user()->shop;
@@ -106,27 +80,12 @@ class ShopBankController extends Controller
         return view('seller.bank-accounts.edit', compact('bankAccount'));
     }
 
-    /**
-     * Update the specified bank account in storage.
-     */
-    public function update(Request $request, ShopBank $bankAccount)
+    public function update(ShopBankUpdateRequest $request, ShopBank $bankAccount)
     {
         $shop = Auth::user()->shop;
 
 
-        $validated = $request->validate([
-            'bank_code' => 'required|string|max:10',
-            'bank_name' => 'required|string|max:255',
-            'account_number' => [
-                'required',
-                'string',
-                'max:50',
-                Rule::unique('shop_banks')->where(function ($query) use ($shop) {
-                    return $query->where('shop_id', $shop->id);
-                })->ignore($bankAccount->id),
-            ],
-            'is_default' => 'nullable|boolean',
-        ]);
+        $validated = $request->validated();
 
         $validated['is_default'] = $request->boolean('is_default');
 
@@ -141,9 +100,6 @@ class ShopBankController extends Controller
                         ->with('success', 'Bank account updated successfully!');
     }
 
-    /**
-     * Remove the specified bank account from storage.
-     */
     public function destroy(ShopBank $bankAccount)
     {
         $shop = Auth::user()->shop;
@@ -166,9 +122,6 @@ class ShopBankController extends Controller
                         ->with('success', 'Bank account deleted successfully!');
     }
 
-    /**
-     * Set the specified bank account as default.
-     */
     public function setPrimary(ShopBank $bankAccount)
     {
         $shop = Auth::user()->shop;
