@@ -2,20 +2,18 @@
 
 namespace App\Http\Controllers\Seller;
 
-use App\Http\Controllers\Controller;
-use App\Models\ShopBalance;
-use App\Models\ShopBalanceLog;
 use App\Models\ShopBank;
+use App\Models\ShopBalance;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use App\Models\ShopBalanceLog;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\WalletWithdrawRequest;
 
 class WalletController extends Controller
 {
-    /**
-     * Display wallet dashboard with balance overview.
-     */
     public function index()
     {
         $shop = Auth::user()->shop;
@@ -47,9 +45,6 @@ class WalletController extends Controller
         ));
     }
 
-    /**
-     * Display all wallet transactions with filtering.
-     */
     public function transactions(Request $request)
     {
         $shop = Auth::user()->shop;
@@ -88,9 +83,6 @@ class WalletController extends Controller
         return view('seller.wallet.transactions', compact('transactions'));
     }
 
-    /**
-     * Show withdrawal form.
-     */
     public function withdrawForm()
     {
         $shop = Auth::user()->shop;
@@ -107,19 +99,9 @@ class WalletController extends Controller
         return view('seller.wallet.withdraw', compact('balance', 'bankAccounts'));
     }
 
-    /**
-     * Process withdrawal request.
-     */
-    public function withdrawRequest(Request $request)
+    public function withdrawRequest(WalletWithdrawRequest $request)
     {
         $shop = Auth::user()->shop;
-
-
-        $request->validate([
-            'amount' => 'required|numeric|min:10000|max:50000000', // Min 10K, Max 50M IDR
-            'shop_bank_id' => 'required|exists:shop_banks,id',
-            'note' => 'nullable|string|max:255',
-        ]);
 
         $balance = ShopBalance::where('shop_id', $shop->id)->first();
 
@@ -168,9 +150,6 @@ class WalletController extends Controller
         }
     }
 
-    /**
-     * Display withdrawal history.
-     */
     public function withdrawHistory(Request $request)
     {
         $shop = Auth::user()->shop;
@@ -190,9 +169,6 @@ class WalletController extends Controller
         return view('seller.wallet.withdraw-history', compact('withdrawals'));
     }
 
-    /**
-     * Display earnings overview.
-     */
     public function earnings(Request $request)
     {
         $shop = Auth::user()->shop;
@@ -224,9 +200,6 @@ class WalletController extends Controller
         ));
     }
 
-    /**
-     * Show transaction details (AJAX).
-     */
     public function transactionDetails($id)
     {
         $shop = Auth::user()->shop;

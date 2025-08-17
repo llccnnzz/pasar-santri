@@ -2,20 +2,22 @@
 
 namespace App\Http\Controllers\Seller;
 
-use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Category;
-use App\Models\ProductVariant;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\ProductVariant;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
+use App\Http\Requests\InventoryStoreRequest;
+use App\Http\Requests\InventoryUpdateRequest;
+use App\Http\Requests\InventoryAddVariantRequest;
+use App\Http\Requests\InventoryBulkDeleteRequest;
+use App\Http\Requests\InventoryBulkStatusUpdateRequest;
 
 class InventoryController extends Controller
 {
-    /**
-     * Display a listing of the products.
-     */
     public function index(Request $request)
     {
         $shop = Auth::user()->shop;
@@ -27,8 +29,8 @@ class InventoryController extends Controller
             $searchTerm = $request->search;
             $query->where(function($q) use ($searchTerm) {
                 $q->where('name', 'ilike', '%' . $searchTerm . '%')
-                  ->orWhere('sku', 'ilike', '%' . $searchTerm . '%')
-                  ->orWhere('description', 'ilike', '%' . $searchTerm . '%');
+                    ->orWhere('sku', 'ilike', '%' . $searchTerm . '%')
+                    ->orWhere('description', 'ilike', '%' . $searchTerm . '%');
             });
         }
 
@@ -37,9 +39,6 @@ class InventoryController extends Controller
         return view('seller.inventory.index', compact('products'));
     }
 
-    /**
-     * Show the form for creating a new product.
-     */
     public function create()
     {
         $shop = Auth::user()->shop;
@@ -51,40 +50,10 @@ class InventoryController extends Controller
         return view('seller.inventory.create', compact('globalCategories', 'localCategories'));
     }
 
-    /**
-     * Store a newly created product in storage.
-     */
-    public function store(Request $request)
+    public function store(InventoryStoreRequest $request)
     {
         $shop = Auth::user()->shop;
-
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'long_description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
-            'final_price' => 'nullable|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'global_categories' => 'required|array|min:1',
-            'global_categories.*' => 'exists:categories,id',
-            'local_categories' => 'nullable|array',
-            'local_categories.*' => 'exists:categories,id',
-            'sku' => 'nullable|string|max:100|unique:products,sku',
-            'default_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'hover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'gallery_images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'meta_title' => 'nullable|string|max:255',
-            'meta_keywords' => 'nullable|string',
-            'meta_description' => 'nullable|string',
-            'status' => 'required|in:active,inactive',
-            'weight' => 'nullable|numeric|min:0',
-            'dimensions' => 'nullable|string',
-            'brand' => 'nullable|string|max:100',
-            'tags' => 'nullable|string',
-            'specification' => 'nullable|string',
-            'is_featured' => 'boolean',
-            'is_popular' => 'boolean',
-        ]);
+        $validated = $request->validated();
 
         // Validate that global categories exist and don't belong to any shop
         $globalCategoryIds = $validated['global_categories'];
@@ -203,9 +172,6 @@ class InventoryController extends Controller
         return redirect()->route('seller.products.create')->with('success', 'Product created successfully!');
     }
 
-    /**
-     * Display the specified product.
-     */
     public function show(Product $product)
     {
         $shop = Auth::user()->shop;
@@ -219,9 +185,6 @@ class InventoryController extends Controller
         return view('seller.inventory.show', compact('product'));
     }
 
-    /**
-     * Show the form for editing the specified product.
-     */
     public function edit(Product $product)
     {
         $shop = Auth::user()->shop;
@@ -240,10 +203,7 @@ class InventoryController extends Controller
         return view('seller.inventory.edit', compact('product', 'globalCategories', 'localCategories'));
     }
 
-    /**
-     * Update the specified product in storage.
-     */
-    public function update(Request $request, Product $product)
+    public function update(InventoryUpdateRequest $request, Product $product)
     {
         $shop = Auth::user()->shop;
 
@@ -251,28 +211,7 @@ class InventoryController extends Controller
             abort(404);
         }
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'global_categories' => 'required|array|min:1',
-            'global_categories.*' => 'exists:categories,id',
-            'local_categories' => 'nullable|array',
-            'local_categories.*' => 'exists:categories,id',
-            'sku' => 'nullable|string|max:100|unique:products,sku,' . $product->id,
-            'default_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'hover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'gallery_images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'meta_title' => 'nullable|string|max:255',
-            'meta_keywords' => 'nullable|string',
-            'meta_description' => 'nullable|string',
-            'long_description' => 'nullable|string',
-            'status' => 'required|in:active,inactive',
-            'weight' => 'nullable|numeric|min:0',
-            'dimensions' => 'nullable|string',
-            'brand' => 'nullable|string|max:100',
-        ]);
+        $validated = $request->validated();
 
         // Update slug if name changed
         if ($validated['name'] !== $product->name) {
@@ -332,9 +271,6 @@ class InventoryController extends Controller
         return redirect()->route('seller.products.index')->with('success', 'Product updated successfully!');
     }
 
-    /**
-     * Remove the specified product from storage.
-     */
     public function destroy(Product $product)
     {
         $shop = Auth::user()->shop;
@@ -358,10 +294,7 @@ class InventoryController extends Controller
         return redirect()->route('seller.products.index')->with('success', 'Product deleted successfully!');
     }
 
-    /**
-     * Add a variant to the specified product.
-     */
-    public function addVariant(Request $request, Product $product)
+    public function addVariant(InventoryAddVariantRequest $request, Product $product)
     {
         $shop = Auth::user()->shop;
 
@@ -369,13 +302,7 @@ class InventoryController extends Controller
             abort(404);
         }
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'sku' => 'nullable|string|max:100|unique:product_variants,sku',
-            'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'attributes' => 'nullable|array',
-        ]);
+        $validated = $request->validated();
 
         // Generate SKU if not provided
         if (!$validated['sku']) {
@@ -390,9 +317,6 @@ class InventoryController extends Controller
         return redirect()->route('seller.products.show', $product)->with('success', 'Product variant added successfully!');
     }
 
-    /**
-     * Remove the specified variant from storage.
-     */
     public function removeVariant(ProductVariant $variant)
     {
         $shop = Auth::user()->shop;
@@ -407,10 +331,7 @@ class InventoryController extends Controller
         return redirect()->route('seller.products.show', $product)->with('success', 'Product variant removed successfully!');
     }
 
-    /**
-     * Update product status (bulk action).
-     */
-    public function bulkStatusUpdate(Request $request)
+    public function bulkStatusUpdate(InventoryBulkStatusUpdateRequest $request)
     {
         $shop = Auth::user()->shop;
 
@@ -418,23 +339,14 @@ class InventoryController extends Controller
             return response()->json(['error' => 'Shop not found'], 404);
         }
 
-        $validated = $request->validate([
-            'product_ids' => 'required|array',
-            'product_ids.*' => 'exists:products,id',
-            'status' => 'required|in:active,inactive',
-        ]);
-
         Product::where('shop_id', $shop->id)
-            ->whereIn('id', $validated['product_ids'])
-            ->update(['status' => $validated['status']]);
+            ->whereIn('id', $request['product_ids'])
+            ->update(['status' => $request['status']]);
 
         return response()->json(['message' => 'Products status updated successfully!']);
     }
 
-    /**
-     * Bulk delete products.
-     */
-    public function bulkDelete(Request $request)
+    public function bulkDelete(InventoryBulkDeleteRequest $request)
     {
         $shop = Auth::user()->shop;
 
@@ -442,13 +354,8 @@ class InventoryController extends Controller
             return response()->json(['error' => 'Shop not found'], 404);
         }
 
-        $validated = $request->validate([
-            'product_ids' => 'required|array',
-            'product_ids.*' => 'exists:products,id',
-        ]);
-
         $products = Product::where('shop_id', $shop->id)
-            ->whereIn('id', $validated['product_ids'])
+            ->whereIn('id', $request['product_ids'])
             ->get();
 
         foreach ($products as $product) {
