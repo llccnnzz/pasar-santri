@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Seller;
 
-use App\Http\Controllers\Controller;
-use App\Models\KycApplication;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Models\KycApplication;
 use Illuminate\Validation\Rule;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\KycStoreRequest;
+use App\Http\Requests\KycReapplicationUpdateRequest;
 
 class KycController extends Controller
 {
@@ -26,7 +28,7 @@ class KycController extends Controller
     public function create()
     {
         $user = Auth::user();
-        
+
         // Check if user already has an approved KYC
         $approvedKyc = KycApplication::where('user_id', $user->id)
             ->where('status', 'approved')
@@ -50,10 +52,10 @@ class KycController extends Controller
         return view('seller.kyc.create');
     }
 
-    public function store(Request $request)
+    public function store(KycStoreRequest $request)
     {
         $user = Auth::user();
-        
+
         // Check if user already has pending/approved KYC
         $existingKyc = KycApplication::where('user_id', $user->id)
             ->whereIn('status', ['pending', 'under_review', 'approved'])
@@ -63,30 +65,6 @@ class KycController extends Controller
             return redirect()->route('kyc.index')
                 ->with('error', 'You already have a KYC application.');
         }
-
-        $request->validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'date_of_birth' => 'required|date|before:today|after:1900-01-01',
-            'gender' => 'required|in:male,female,other',
-            'nationality' => 'required|string|max:100',
-            'address' => 'required|string|max:500',
-            'city' => 'required|string|max:100',
-            'state' => 'required|string|max:100',
-            'postal_code' => 'required|string|max:20',
-            'country' => 'required|string|max:100',
-            'phone' => 'required|string|max:20',
-            'document_type' => 'required|in:national_id,passport,driving_license',
-            'document_number' => 'required|string|max:100',
-            'document_expiry_date' => 'required|date|after:today',
-            'document_issued_country' => 'required|string|max:100',
-            'document_front' => 'required|image|mimes:jpeg,png,jpg,webp|max:5120',
-            'document_back' => 'required_if:document_type,national_id,driving_license|image|mimes:jpeg,png,jpg,webp|max:5120',
-            'selfie' => 'required|image|mimes:jpeg,png,jpg,webp|max:5120',
-            'additional_docs.*' => 'nullable|file|mimes:jpeg,png,jpg,webp,pdf|max:10240',
-            'terms_accepted' => 'required|accepted',
-            'privacy_accepted' => 'required|accepted',
-        ]);
 
         $kycData = $request->only([
             'first_name', 'last_name', 'date_of_birth', 'gender', 'nationality',
@@ -135,14 +113,14 @@ class KycController extends Controller
     public function show(KycApplication $kyc)
     {
         $this->authorize('view', $kyc);
-        
+
         return view('seller.kyc.show', compact('kyc'));
     }
 
     public function reapply(KycApplication $kyc)
     {
         $this->authorize('reapply', $kyc);
-        
+
         if ($kyc->status !== 'rejected') {
             return redirect()->route('kyc.index')
                 ->with('error', 'You can only reapply for rejected applications.');
@@ -151,38 +129,15 @@ class KycController extends Controller
         return view('seller.kyc.reapply', compact('kyc'));
     }
 
-    public function updateReapplication(Request $request, KycApplication $kyc)
+    public function updateReapplication(KycReapplicationUpdateRequest $request, KycApplication $kyc)
     {
         $this->authorize('reapply', $kyc);
-        
+
         if ($kyc->status !== 'rejected') {
             return redirect()->route('kyc.index')
                 ->with('error', 'You can only reapply for rejected applications.');
         }
 
-        $request->validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'date_of_birth' => 'required|date|before:today|after:1900-01-01',
-            'gender' => 'required|in:male,female,other',
-            'nationality' => 'required|string|max:100',
-            'address' => 'required|string|max:500',
-            'city' => 'required|string|max:100',
-            'state' => 'required|string|max:100',
-            'postal_code' => 'required|string|max:20',
-            'country' => 'required|string|max:100',
-            'phone' => 'required|string|max:20',
-            'document_type' => 'required|in:national_id,passport,driving_license',
-            'document_number' => 'required|string|max:100',
-            'document_expiry_date' => 'required|date|after:today',
-            'document_issued_country' => 'required|string|max:100',
-            'document_front' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
-            'document_back' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
-            'selfie' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
-            'additional_docs.*' => 'nullable|file|mimes:jpeg,png,jpg,webp,pdf|max:10240',
-            'terms_accepted' => 'required|accepted',
-            'privacy_accepted' => 'required|accepted',
-        ]);
 
         $kycData = $request->only([
             'first_name', 'last_name', 'date_of_birth', 'gender', 'nationality',
