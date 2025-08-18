@@ -8,6 +8,7 @@ use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\Seller\CategoryController;
 use App\Http\Controllers\Seller\InventoryController;
 use App\Http\Controllers\Seller\KycController;
+use App\Http\Controllers\Seller\ProfileController;
 use App\Http\Controllers\Seller\SellerController;
 use App\Http\Controllers\Seller\ShopBankController;
 use App\Http\Controllers\Seller\WalletController;
@@ -144,6 +145,18 @@ Route::middleware('auth')->group(function () {
                 Route::get('/', [SellerController::class, 'ordersList'])->name('seller.orders.index');
                 Route::get('/{order}', [SellerController::class, 'ordersShow'])->name('seller.orders.show');
                 Route::put('/{order}/status', [SellerController::class, 'ordersUpdateStatus'])->name('seller.orders.update-status');
+            });
+
+            // Profile Management
+            Route::group(['prefix' => 'profile'], function () {
+                Route::get('/', [ProfileController::class, 'index'])->name('seller.profile.index');
+                Route::get('/edit', [ProfileController::class, 'edit'])->name('seller.profile.edit');
+                Route::put('/update', [ProfileController::class, 'update'])->name('seller.profile.update');
+                Route::get('/security', [ProfileController::class, 'security'])->name('seller.profile.security');
+                Route::put('/password', [ProfileController::class, 'updatePassword'])->name('seller.profile.password.update');
+                Route::get('/withdrawal-pin', [ProfileController::class, 'withdrawalPin'])->name('seller.profile.withdrawal-pin');
+                Route::put('/withdrawal-pin', [ProfileController::class, 'updateWithdrawalPin'])->name('seller.profile.withdrawal-pin.update');
+                Route::post('/verify-pin', [ProfileController::class, 'verifyPin'])->name('seller.profile.verify-pin');
             });
         });
     });

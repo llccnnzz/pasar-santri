@@ -185,10 +185,10 @@
 				</li>
 				
 				<!-- User Profile -->
-				<li>
-					<a href="#" class="menu-title">
+				<li class="{{ request()->routeIs('seller.profile.*') ? 'mm-active' : '' }}">
+					<a href="{{ route('seller.profile.index') }}" class="menu-title">
 						<span class="icon"><i data-feather="user"></i></span>
-						<span class="title">Profile Settings (soon)</span>
+						<span class="title">Profile Settings</span>
 					</a>
 				</li>
 				
