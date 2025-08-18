@@ -1,27 +1,27 @@
-name: marketplace-production
-
-on:
-  push:
-    branches:
-      - dev
-
-jobs:
-  main_deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Deploy env Dev -> AWS
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SSH_HOST_DEV }}
-          username: ${{ secrets.SSH_USERNAME_DEV }}
-          key: ${{ secrets.SSH_PRIVATE_KEY_DEV }}
-          port: 22
-          script: |
-            cd /var/www/marketplace-11.6.1
-            git checkout dev
-            git pull origin dev
-            composer install
-            php artisan migrate --force
+#name: marketplace-production
+#
+#on:
+#  push:
+#    branches:
+#      - dev
+#
+#jobs:
+#  main_deploy:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - uses: actions/checkout@v2
+#
+#      - name: Deploy env Dev -> AWS
+#        uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{ secrets.SSH_HOST_DEV }}
+#          username: ${{ secrets.SSH_USERNAME_DEV }}
+#          key: ${{ secrets.SSH_PRIVATE_KEY_DEV }}
+#          port: 22
+#          script: |
+#            cd /var/www/marketplace-11.6.1
+#            git checkout dev
+#            git pull origin dev
+#            composer install
+#            php artisan migrate --force
