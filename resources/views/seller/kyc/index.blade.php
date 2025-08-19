@@ -79,7 +79,7 @@
                                             <code>{{ substr($application->id, 0, 8) }}...</code>
                                         </td>
                                         <td>
-                                            <span class="badge badge-{{ $application->status_badge }}">
+                                            <span class="badge bg-{{ $application->status_badge }}">
                                                 {{ $application->status_label }}
                                             </span>
                                         </td>
