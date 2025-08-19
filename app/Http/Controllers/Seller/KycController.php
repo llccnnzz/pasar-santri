@@ -80,7 +80,6 @@ class KycController extends Controller
 
         $kyc = KycApplication::create($kycData);
 
-
         // Upload document front
         if ($request->hasFile('document_front')) {
             $kyc->addMediaFromRequest('document_front')

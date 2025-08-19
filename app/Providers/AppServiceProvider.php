@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Providers;
 
 use App\Models\Cart;
@@ -38,13 +39,13 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Relation::enforceMorphMap([
-            'cart'            => Cart::class,
-            'category'        => Category::class,
-            'product'         => Product::class,
+            'cart' => Cart::class,
+            'category' => Category::class,
+            'product' => Product::class,
             'product_variant' => ProductVariant::class,
-            'shop'            => Shop::class,
-            'user'            => User::class,
-            'wishlist'        => Wishlist::class,
+            'shop' => Shop::class,
+            'user' => User::class,
+            'wishlist' => Wishlist::class,
             'kyc_application' => KycApplication::class,
         ]);
     }
