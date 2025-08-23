@@ -8,7 +8,8 @@
         <h4 class="text-dark mb-0">Setup Your Shop</h4>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0 mt-2 mt-sm-0 justify-content-center">
-                <li class="breadcrumb-item fs-14"><a class="text-decoration-none" href="{{ route('seller.dashboard') }}">Dashboard</a></li>
+                <li class="breadcrumb-item fs-14"><a class="text-decoration-none"
+                        href="{{ route('seller.dashboard') }}">Dashboard</a></li>
                 <li class="breadcrumb-item fs-14 text-primary" aria-current="page">Shop Setup</li>
             </ol>
         </nav>
@@ -34,8 +35,9 @@
                                         <div class="text-center">
                                             <div class="mb-2">
                                                 <div class="logo-preview bg-light border rounded d-flex align-items-center justify-content-center"
-                                                     style="width: 80px; height: 80px;">
-                                                    <i data-feather="image" style="width: 24px; height: 24px;" class="text-muted"></i>
+                                                    style="width: 80px; height: 80px;">
+                                                    <i data-feather="image" style="width: 24px; height: 24px;"
+                                                        class="text-muted"></i>
                                                 </div>
                                             </div>
                                         </div>
@@ -53,10 +55,11 @@
 
                                 <!-- Shop Name -->
                                 <div class="mb-3">
-                                    <label for="name" class="form-label">Shop Name <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control @error('name') is-invalid @enderror" 
-                                           id="name" name="name" value="{{ old('name') }}" required
-                                           placeholder="Enter your shop name">
+                                    <label for="name" class="form-label">Shop Name <span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" class="form-control @error('name') is-invalid @enderror"
+                                        id="name" name="name" value="{{ old('name') }}" required
+                                        placeholder="Enter your shop name">
                                     @error('name')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -67,27 +70,28 @@
 
                                 <!-- Shop Slug -->
                                 <div class="mb-3">
-                                    <label for="slug" class="form-label">Shop URL Slug <span class="text-danger">*</span></label>
+                                    <label for="slug" class="form-label">Shop URL Slug <span
+                                            class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <span class="input-group-text">{{ url('/shop/') }}/</span>
-                                        <input type="text" class="form-control @error('slug') is-invalid @enderror" 
-                                               id="slug" name="slug" value="{{ old('slug') }}" required
-                                               placeholder="your-shop-name">
+                                        <input type="text" class="form-control @error('slug') is-invalid @enderror"
+                                            id="slug" name="slug" value="{{ old('slug') }}" required
+                                            placeholder="your-shop-name">
                                         @error('slug')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                     <div class="form-text">
-                                        This will be your shop's public URL. Use lowercase letters, numbers, and hyphens only.
+                                        This will be your shop's public URL. Use lowercase letters, numbers, and hyphens
+                                        only.
                                     </div>
                                 </div>
 
                                 <!-- Shop Description -->
                                 <div class="mb-3">
                                     <label for="description" class="form-label">Shop Description</label>
-                                    <textarea class="form-control @error('description') is-invalid @enderror" 
-                                              id="description" name="description" rows="4" 
-                                              placeholder="Tell customers about your shop, what you sell, and what makes you special...">{{ old('description') }}</textarea>
+                                    <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description"
+                                        rows="4" placeholder="Tell customers about your shop, what you sell, and what makes you special...">{{ old('description') }}</textarea>
                                     @error('description')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -101,9 +105,9 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label for="phone" class="form-label">Phone Number</label>
-                                            <input type="tel" class="form-control @error('phone') is-invalid @enderror" 
-                                                   id="phone" name="phone" value="{{ old('phone') }}"
-                                                   placeholder="+1 234 567 8900">
+                                            <input type="tel" class="form-control @error('phone') is-invalid @enderror"
+                                                id="phone" name="phone" value="{{ old('phone') }}"
+                                                placeholder="+1 234 567 8900">
                                             @error('phone')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -114,20 +118,89 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="address" class="form-label">Shop Address</label>
-                                            <textarea class="form-control @error('address') is-invalid @enderror" 
-                                                      id="address" name="address" rows="2" 
-                                                      placeholder="Enter your shop's address...">{{ old('address') }}</textarea>
-                                            @error('address')
+                                            <label for="street_address" class="form-label">Street Address</label>
+                                            <textarea class="form-control @error('street_address') is-invalid @enderror" id="street_address" name="street_address"
+                                                rows="2" placeholder="Enter your shop's street address name...">{{ old('street_address') }}</textarea>
+                                            @error('street_address')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                             <div class="form-text">
-                                                Your business location
+                                                Your business street address name
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="province" class="form-label">Province</label>
+                                            <select class="form-control @error('province') is-invalid @enderror"
+                                                id="province" name="province" required>
+                                                <option value="">-- Select Province --</option>
+                                            </select>
+                                            @error('province')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                            <div class="form-text">
+                                                Your business province location
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="city" class="form-label">City</label>
+                                            <select class="form-control @error('city') is-invalid @enderror"
+                                                id="city" name="city" required>
+                                                <option value="">-- Select City --</option>
+                                            </select>
+                                            @error('city')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                            <div class="form-text">
+                                                Your business city location
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="subdistrict" class="form-label">Subdistrict</label>
+                                            <select class="form-control @error('subdistrict') is-invalid @enderror"
+                                                id="subdistrict" name="subdistrict" required>
+                                                <option value="">-- Select Subdistrict --</option>
+                                            </select>
+                                            @error('subdistrict')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                            <div class="form-text">
+                                                Your business subdistrict location
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="postal_code" class="form-label">Postal Code</label>
+                                            <select class="form-control @error('postal_code') is-invalid @enderror"
+                                                id="postal_code" name="postal_code" required>
+                                                <option value="">-- Select Postal Code --</option>
+                                            </select>
+                                            @error('postal_code')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                            <div class="form-text">
+                                                Your business postal code area
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
+                                <div class="mb-3">
+                                    <label for="country" class="form-label">Country</label>
+                                    <input type="text" class="form-control" id="country" name="country"
+                                        value="Indonesia" required>
+                                    @error('country')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                    <div class="form-text">
+                                        Your business country location
+                                    </div>
+                                </div>
                                 <div class="d-flex justify-content-end gap-2">
                                     <a href="{{ route('seller.dashboard') }}" class="btn btn-outline-secondary">
                                         Cancel
@@ -171,7 +244,8 @@
                                         </div>
                                     </div>
                                     <p class="text-muted small mb-0">
-                                        <strong>Note:</strong> You can always update your shop information later in the settings page.
+                                        <strong>Note:</strong> You can always update your shop information later in the
+                                        settings page.
                                     </p>
                                 </div>
                             </div>
@@ -210,32 +284,115 @@
         </div>
     </form>
 
-@push('scripts')
-<script>
-// Auto-generate slug from name
-document.getElementById('name').addEventListener('input', function() {
-    const name = this.value;
-    const slug = name.toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
-        .replace(/\s+/g, '-') // Replace spaces with hyphens
-        .replace(/-+/g, '-') // Replace multiple hyphens with single
-        .trim('-'); // Remove leading/trailing hyphens
-    
-    document.getElementById('slug').value = slug;
-});
+    @push('scripts')
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            let provinces = [];
+            let cities = [];
+            let subdistricts = [];
+            let postals = [];
 
-// Preview logo before upload
-document.querySelector('input[name="logo"]').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const preview = document.querySelector('.logo-preview');
-            preview.innerHTML = `<img src="${e.target.result}" class="rounded border" style="width: 80px; height: 80px; object-fit: cover;">`;
-        };
-        reader.readAsDataURL(file);
-    }
-});
-</script>
-@endpush
+            let $province = $("#province"),
+                $city = $("#city"),
+                $subdistrict = $("#subdistrict"),
+                $postal = $("#postal_code");
+
+            $(document).ready(function() {
+                // Load all JSON (update path sesuai lokasi file di public/json)
+                $.getJSON("{{ asset('assets/js/provinces.json') }}", function(data) {
+                    provinces = data.sort((a, b) => a.name.localeCompare(b.name));
+                    $.each(provinces, function(_, prov) {
+                        $province.append(`<option value="${prov.id}">${prov.name}</option>`);
+                    });
+                });
+
+                $.getJSON("{{ asset('assets/js/cities.json') }}", function(data) {
+                    cities = data;
+                });
+
+                $.getJSON("{{ asset('assets/js/sub_districts.json') }}", function(data) {
+                    subdistricts = data;
+                });
+
+                $.getJSON("{{ asset('assets/js/postal_codes.json') }}", function(data) {
+                    postals = data;
+                });
+
+                // Cities (urut abjad)
+                $province.on('change', function() {
+                    const provId = $(this).val();
+
+                    $city.html('<option value="">-- Select City --</option>');
+                    $subdistrict.html('<option value="">-- Select Subdistrict --</option>');
+                    $postal.html('<option value="">-- Select Postal Code --</option>');
+
+                    const filteredCities = cities
+                        .filter(c => c.province_id == provId)
+                        .sort((a, b) => a.name.localeCompare(b.name));
+
+                    $.each(filteredCities, function(_, city) {
+                        $city.append(`<option value="${city.id}">${city.name}</option>`);
+                    });
+                });
+
+                $city.on('change', function() {
+                    const cityId = $(this).val();
+
+                    $subdistrict.html('<option value="">-- Select Subdistrict --</option>');
+                    $postal.html('<option value="">-- Select Postal Code --</option>');
+
+                    const filteredSubs = subdistricts
+                        .filter(s => s.city_id == cityId)
+                        .sort((a, b) => a.name.localeCompare(b.name));
+
+                    $.each(filteredSubs, function(_, sub) {
+                        $subdistrict.append(
+                            `<option value="${sub.id}">${sub.name}</option>`
+                        );
+                    });
+                });
+
+                $subdistrict.on('change', function() {
+                    const subdistrictId = $(this).val();
+
+                    $postal.html('<option value="">-- Select Postal Code --</option>');
+
+                    const filteredPostals = postals
+                        .filter(p => p.subdistrict_id == subdistrictId)
+                        .sort((a, b) => a.name.localeCompare(b.name));
+
+                    $.each(filteredPostals, function(_, pc) {
+                        $postal.append(
+                            `<option value="${pc.id}">${pc.name}</option>`
+                        );
+                    });
+                });
+            });
+            // Auto-generate slug from name
+            document.getElementById('name').addEventListener('input', function() {
+                const name = this.value;
+                const slug = name.toLowerCase()
+                    .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+                    .replace(/\s+/g, '-') // Replace spaces with hyphens
+                    .replace(/-+/g, '-') // Replace multiple hyphens with single
+                    .trim('-'); // Remove leading/trailing hyphens
+
+                document.getElementById('slug').value = slug;
+            });
+
+            // Preview logo before upload
+            document.querySelector('input[name="logo"]').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const preview = document.querySelector('.logo-preview');
+                        preview.innerHTML =
+                            `<img src="${e.target.result}" class="rounded border" style="width: 80px; height: 80px; object-fit: cover;">`;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        </script>
+    @endpush
 @endsection

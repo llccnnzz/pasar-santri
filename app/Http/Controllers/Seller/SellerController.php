@@ -1,13 +1,13 @@
 <?php
 namespace App\Http\Controllers\Seller;
 
+use App\Http\Controllers\Controller;
+use App\Http\Requests\ShopSettingsUpdateRequest;
+use App\Http\Requests\ShopSetupStoreRequest;
+use App\Models\KycApplication;
 use App\Models\Shop;
 use Illuminate\Http\Request;
-use App\Models\KycApplication;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\ShopSetupStoreRequest;
-use App\Http\Requests\ShopSettingsUpdateRequest;
 
 class SellerController extends Controller
 {
@@ -105,10 +105,29 @@ class SellerController extends Controller
                 ->with('error', 'You must complete and get your KYC verification approved before setting up your shop.');
         }
 
-        // Get the validated data directly from $request
         $validated            = $request->validated();
         $validated['user_id'] = $user->id;
         $validated['is_open'] = true;
+
+        $addressData = [
+            'province'     => $validated['province'],
+            'city'         => $validated['city'],
+            'subdistrict'  => $validated['subdistrict'],
+            'postal_code'  => $validated['postal_code'],
+            'country'      => $validated['country'],
+            'address_line' => $validated['street_address'],
+        ];
+
+        unset(
+            $validated['province'],
+            $validated['city'],
+            $validated['subdistrict'],
+            $validated['postal_code'],
+            $validated['country'],
+            $validated['street_address']
+        );
+
+        $validated['address'] = json_encode($addressData);
 
         // Create the shop
         $shop = Shop::create($validated);
@@ -133,6 +152,7 @@ class SellerController extends Controller
     public function shopSettingsUpdate(ShopSettingsUpdateRequest $request)
     {
         $shop = Auth::user()->shop;
+        dd($request->all());
 
         // Get the validated data directly from the request
         $validated = $request->validated();
@@ -148,6 +168,34 @@ class SellerController extends Controller
         }
 
         $validated['social_links'] = $socialLinks;
+
+        $addressData = [
+            'province_id'      => $validated['province'],
+            'province_name'    => $validated['province_name'],
+            'city_id'          => $validated['city'],
+            'city_name'        => $validated['city_name'],
+            'subdistrict_id'   => $validated['subdistrict'],
+            'subdistrict_name' => $validated['subdistrict_name'],
+            'postal_code_id'   => $validated['postal_code'],
+            'postal_code'      => $validated['postal_code_name'],
+            'country'          => $validated['country'],
+            'street_address'   => $validated['street_address'],
+        ];
+
+        unset(
+            $validated['province'],
+            $validated['province_name'],
+            $validated['city'],
+            $validated['city_name'],
+            $validated['subdistrict'],
+            $validated['subdistrict_name'],
+            $validated['postal_code'],
+            $validated['postal_code_name'],
+            $validated['country'],
+            $validated['street_address']
+        );
+
+        $validated['address'] = json_encode($addressData);
 
         // Handle logo upload
         if ($request->hasFile('logo')) {
