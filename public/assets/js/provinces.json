@@ -1,0 +1,206 @@
+[
+    {
+        "id": 1,
+        "name": "D.K.I. JAKARTA",
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "id": 2,
+        "name": "JAWA BARAT",
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "id": 3,
+        "name": "JAWA TENGAH",
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "id": 4,
+        "name": "D.I. YOGYAKARTA",
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "id": 5,
+        "name": "JAWA TIMUR",
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "id": 6,
+        "name": "ACEH",
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "id": 7,
+        "name": "SUMATERA UTARA",
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "id": 8,
+        "name": "SUMATERA BARAT",
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "id": 9,
+        "name": "RIAU",
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "id": 10,
+        "name": "JAMBI",
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "id": 11,
+        "name": "SUMATERA SELATAN",
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "id": 12,
+        "name": "LAMPUNG",
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "id": 13,
+        "name": "KALIMANTAN BARAT",
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "id": 14,
+        "name": "KALIMANTAN TENGAH",
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "id": 15,
+        "name": "KALIMANTAN SELATAN",
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "id": 16,
+        "name": "KALIMANTAN TIMUR",
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "id": 17,
+        "name": "SULAWESI UTARA",
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "id": 18,
+        "name": "SULAWESI TENGAH",
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "id": 19,
+        "name": "SULAWESI SELATAN",
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "id": 20,
+        "name": "SULAWESI TENGGARA",
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "id": 21,
+        "name": "MALUKU",
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "id": 22,
+        "name": "BALI",
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "id": 23,
+        "name": "NUSA TENGGARA BARAT",
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "id": 24,
+        "name": "NUSA TENGGARA TIMUR",
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "id": 25,
+        "name": "PAPUA",
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "id": 26,
+        "name": "BENGKULU",
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "id": 27,
+        "name": "MALUKU UTARA",
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "id": 28,
+        "name": "BANTEN",
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "id": 29,
+        "name": "KEPULAUAN BANGKA BELITUNG",
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "id": 30,
+        "name": "GORONTALO",
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "id": 31,
+        "name": "KEPULAUAN RIAU",
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "id": 32,
+        "name": "PAPUA BARAT",
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "id": 33,
+        "name": "SULAWESI BARAT",
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "id": 34,
+        "name": "KALIMANTAN UTARA",
+        "created_at": null,
+        "updated_at": null
+    }
+]

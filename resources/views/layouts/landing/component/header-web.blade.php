@@ -44,12 +44,12 @@
                                             @foreach(auth()->user()->addresses as $address)
                                                 @if(!isset($address['is_primary']) || !$address['is_primary'])
                                                     <option value="{{ $address['id'] }}">
-                                                        {{ $address['city'] }}, {{ $address['state'] }}
+                                                        {{ $address['city'] }}, {{ $address['province'] }}
                                                     </option>
                                                 @endif
                                             @endforeach
                                         @endif
-                                        
+
                                         @if(auth()->user())
                                             <option value="manage" class="text-primary">+ Manage Addresses</option>
                                         @else
