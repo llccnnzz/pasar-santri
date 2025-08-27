@@ -126,14 +126,8 @@ class InventoryController extends Controller
             $path = $defaultImage->store('products', 'public');
 
             // Create media record for default image using defaultImage() relation
-            $product->media()->create([
-                'file_name' => $path, // Store the path in file_name
-                'mime_type' => $defaultImage->getMimeType(),
-                'disk' => 'public',
-                'collection_name' => 'default-image',
-                'name' => 'default-image',
-                'size' => $defaultImage->getSize(),
-            ]);
+            $product->addToMedia($defaultImage)
+                    ->toMediaCollection('default-image');
         }
 
         // 2. Handle Hover Image (optional)
@@ -142,14 +136,8 @@ class InventoryController extends Controller
             $path = $hoverImage->store('products', 'public');
 
             // Create media record for hover image using hoverImage() relation
-            $product->media()->create([
-                'file_name' => $path, // Store the path in file_name
-                'mime_type' => $hoverImage->getMimeType(),
-                'disk' => 'public',
-                'collection_name' => 'hover-image',
-                'name' => 'hover-image',
-                'size' => $hoverImage->getSize(),
-            ]);
+            $product->addToMedia($hoverImage)
+                    ->toMediaCollection('hover-image');
         }
 
         // 3. Handle Gallery Images (optional, multiple)
@@ -158,14 +146,8 @@ class InventoryController extends Controller
                 $path = $galleryImage->store('products', 'public');
 
                 // Create media record for gallery image using images() relation
-                $product->media()->create([
-                    'file_name' => $path, // Store the path in file_name
-                    'mime_type' => $galleryImage->getMimeType(),
-                    'disk' => 'public',
-                    'collection_name' => 'image',
-                    'name' => 'gallery-image-' . ($index + 1),
-                    'size' => $galleryImage->getSize(),
-                ]);
+                $product->addToMedia($galleryImage)
+                        ->toMediaCollection('image');
             }
         }
 
