@@ -126,7 +126,7 @@ class InventoryController extends Controller
             $path = $defaultImage->store('products', 'public');
 
             // Create media record for default image using defaultImage() relation
-            $product->addToMedia($defaultImage)
+            $product->addMedia($defaultImage)->preservingOriginal()
                     ->toMediaCollection('default-image');
         }
 
@@ -136,7 +136,7 @@ class InventoryController extends Controller
             $path = $hoverImage->store('products', 'public');
 
             // Create media record for hover image using hoverImage() relation
-            $product->addToMedia($hoverImage)
+            $product->addMedia($hoverImage)->preservingOriginal()
                     ->toMediaCollection('hover-image');
         }
 
@@ -146,7 +146,7 @@ class InventoryController extends Controller
                 $path = $galleryImage->store('products', 'public');
 
                 // Create media record for gallery image using images() relation
-                $product->addToMedia($galleryImage)
+                $product->addMedia($galleryImage)->preservingOriginal()
                         ->toMediaCollection('image');
             }
         }
