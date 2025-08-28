@@ -118,10 +118,10 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="street_address" class="form-label">Street Address</label>
-                                            <textarea class="form-control @error('street_address') is-invalid @enderror" id="street_address" name="street_address"
-                                                rows="2" placeholder="Enter your shop's street address name...">{{ old('street_address') }}</textarea>
-                                            @error('street_address')
+                                            <label for="address" class="form-label">Street Address</label>
+                                            <textarea class="form-control @error('address') is-invalid @enderror" id="address" name="address"
+                                                rows="2" placeholder="Enter your shop's street address name...">{{ old('address') }}</textarea>
+                                            @error('address')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                             <div class="form-text">
@@ -171,6 +171,21 @@
                                             @enderror
                                             <div class="form-text">
                                                 Your business subdistrict location
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="village" class="form-label">Village</label>
+                                            <select class="form-control @error('village') is-invalid @enderror"
+                                                id="village" name="village" required>
+                                                <option value="">-- Select Village --</option>
+                                            </select>
+                                            @error('village')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                            <div class="form-text">
+                                                Your business village location
                                             </div>
                                         </div>
                                     </div>
@@ -290,11 +305,13 @@
             let provinces = [];
             let cities = [];
             let subdistricts = [];
+            let villages = [];
             let postals = [];
 
             let $province = $("#province"),
                 $city = $("#city"),
                 $subdistrict = $("#subdistrict"),
+                $village = $("#village"),
                 $postal = $("#postal_code");
 
             $(document).ready(function() {
@@ -314,6 +331,10 @@
                     subdistricts = data;
                 });
 
+                $.getJSON("{{ asset('assets/js/villages.json') }}", function(data) {
+                    villages = data;
+                });
+
                 $.getJSON("{{ asset('assets/js/postal_codes.json') }}", function(data) {
                     postals = data;
                 });
@@ -324,6 +345,7 @@
 
                     $city.html('<option value="">-- Select City --</option>');
                     $subdistrict.html('<option value="">-- Select Subdistrict --</option>');
+                    $village.html('<option value="">-- Select Village --</option>');
                     $postal.html('<option value="">-- Select Postal Code --</option>');
 
                     const filteredCities = cities
@@ -339,6 +361,7 @@
                     const cityId = $(this).val();
 
                     $subdistrict.html('<option value="">-- Select Subdistrict --</option>');
+                    $village.html('<option value="">-- Select Village --</option>');
                     $postal.html('<option value="">-- Select Postal Code --</option>');
 
                     const filteredSubs = subdistricts
@@ -355,10 +378,27 @@
                 $subdistrict.on('change', function() {
                     const subdistrictId = $(this).val();
 
+                    $village.html('<option value="">-- Select Village --</option>');
+                    $postal.html('<option value="">-- Select Postal Code --</option>');
+
+                    const filteredVillages = villages
+                        .filter(p => p.subdistrict_id == subdistrictId)
+                        .sort((a, b) => a.name.localeCompare(b.name));
+
+                    $.each(filteredVillages, function(_, vill) {
+                        $village.append(
+                            `<option value="${vill.id}">${vill.name}</option>`
+                        );
+                    });
+                });
+
+                $village.on('change', function() {
+                    const villageId = $(this).val();
+
                     $postal.html('<option value="">-- Select Postal Code --</option>');
 
                     const filteredPostals = postals
-                        .filter(p => p.subdistrict_id == subdistrictId)
+                        .filter(p => p.vilage_id == villageId)
                         .sort((a, b) => a.name.localeCompare(b.name));
 
                     $.each(filteredPostals, function(_, pc) {
