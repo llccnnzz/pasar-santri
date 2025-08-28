@@ -109,26 +109,6 @@ class SellerController extends Controller
         $validated['user_id'] = $user->id;
         $validated['is_open'] = true;
 
-        $addressData = [
-            'province'     => $validated['province'],
-            'city'         => $validated['city'],
-            'subdistrict'  => $validated['subdistrict'],
-            'postal_code'  => $validated['postal_code'],
-            'country'      => $validated['country'],
-            'address_line' => $validated['street_address'],
-        ];
-
-        unset(
-            $validated['province'],
-            $validated['city'],
-            $validated['subdistrict'],
-            $validated['postal_code'],
-            $validated['country'],
-            $validated['street_address']
-        );
-
-        $validated['address'] = json_encode($addressData);
-
         // Create the shop
         $shop = Shop::create($validated);
 
