@@ -152,9 +152,7 @@ class SellerController extends Controller
     public function shopSettingsUpdate(ShopSettingsUpdateRequest $request)
     {
         $shop = Auth::user()->shop;
-        dd($request->all());
 
-        // Get the validated data directly from the request
         $validated = $request->validated();
 
         // Handle social links
@@ -168,34 +166,6 @@ class SellerController extends Controller
         }
 
         $validated['social_links'] = $socialLinks;
-
-        $addressData = [
-            'province_id'      => $validated['province'],
-            'province_name'    => $validated['province_name'],
-            'city_id'          => $validated['city'],
-            'city_name'        => $validated['city_name'],
-            'subdistrict_id'   => $validated['subdistrict'],
-            'subdistrict_name' => $validated['subdistrict_name'],
-            'postal_code_id'   => $validated['postal_code'],
-            'postal_code'      => $validated['postal_code_name'],
-            'country'          => $validated['country'],
-            'street_address'   => $validated['street_address'],
-        ];
-
-        unset(
-            $validated['province'],
-            $validated['province_name'],
-            $validated['city'],
-            $validated['city_name'],
-            $validated['subdistrict'],
-            $validated['subdistrict_name'],
-            $validated['postal_code'],
-            $validated['postal_code_name'],
-            $validated['country'],
-            $validated['street_address']
-        );
-
-        $validated['address'] = json_encode($addressData);
 
         // Handle logo upload
         if ($request->hasFile('logo')) {
