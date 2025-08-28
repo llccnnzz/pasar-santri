@@ -1,25 +1,22 @@
 <?php
-
 namespace App\Http\Controllers\Seller;
 
-use Illuminate\Http\Request;
-use App\Models\KycApplication;
-use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\KycStoreRequest;
 use App\Http\Requests\KycReapplicationUpdateRequest;
+use App\Http\Requests\KycStoreRequest;
+use App\Models\KycApplication;
+use Illuminate\Support\Facades\Auth;
 
 class KycController extends Controller
 {
     public function index()
     {
-        $user = Auth::user();
+        $user            = Auth::user();
         $kycApplications = KycApplication::where('user_id', $user->id)
             ->orderBy('created_at', 'desc')
             ->get();
 
-        $hasApprovedKyc = $kycApplications->where('status', 'approved')->isNotEmpty();
+        $hasApprovedKyc    = $kycApplications->where('status', 'approved')->isNotEmpty();
         $latestApplication = $kycApplications->first();
 
         return view('seller.kyc.index', compact('kycApplications', 'hasApprovedKyc', 'latestApplication'));
@@ -68,17 +65,29 @@ class KycController extends Controller
 
         $kycData = $request->only([
             'first_name', 'last_name', 'date_of_birth', 'gender', 'nationality',
-            'address', 'city', 'state', 'postal_code', 'country', 'phone',
+            'address', 'city', 'province', 'postal_code', 'subdistrict', 'village', 'country', 'phone',
             'document_type', 'document_number', 'document_expiry_date', 'document_issued_country',
-            'terms_accepted', 'privacy_accepted'
+            'terms_accepted', 'privacy_accepted',
         ]);
 
-        $kycData['user_id'] = $user->id;
-        $kycData['status'] = 'pending';
+        $kycData['user_id']    = $user->id;
+        $kycData['status']     = 'pending';
         $kycData['ip_address'] = $request->ip();
         $kycData['user_agent'] = $request->userAgent();
 
         $kyc = KycApplication::create($kycData);
+
+        $addressData = array_merge(
+            $request->only([
+                'first_name', 'last_name', 'phone', 'address',
+                'province', 'city', 'subdistrict', 'postal_code', 'country', 'village',
+            ]),
+            [
+                'label'   => 'Office',
+            ]
+        );
+
+        $user->addAddress($addressData);
 
         // Upload document front
         if ($request->hasFile('document_front')) {
@@ -138,21 +147,20 @@ class KycController extends Controller
                 ->with('error', 'You can only reapply for rejected applications.');
         }
 
-
         $kycData = $request->only([
             'first_name', 'last_name', 'date_of_birth', 'gender', 'nationality',
             'address', 'city', 'state', 'postal_code', 'country', 'phone',
             'document_type', 'document_number', 'document_expiry_date', 'document_issued_country',
-            'terms_accepted', 'privacy_accepted'
+            'terms_accepted', 'privacy_accepted',
         ]);
 
-        $kycData['status'] = 'pending';
-        $kycData['reviewed_by'] = null;
-        $kycData['reviewed_at'] = null;
+        $kycData['status']           = 'pending';
+        $kycData['reviewed_by']      = null;
+        $kycData['reviewed_at']      = null;
         $kycData['rejection_reason'] = null;
-        $kycData['admin_notes'] = null;
-        $kycData['ip_address'] = $request->ip();
-        $kycData['user_agent'] = $request->userAgent();
+        $kycData['admin_notes']      = null;
+        $kycData['ip_address']       = $request->ip();
+        $kycData['user_agent']       = $request->userAgent();
 
         $kyc->update($kycData);
 
