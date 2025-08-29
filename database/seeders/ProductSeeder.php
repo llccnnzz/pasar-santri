@@ -1,5 +1,4 @@
 <?php
-
 namespace Database\Seeders;
 
 use App\Models\Attribute;
@@ -30,7 +29,7 @@ class ProductSeeder extends Seeder
 
         $allCategoryIds = [];
         foreach ($categories as $item) {
-            $category = new Category();
+            $category         = new Category();
             $category['name'] = $item['name'];
             $category->save();
 
@@ -61,213 +60,253 @@ class ProductSeeder extends Seeder
             'Mexico Chiapas',
             'Peru Cajamarca',
             'Indian Monsooned Malabar',
-            'Papua New Guinea Sigri'
+            'Papua New Guinea Sigri',
         ];
         $brands = [
             [
-                'name' => 'Kopi Kenangan',
-                'slug' => 'kopi-kenangan',
-                'description' => 'Kopi Kenangan is a popular coffee chain in Indonesia, known for its high-quality coffee and unique blends.',
-                'address' => 'Jl. Jend. Sudirman No.1, Jakarta',
-                'phone' => '+62 21 1234 5678',
+                'name'         => 'Kopi Kenangan',
+                'slug'         => 'kopi-kenangan',
+                'description'  => 'Kopi Kenangan is a popular coffee chain in Indonesia, known for its high-quality coffee and unique blends.',
+                'address'      => 'Jl. Jend. Sudirman No.1, Jakarta',
+                'province'     => 'DKI Jakarta',
+                'city'         => 'Jakarta Pusat',
+                'subdistrict'  => 'Tanah Abang',
+                'village'      => 'Kebon Melati',
+                'postal_code'  => '10230',
+                'phone'        => '+62 21 1234 5678',
                 'social_links' => json_encode([
                     [
-                        'name'=> 'Facebook',
-                        'url' => 'https://www.facebook.com/kopikenangan',
-                        'logo' => '/assets/imgs/theme/icons/social-fb.svg'
+                        'name' => 'Facebook',
+                        'url'  => 'https://www.facebook.com/kopikenangan',
+                        'logo' => '/assets/imgs/theme/icons/social-fb.svg',
                     ],
                     [
-                        'name'=> 'Instagram',
-                        'url' => 'https://www.instagram.com/kopikenangan',
-                        'logo' => '/assets/imgs/theme/icons/social-insta.svg'
+                        'name' => 'Instagram',
+                        'url'  => 'https://www.instagram.com/kopikenangan',
+                        'logo' => '/assets/imgs/theme/icons/social-insta.svg',
                     ],
                     [
-                        'name'=> 'Twitter',
-                        'url' => 'https://twitter.com/kopikenangan',
-                        'logo' => '/assets/imgs/theme/icons/social-tw.svg'
-                    ]
+                        'name' => 'Twitter',
+                        'url'  => 'https://twitter.com/kopikenangan',
+                        'logo' => '/assets/imgs/theme/icons/social-tw.svg',
+                    ],
                 ]),
-                'is_open' => true,
+                'is_open'      => true,
             ],
             [
-                'name' => 'Tomorrow',
-                'slug' => 'tomorrow',
-                'description' => 'Tomorrow is a modern coffee brand focusing on sustainability and quality sourcing.',
-                'address' => 'Jl. Kebon Jeruk No.2, Jakarta',
-                'phone' => '+62 21 2345 6789',
+                'name'         => 'Tomorrow',
+                'slug'         => 'tomorrow',
+                'description'  => 'Tomorrow is a modern coffee brand focusing on sustainability and quality sourcing.',
+                'address'      => 'Jl. Kebon Jeruk No.2, Jakarta',
+                'province'     => 'DKI Jakarta',
+                'city'         => 'Jakarta Barat',
+                'subdistrict'  => 'Kebon Jeruk',
+                'village'      => 'Sukabumi Utara',
+                'postal_code'  => '11540',
+                'phone'        => '+62 21 2345 6789',
                 'social_links' => json_encode([
                     [
-                        'name'=> 'Facebook',
-                        'url' => 'https://www.facebook.com/tomorrowcoffee',
-                        'logo' => '/assets/imgs/theme/icons/social-fb.svg'
+                        'name' => 'Facebook',
+                        'url'  => 'https://www.facebook.com/tomorrowcoffee',
+                        'logo' => '/assets/imgs/theme/icons/social-fb.svg',
                     ],
                     [
-                        'name'=> 'Instagram',
-                        'url' => 'https://www.instagram.com/tomorrowcoffee',
-                        'logo' => '/assets/imgs/theme/icons/social-insta.svg'
+                        'name' => 'Instagram',
+                        'url'  => 'https://www.instagram.com/tomorrowcoffee',
+                        'logo' => '/assets/imgs/theme/icons/social-insta.svg',
                     ],
                     [
-                        'name'=> 'Twitter',
-                        'url' => 'https://twitter.com/tomorrowcoffee',
-                        'logo' => '/assets/imgs/theme/icons/social-tw.svg'
-                    ]
+                        'name' => 'Twitter',
+                        'url'  => 'https://twitter.com/tomorrowcoffee',
+                        'logo' => '/assets/imgs/theme/icons/social-tw.svg',
+                    ],
                 ]),
-                'is_open' => true,
+                'is_open'      => true,
             ],
             [
-                'name' => 'Tanamera',
-                'slug' => 'tanamera',
-                'description' => 'Tanamera is known for its specialty coffee sourced from various regions in Indonesia.',
-                'address' => 'Jl. Melawai No.3, Jakarta',
-                'phone' => '+62 21 3456 7890',
+                'name'         => 'Tanamera',
+                'slug'         => 'tanamera',
+                'description'  => 'Tanamera is known for its specialty coffee sourced from various regions in Indonesia.',
+                'address'      => 'Jl. Melawai No.3, Jakarta',
+                'province'     => 'DKI Jakarta',
+                'city'         => 'Jakarta Selatan',
+                'subdistrict'  => 'Kebayoran Baru',
+                'village'      => 'Melawai',
+                'postal_code'  => '12160',
+                'phone'        => '+62 21 3456 7890',
                 'social_links' => json_encode([
                     [
-                        'name'=> 'Facebook',
-                        'url' => 'https://www.facebook.com/tanameracoffee',
-                        'logo' => '/assets/imgs/theme/icons/social-fb.svg'
+                        'name' => 'Facebook',
+                        'url'  => 'https://www.facebook.com/tanameracoffee',
+                        'logo' => '/assets/imgs/theme/icons/social-fb.svg',
                     ],
                     [
-                        'name'=> 'Instagram',
-                        'url' => 'https://www.instagram.com/tanameracoffee',
-                        'logo' => '/assets/imgs/theme/icons/social-insta.svg'
+                        'name' => 'Instagram',
+                        'url'  => 'https://www.instagram.com/tanameracoffee',
+                        'logo' => '/assets/imgs/theme/icons/social-insta.svg',
                     ],
                     [
-                        'name'=> 'Twitter',
-                        'url' => 'https://twitter.com/tanameracoffee',
-                        'logo' => '/assets/imgs/theme/icons/social-tw.svg'
-                    ]
+                        'name' => 'Twitter',
+                        'url'  => 'https://twitter.com/tanameracoffee',
+                        'logo' => '/assets/imgs/theme/icons/social-tw.svg',
+                    ],
                 ]),
-                'is_open' => true,
+                'is_open'      => true,
             ],
             [
-                'name' => 'Anomali Coffee',
-                'slug' => 'anomali-coffee',
-                'description' => 'Anomali Coffee offers a wide range of Indonesian coffee beans and blends.',
-                'address' => 'Jl. Senopati No.4, Jakarta',
-                'phone' => '+62 21 4567 8901',
+                'name'         => 'Anomali Coffee',
+                'slug'         => 'anomali-coffee',
+                'description'  => 'Anomali Coffee offers a wide range of Indonesian coffee beans and blends.',
+                'address'      => 'Jl. Senopati No.4, Jakarta',
+                'province'     => 'DKI Jakarta',
+                'city'         => 'Jakarta Selatan',
+                'subdistrict'  => 'Kebayoran Baru',
+                'village'      => 'Senopati',
+                'postal_code'  => '12110',
+                'phone'        => '+62 21 4567 8901',
                 'social_links' => json_encode([
                     [
-                        'name'=> 'Facebook',
-                        'url' => 'https://www.facebook.com/anomalicoffee',
-                        'logo' => '/assets/imgs/theme/icons/social-fb.svg'
+                        'name' => 'Facebook',
+                        'url'  => 'https://www.facebook.com/anomalicoffee',
+                        'logo' => '/assets/imgs/theme/icons/social-fb.svg',
                     ],
                     [
-                        'name'=> 'Instagram',
-                        'url' => 'https://www.instagram.com/anomalicoffee',
-                        'logo' => '/assets/imgs/theme/icons/social-insta.svg'
+                        'name' => 'Instagram',
+                        'url'  => 'https://www.instagram.com/anomalicoffee',
+                        'logo' => '/assets/imgs/theme/icons/social-insta.svg',
                     ],
                     [
-                        'name'=> 'Twitter',
-                        'url' => 'https://twitter.com/anomalicoffee',
-                        'logo' => '/assets/imgs/theme/icons/social-tw.svg'
-                    ]
+                        'name' => 'Twitter',
+                        'url'  => 'https://twitter.com/anomalicoffee',
+                        'logo' => '/assets/imgs/theme/icons/social-tw.svg',
+                    ],
                 ]),
-                'is_open' => true,
+                'is_open'      => true,
             ],
             [
-                'name' => 'Fore Coffee',
-                'slug' => 'fore-coffee',
-                'description' => 'Fore Coffee is a trendy coffee brand with a focus on quality and innovation.',
-                'address' => 'Jl. Panglima Polim No.5, Jakarta',
-                'phone' => '+62 21 5678 9012',
+                'name'         => 'Fore Coffee',
+                'slug'         => 'fore-coffee',
+                'description'  => 'Fore Coffee is a trendy coffee brand with a focus on quality and innovation.',
+                'address'      => 'Jl. Panglima Polim No.5, Jakarta',
+                'province'     => 'DKI Jakarta',
+                'city'         => 'Jakarta Selatan',
+                'subdistrict'  => 'Kebayoran Baru',
+                'village'      => 'Melawai',
+                'postal_code'  => '12160',
+                'phone'        => '+62 21 5678 9012',
                 'social_links' => json_encode([
                     [
-                        'name'=> 'Facebook',
-                        'url' => 'https://www.facebook.com/forecoffee',
-                        'logo' => '/assets/imgs/theme/icons/social-fb.svg'
+                        'name' => 'Facebook',
+                        'url'  => 'https://www.facebook.com/forecoffee',
+                        'logo' => '/assets/imgs/theme/icons/social-fb.svg',
                     ],
                     [
-                        'name'=> 'Instagram',
-                        'url' => 'https://www.instagram.com/forecoffee',
-                        'logo' => '/assets/imgs/theme/icons/social-insta.svg'
+                        'name' => 'Instagram',
+                        'url'  => 'https://www.instagram.com/forecoffee',
+                        'logo' => '/assets/imgs/theme/icons/social-insta.svg',
                     ],
                     [
-                        'name'=> 'Twitter',
-                        'url' => 'https://twitter.com/forecoffee',
-                        'logo' => '/assets/imgs/theme/icons/social-tw.svg'
-                    ]
+                        'name' => 'Twitter',
+                        'url'  => 'https://twitter.com/forecoffee',
+                        'logo' => '/assets/imgs/theme/icons/social-tw.svg',
+                    ],
                 ]),
-                'is_open' => true,
+                'is_open'      => true,
             ],
             [
-                'name' => 'Kapal Api',
-                'slug' => 'kapal-api',
-                'description' => 'Kapal Api is one of Indonesia\'s oldest and most recognized coffee brands, known for its rich flavors.',
-                'address' => 'Jl. Raya Kapal Api No.6, Surabaya',
-                'phone' => '+62 31 6789 0123',
+                'name'         => 'Kapal Api',
+                'slug'         => 'kapal-api',
+                'description'  => 'Kapal Api is one of Indonesia\'s oldest and most recognized coffee brands, known for its rich flavors.',
+                'address'      => 'Jl. Raya Kapal Api No.6, Surabaya',
+                'province'     => 'Jawa Timur',
+                'city'         => 'Surabaya',
+                'subdistrict'  => 'Sawahan',
+                'village'      => 'Krembangan',
+                'postal_code'  => '60251',
+                'phone'        => '+62 31 6789 0123',
                 'social_links' => json_encode([
                     [
-                        'name'=> 'Facebook',
-                        'url' => 'https://www.facebook.com/kapalapi',
-                        'logo' => '/assets/imgs/theme/icons/social-fb.svg'
+                        'name' => 'Facebook',
+                        'url'  => 'https://www.facebook.com/kapalapi',
+                        'logo' => '/assets/imgs/theme/icons/social-fb.svg',
                     ],
                     [
-                        'name'=> 'Instagram',
-                        'url' => 'https://www.instagram.com/kapalapi',
-                        'logo' => '/assets/imgs/theme/icons/social-insta.svg'
+                        'name' => 'Instagram',
+                        'url'  => 'https://www.instagram.com/kapalapi',
+                        'logo' => '/assets/imgs/theme/icons/social-insta.svg',
                     ],
                     [
-                        'name'=> 'Twitter',
-                        'url' => 'https://twitter.com/kapalapi',
-                        'logo' => '/assets/imgs/theme/icons/social-tw.svg'
-                    ]
+                        'name' => 'Twitter',
+                        'url'  => 'https://twitter.com/kapalapi',
+                        'logo' => '/assets/imgs/theme/icons/social-tw.svg',
+                    ],
                 ]),
-                'is_open' => true,
+                'is_open'      => true,
             ],
             [
-                'name' => 'Tuku',
-                'slug' => 'tuku',
-                'description' => 'Tuku is a coffee brand that emphasizes local sourcing and community engagement.',
-                'address' => 'Jl. Cikini No.7, Jakarta',
-                'phone' => '+62 21 7890 1234',
+                'name'         => 'Tuku',
+                'slug'         => 'tuku',
+                'description'  => 'Tuku is a coffee brand that emphasizes local sourcing and community engagement.',
+                'address'      => 'Jl. Cikini No.7, Jakarta',
+                'province'     => 'DKI Jakarta',
+                'city'         => 'Jakarta Pusat',
+                'subdistrict'  => 'Menteng',
+                'village'      => 'Cikini',
+                'postal_code'  => '10330',
+                'phone'        => '+62 21 7890 1234',
                 'social_links' => json_encode([
                     [
-                        'name'=> 'Facebook',
-                        'url' => 'https://www.facebook.com/tuku',
-                        'logo' => '/assets/imgs/theme/icons/social-fb.svg'
+                        'name' => 'Facebook',
+                        'url'  => 'https://www.facebook.com/tuku',
+                        'logo' => '/assets/imgs/theme/icons/social-fb.svg',
                     ],
                     [
-                        'name'=> 'Instagram',
-                        'url' => 'https://www.instagram.com/tuku',
-                        'logo' => '/assets/imgs/theme/icons/social-insta.svg'
+                        'name' => 'Instagram',
+                        'url'  => 'https://www.instagram.com/tuku',
+                        'logo' => '/assets/imgs/theme/icons/social-insta.svg',
                     ],
                     [
-                        'name'=> 'Twitter',
-                        'url' => 'https://twitter.com/tuku',
-                        'logo' => '/assets/imgs/theme/icons/social-tw.svg'
-                    ]
+                        'name' => 'Twitter',
+                        'url'  => 'https://twitter.com/tuku',
+                        'logo' => '/assets/imgs/theme/icons/social-tw.svg',
+                    ],
                 ]),
-                'is_open' => true,
+                'is_open'      => true,
             ],
             [
-                'name' => 'Excelso',
-                'slug' => 'excelso',
-                'description' => 'Excelso is a premium coffee brand offering a wide range of blends and single-origin coffees.',
-                'address' => 'Jl. Thamrin No.8, Jakarta',
-                'phone' => '+62 21 8901 2345',
+                'name'         => 'Excelso',
+                'slug'         => 'excelso',
+                'description'  => 'Excelso is a premium coffee brand offering a wide range of blends and single-origin coffees.',
+                'address'      => 'Jl. Thamrin No.8, Jakarta',
+                'province'     => 'DKI Jakarta',
+                'city'         => 'Jakarta Pusat',
+                'subdistrict'  => 'Menteng',
+                'village'      => 'Gondangdia',
+                'postal_code'  => '10350',
+                'phone'        => '+62 21 8901 2345',
                 'social_links' => json_encode([
                     [
-                        'name'=> 'Facebook',
-                        'url' => 'https://www.facebook.com/excelso',
-                        'logo' => '/assets/imgs/theme/icons/social-fb.svg'
+                        'name' => 'Facebook',
+                        'url'  => 'https://www.facebook.com/excelso',
+                        'logo' => '/assets/imgs/theme/icons/social-fb.svg',
                     ],
                     [
-                        'name'=> 'Instagram',
-                        'url' => 'https://www.instagram.com/excelso',
-                        'logo' => '/assets/imgs/theme/icons/social-insta.svg'
+                        'name' => 'Instagram',
+                        'url'  => 'https://www.instagram.com/excelso',
+                        'logo' => '/assets/imgs/theme/icons/social-insta.svg',
                     ],
                     [
-                        'name'=> 'Twitter',
-                        'url' => 'https://twitter.com/excelso',
-                        'logo' => '/assets/imgs/theme/icons/social-tw.svg'
-                    ]
+                        'name' => 'Twitter',
+                        'url'  => 'https://twitter.com/excelso',
+                        'logo' => '/assets/imgs/theme/icons/social-tw.svg',
+                    ],
                 ]),
-                'is_open' => true,
+                'is_open'      => true,
             ],
         ];
 
         foreach ($brands as $i => $brand) {
-            $path = '/assets/imgs/vendor/vendor-'.($i+1).'.png';
+            $path = '/assets/imgs/vendor/vendor-' . ($i + 1) . '.png';
             $shop = Shop::create($brand);
             $shop->addMedia(public_path($path))->preservingOriginal()->toMediaCollection('logo');
         }
@@ -280,7 +319,7 @@ class ProductSeeder extends Seeder
         $grindAttr = Attribute::firstOrCreate(['name' => 'Grind Size']);
 
         $roastLevels = ['Light', 'Medium', 'Dark'];
-        $grindSizes = ['Whole Bean', 'Coarse', 'Medium', 'Fine'];
+        $grindSizes  = ['Whole Bean', 'Coarse', 'Medium', 'Fine'];
 
         foreach ($roastLevels as $roastLevel) {
             AttributeValue::firstOrCreate(['attribute_id' => $roastAttr->id, 'value' => $roastLevel]);
@@ -290,30 +329,30 @@ class ProductSeeder extends Seeder
         }
 
         foreach ($productNames as $name) {
-            $slug = Str::slug($name) . '-' . time();
+            $slug    = Str::slug($name) . '-' . time();
             $baseSku = strtoupper(Str::random(6));
-            $price = rand(5000, 100000);
+            $price   = rand(5000, 100000);
 
             $variantMode = rand(0, 3);
 
             $hasVariant = $variantMode > 0;
 
             $specOptions = [
-                'Origin' => collect(['Ethiopia', 'Colombia', 'Sumatra', 'Kenya', 'Brazil', 'Guatemala', 'Vietnam', 'Panama', 'Peru', 'Yemen'])->random(),
-                'Tasting Notes' => collect(['Floral', 'Citrus', 'Chocolate', 'Nutty', 'Fruity', 'Spicy', 'Earthy', 'Caramel'])->random(),
+                'Origin'            => collect(['Ethiopia', 'Colombia', 'Sumatra', 'Kenya', 'Brazil', 'Guatemala', 'Vietnam', 'Panama', 'Peru', 'Yemen'])->random(),
+                'Tasting Notes'     => collect(['Floral', 'Citrus', 'Chocolate', 'Nutty', 'Fruity', 'Spicy', 'Earthy', 'Caramel'])->random(),
                 'Processing Method' => collect(['Washed', 'Natural', 'Honey', 'Wet-Hulled'])->random(),
-                'Altitude' => rand(1000, 2200) . ' masl',
-                'Body' => collect(['Light', 'Medium', 'Full'])->random(),
-                'Acidity' => collect(['Low', 'Medium', 'High'])->random(),
-                'Caffeine Level' => collect(['Regular', 'Decaf'])->random(),
-                'Packaging' => collect(['250g Bag', '500g Bag', '1kg Bag', 'Drip Bag'])->random(),
+                'Altitude'          => rand(1000, 2200) . ' masl',
+                'Body'              => collect(['Light', 'Medium', 'Full'])->random(),
+                'Acidity'           => collect(['Low', 'Medium', 'High'])->random(),
+                'Caffeine Level'    => collect(['Regular', 'Decaf'])->random(),
+                'Packaging'         => collect(['250g Bag', '500g Bag', '1kg Bag', 'Drip Bag'])->random(),
             ];
 
             $selectedSpecs = collect($specOptions)
                 ->take(rand(6, 8))
                 ->map(function ($value, $key) {
                     return [
-                        'name' => $key,
+                        'name'  => $key,
                         'value' => $value,
                     ];
                 })
@@ -321,20 +360,20 @@ class ProductSeeder extends Seeder
                 ->toArray();
 
             $product = Product::create([
-                'name' => $name,
-                'slug' => $slug,
-                'sku' => $baseSku,
-                'shop_id' => $allShopIds[array_rand($allShopIds)],
+                'name'             => $name,
+                'slug'             => $slug,
+                'sku'              => $baseSku,
+                'shop_id'          => $allShopIds[array_rand($allShopIds)],
                 'meta_description' => 'Sample meta description for ' . $name,
                 'long_description' => 'Sample long description for ' . $name,
-                'price' => $price,
-                'final_price' => $price + rand(-5000, -2000),
-                'has_variant' => $hasVariant,
-                'tags' => [$tags[array_rand($tags)], $tags[array_rand($tags)]],
-                'specification' => $selectedSpecs,
-                'stock' => 0,
-                'is_featured' => rand(0, 100) < 30, // 30% chance of being featured
-                'is_popular' => rand(0, 100) < 25,  // 25% chance of being popular
+                'price'            => $price,
+                'final_price'      => $price + rand(-5000, -2000),
+                'has_variant'      => $hasVariant,
+                'tags'             => [$tags[array_rand($tags)], $tags[array_rand($tags)]],
+                'specification'    => $selectedSpecs,
+                'stock'            => 0,
+                'is_featured'      => rand(0, 100) < 30, // 30% chance of being featured
+                'is_popular'       => rand(0, 100) < 25, // 25% chance of being popular
             ]);
 
             $product->categories()->attach(collect($allCategoryIds)->random(rand(3, 6)));
@@ -348,17 +387,22 @@ class ProductSeeder extends Seeder
                 foreach ($roastValues as $roast) {
                     foreach ($grindValues as $grind) {
                         $variantSku = $baseSku;
-                        if ($roast) $variantSku .= '-' . strtoupper(preg_replace('/[^A-Za-z0-9]/', '', $roast));
-                        if ($grind) $variantSku .= '-' . strtoupper(preg_replace('/[^A-Za-z0-9]/', '', $grind));
+                        if ($roast) {
+                            $variantSku .= '-' . strtoupper(preg_replace('/[^A-Za-z0-9]/', '', $roast));
+                        }
+
+                        if ($grind) {
+                            $variantSku .= '-' . strtoupper(preg_replace('/[^A-Za-z0-9]/', '', $grind));
+                        }
 
                         $stock = rand(5, 20);
 
                         $variant = ProductVariant::create([
-                            'product_id' => $product->id,
-                            'sku' => $variantSku,
-                            'price' => $price + rand(0, 5000),
+                            'product_id'  => $product->id,
+                            'sku'         => $variantSku,
+                            'price'       => $price + rand(0, 5000),
                             'final_price' => $price + rand(-5000, -2000),
-                            'stock' => $stock,
+                            'stock'       => $stock,
                         ]);
 
                         if ($roast) {
@@ -378,7 +422,7 @@ class ProductSeeder extends Seeder
                 $product->update(['stock' => $totalStock]);
             } else {
                 $product->update([
-                    'stock' => rand(10, 30)
+                    'stock' => rand(10, 30),
                 ]);
             }
 

@@ -147,7 +147,8 @@
                                     <label for="province" class="form-label">Province</label>
                                     <select id="province" name="province"
                                         class="form-select @error('province') is-invalid @enderror" required>
-                                        <option value="{{ old('province', $shop->province)}}">{{ old('province', $shop->province ?? '-- Select Province --') }}</option>
+                                        <option value="{{ old('province', $shop->province) }}">
+                                            {{ old('province', $shop->province ?? '-- Select Province --') }}</option>
                                     </select>
                                     @error('province')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -159,7 +160,8 @@
                                     <label for="city" class="form-label">City</label>
                                     <select id="city" name="city"
                                         class="form-select @error('city') is-invalid @enderror" required>
-                                        <option value="{{ old('city', $shop->city) }}">{{ old('city', $shop->city ?? '-- Select City --') }}</option>
+                                        <option value="{{ old('city', $shop->city) }}">
+                                            {{ old('city', $shop->city ?? '-- Select City --') }}</option>
                                     </select>
                                     @error('city')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -171,7 +173,9 @@
                                     <label for="subdistrict" class="form-label">Subdistrict</label>
                                     <select id="subdistrict" name="subdistrict"
                                         class="form-select @error('subdistrict') is-invalid @enderror" required>
-                                        <option value="{{ old('subdistrict', $shop->subdistrict) }}">{{ old('subdistrict', $shop->subdistrict ?? '-- Select Subdistrict --') }}</option>
+                                        <option value="{{ old('subdistrict', $shop->subdistrict) }}">
+                                            {{ old('subdistrict', $shop->subdistrict ?? '-- Select Subdistrict --') }}
+                                        </option>
                                     </select>
                                     @error('subdistrict')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -183,7 +187,8 @@
                                     <label for="village" class="form-label">Village</label>
                                     <select id="village" name="village"
                                         class="form-select @error('village') is-invalid @enderror" required>
-                                        <option value="{{ old('village', $shop->village) }}">{{ old('village', $shop->village ?? '-- Select Village --') }}</option>
+                                        <option value="{{ old('village', $shop->village) }}">
+                                            {{ old('village', $shop->village ?? '-- Select Village --') }}</option>
                                     </select>
                                     @error('village')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -195,7 +200,9 @@
                                     <label for="postal_code" class="form-label">Postal Code</label>
                                     <select id="postal_code" name="postal_code"
                                         class="form-select @error('postal_code') is-invalid @enderror" required>
-                                        <option value="{{ old('postal_code', $shop->postal_code) }}">{{ old('postal_code', $shop->postal_code ?? '-- Select Postal Code --') }}</option>
+                                        <option value="{{ old('postal_code', $shop->postal_code) }}">
+                                            {{ old('postal_code', $shop->postal_code ?? '-- Select Postal Code --') }}
+                                        </option>
                                     </select>
                                     @error('postal_code')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -215,8 +222,7 @@
 
                                 <div class="mb-3">
                                     <label for="address" class="form-label">Address</label>
-                                    <textarea class="form-control" id="address" name="address"
-                                        rows="3" required>{{ old('address', $shop->address ?? '') }}</textarea>
+                                    <textarea class="form-control" id="address" name="address" rows="3" required>{{ old('address', $shop->address ?? '') }}</textarea>
                                     @error('address')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -418,7 +424,6 @@
                 $postal = $("#postal_code");
 
             $(document).ready(function() {
-                // Load all JSON (update path sesuai lokasi file di public/json)
                 $.getJSON("{{ asset('assets/js/provinces.json') }}", function(data) {
                     provinces = data.sort((a, b) => a.name.localeCompare(b.name));
                     $.each(provinces, function(_, prov) {
@@ -443,7 +448,10 @@
                 });
 
                 $province.on('change', function() {
-                    const provId = $(this).val();
+                    const provName = $(this).val();
+
+                    const provObj = provinces.find(p => p.name === provName);
+                    const provId = provObj ? provObj.id : null;
 
                     $city.html('<option value="">-- Select City --</option>');
                     $subdistrict.html('<option value="">-- Select Subdistrict --</option>');
@@ -460,7 +468,9 @@
                 });
 
                 $city.on('change', function() {
-                    const cityId = $(this).val();
+                    const cityName = $(this).val();
+                    const cityObj = cities.find(c => c.name === cityName);
+                    const cityId = cityObj ? cityObj.id : null;
 
                     $subdistrict.html('<option value="">-- Select Subdistrict --</option>');
                     $village.html('<option value="">-- Select Village --</option>');
@@ -478,13 +488,15 @@
                 });
 
                 $subdistrict.on('change', function() {
-                    const subdistrictId = $(this).val();
+                    const subName = $(this).val();
+                    const subObj = subdistricts.find(s => s.name === subName);
+                    const subId = subObj ? subObj.id : null;
 
-                    $village.html('<option value="">-- Select Village Code --</option>');
+                    $village.html('<option value="">-- Select Village --</option>');
                     $postal.html('<option value="">-- Select Postal Code --</option>');
 
                     const filteredVillages = villages
-                        .filter(p => p.subdistrict_id == subdistrictId)
+                        .filter(v => v.sub_district_id == subId)
                         .sort((a, b) => a.name.localeCompare(b.name));
 
                     $.each(filteredVillages, function(_, vill) {
@@ -495,12 +507,14 @@
                 });
 
                 $village.on('change', function() {
-                    const villageId = $(this).val();
+                    const villName = $(this).val();
+                    const villObj = villages.find(v => v.name === villName);
+                    const villId = villObj ? villObj.id : null;
 
                     $postal.html('<option value="">-- Select Postal Code --</option>');
 
                     const filteredPostals = postals
-                        .filter(p => p.village_id == villageId)
+                        .filter(pc => pc.village_id == villId)
                         .sort((a, b) => a.name.localeCompare(b.name));
 
                     $.each(filteredPostals, function(_, pc) {

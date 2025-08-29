@@ -12,7 +12,7 @@ class KycController extends Controller
     public function index()
     {
         $user            = Auth::user();
-        $kycApplications = KycApplication::where('user_id', $user->id)
+        $kycApplications = KycApplication::where('user_id', $user['id'])
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -27,7 +27,7 @@ class KycController extends Controller
         $user = Auth::user();
 
         // Check if user already has an approved KYC
-        $approvedKyc = KycApplication::where('user_id', $user->id)
+        $approvedKyc = KycApplication::where('user_id', $user['id'])
             ->where('status', 'approved')
             ->exists();
 
@@ -37,7 +37,7 @@ class KycController extends Controller
         }
 
         // Check if user has a pending or under review application
-        $pendingKyc = KycApplication::where('user_id', $user->id)
+        $pendingKyc = KycApplication::where('user_id', $user['id'])
             ->whereIn('status', ['pending', 'under_review'])
             ->exists();
 
@@ -54,7 +54,7 @@ class KycController extends Controller
         $user = Auth::user();
 
         // Check if user already has pending/approved KYC
-        $existingKyc = KycApplication::where('user_id', $user->id)
+        $existingKyc = KycApplication::where('user_id', $user['id'])
             ->whereIn('status', ['pending', 'under_review', 'approved'])
             ->exists();
 
@@ -65,27 +65,30 @@ class KycController extends Controller
 
         $kycData = $request->only([
             'first_name', 'last_name', 'date_of_birth', 'gender', 'nationality',
-            'address', 'city', 'province', 'postal_code', 'subdistrict', 'village', 'country', 'phone',
+            'address', 'province', 'city', 'subdistrict', 'village', 'postal_code', 'country', 'phone',
             'document_type', 'document_number', 'document_expiry_date', 'document_issued_country',
             'terms_accepted', 'privacy_accepted',
         ]);
 
-        $kycData['user_id']    = $user->id;
+        $kycData['user_id']    = $user['id'];
         $kycData['status']     = 'pending';
         $kycData['ip_address'] = $request->ip();
         $kycData['user_agent'] = $request->userAgent();
 
         $kyc = KycApplication::create($kycData);
 
-        $addressData = array_merge(
-            $request->only([
-                'first_name', 'last_name', 'phone', 'address',
-                'province', 'city', 'subdistrict', 'postal_code', 'country', 'village',
-            ]),
-            [
-                'label'   => 'Office',
-            ]
-        );
+        $addressData = [
+            'label'          => 'Office',
+            'name'           => $kyc['full_name'],
+            'phone'          => $request['phone'],
+            'address_line_1' => $request['address'],
+            'province'       => $request['province'],
+            'city'           => $request['city'],
+            'subdistrict'    => $request['subdistrict'],
+            'village'        => $request['village'],
+            'postal_code'    => $request['postal_code'],
+            'country'        => $request['country'],
+        ];
 
         $user->addAddress($addressData);
 
@@ -130,7 +133,7 @@ class KycController extends Controller
     {
         $this->authorize('reapply', $kyc);
 
-        if ($kyc->status !== 'rejected') {
+        if ($kyc['status'] !== 'rejected') {
             return redirect()->route('kyc.index')
                 ->with('error', 'You can only reapply for rejected applications.');
         }
@@ -142,7 +145,7 @@ class KycController extends Controller
     {
         $this->authorize('reapply', $kyc);
 
-        if ($kyc->status !== 'rejected') {
+        if ($kyc['status'] !== 'rejected') {
             return redirect()->route('kyc.index')
                 ->with('error', 'You can only reapply for rejected applications.');
         }

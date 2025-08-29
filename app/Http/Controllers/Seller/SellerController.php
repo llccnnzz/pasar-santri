@@ -74,7 +74,7 @@ class SellerController extends Controller
         }
 
         // Check if user has approved KYC
-        $approvedKyc = KycApplication::where('user_id', $user->id)
+        $approvedKyc = KycApplication::where('user_id', $user['id'])
             ->where('status', 'approved')
             ->exists();
 
@@ -96,7 +96,7 @@ class SellerController extends Controller
         }
 
         // Check if user has approved KYC
-        $approvedKyc = KycApplication::where('user_id', $user->id)
+        $approvedKyc = KycApplication::where('user_id', $user['id'])
             ->where('status', 'approved')
             ->exists();
 
@@ -106,7 +106,7 @@ class SellerController extends Controller
         }
 
         $validated            = $request->validated();
-        $validated['user_id'] = $user->id;
+        $validated['user_id'] = $user['id'];
         $validated['is_open'] = true;
 
         // Create the shop
@@ -138,7 +138,7 @@ class SellerController extends Controller
         // Handle social links
         $socialLinks = [];
         if ($request->filled('social_links')) {
-            foreach ($request->social_links as $platform => $url) {
+            foreach ($request['social_links'] as $platform => $url) {
                 if (! empty($url)) {
                     $socialLinks[$platform] = $url;
                 }

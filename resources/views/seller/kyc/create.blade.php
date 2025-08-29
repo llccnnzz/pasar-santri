@@ -138,7 +138,8 @@
                                             class="text-danger">*</span></label>
                                     <select class="form-control @error('province') is-invalid @enderror" id="province"
                                         name="province" required>
-                                        <option value="">-- Select Province --</option>
+                                        <option value="{{ old('province') }}">
+                                            {{ old('province', '-- Select Province --') }}</option>
                                     </select>
                                     @error('province')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -152,7 +153,8 @@
                                             class="text-danger">*</span></label>
                                     <select class="form-control @error('city') is-invalid @enderror" id="city"
                                         name="city" required>
-                                        <option value="">-- Select City --</option>
+                                        <option value="{{ old('city') }}">{{ old('city', '-- Select City --') }}
+                                        </option>
                                     </select>
                                     @error('city')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -166,9 +168,25 @@
                                             class="text-danger">*</span></label>
                                     <select class="form-control @error('subdistrict') is-invalid @enderror"
                                         id="subdistrict" name="subdistrict" required>
-                                        <option value="">-- Select Subdistrict --</option>
+                                        <option value="{{ old('subdistrict') }}">
+                                            {{ old('subdistrict', '-- Select Subdistrict --') }}</option>
                                     </select>
                                     @error('subdistrict')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="village" class="form-label">Village <span
+                                            class="text-danger">*</span></label>
+                                    <select class="form-control @error('village') is-invalid @enderror" id="village"
+                                        name="village" required>
+                                        <option value="{{ old('village') }}">{{ old('village', '-- Select Village --') }}
+                                        </option>
+                                    </select>
+                                    @error('village')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
@@ -180,7 +198,8 @@
                                             class="text-danger">*</span></label>
                                     <select class="form-control @error('postal_code') is-invalid @enderror"
                                         id="postal_code" name="postal_code" required>
-                                        <option value="">-- Select Postal Code --</option>
+                                        <option value="{{ old('postal_code') }}">
+                                            {{ old('postal_code', '-- Select Postal Code --') }}</option>
                                     </select>
                                     @error('postal_code')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -188,19 +207,6 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-4">
-                                <div class="form-group mb-3">
-                                    <label for="village" class="form-label">Village <span
-                                            class="text-danger">*</span></label>
-                                    <select class="form-control @error('village') is-invalid @enderror"
-                                        id="village" name="village" required>
-                                        <option value="">-- Select Village --</option>
-                                    </select>
-                                    @error('village')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
                             <div class="col-md-4">
                                 <div class="form-group mb-3">
                                     <label for="country" class="form-label">Country <span
@@ -391,74 +397,41 @@
             let villages = [];
             let postals = [];
 
-            const oldProvince = "{{ old('province') }}";
-            const oldCity = "{{ old('city') }}";
-            const oldSubdistrict = "{{ old('subdistrict') }}";
-            const oldVillage = "{{ old('village') }}";
-            const oldPostal = "{{ old('postal_code') }}";
-
             let $province = $("#province"),
                 $city = $("#city"),
                 $subdistrict = $("#subdistrict"),
-                $village = $("#village");
+                $village = $("#village"),
                 $postal = $("#postal_code");
 
             $(document).ready(function() {
-                // Load all JSON (update path sesuai lokasi file di public/json)
                 $.getJSON("{{ asset('assets/js/provinces.json') }}", function(data) {
                     provinces = data.sort((a, b) => a.name.localeCompare(b.name));
                     $.each(provinces, function(_, prov) {
-                        $province.append(`<option value="${prov.id}">${prov.name}</option>`);
+                        $province.append(`<option value="${prov.name}">${prov.name}</option>`);
                     });
-
-                    if (oldProvince) {
-                        $province.val(oldProvince).trigger('change');
-                    }
                 });
 
                 $.getJSON("{{ asset('assets/js/cities.json') }}", function(data) {
                     cities = data;
-
-                    if (oldProvince && oldCity) {
-                        setTimeout(() => {
-                            $city.val(oldCity).trigger('change');
-                        }, 300); // kasih delay biar cities sempat di-append
-                    }
                 });
 
                 $.getJSON("{{ asset('assets/js/sub_districts.json') }}", function(data) {
                     subdistricts = data;
-
-                    if (oldCity && oldSubdistrict) {
-                        setTimeout(() => {
-                            $subdistrict.val(oldSubdistrict).trigger('change');
-                        }, 600);
-                    }
                 });
 
                 $.getJSON("{{ asset('assets/js/villages.json') }}", function(data) {
                     villages = data;
-
-                    if (oldSubdistrict && oldVillage) {
-                        setTimeout(() => {
-                            $village.val(oldVillage).trigger('change');
-                        }, 900);
-                    }
                 });
 
                 $.getJSON("{{ asset('assets/js/postal_codes.json') }}", function(data) {
                     postals = data;
-
-                    if (oldVillage && oldPostal) {
-                        setTimeout(() => {
-                            $postal.val(oldPostal);
-                        }, 1200);
-                    }
                 });
 
-                // Cities (urut abjad)
                 $province.on('change', function() {
-                    const provId = $(this).val();
+                    const provName = $(this).val();
+
+                    const provObj = provinces.find(p => p.name === provName);
+                    const provId = provObj ? provObj.id : null;
 
                     $city.html('<option value="">-- Select City --</option>');
                     $subdistrict.html('<option value="">-- Select Subdistrict --</option>');
@@ -470,12 +443,14 @@
                         .sort((a, b) => a.name.localeCompare(b.name));
 
                     $.each(filteredCities, function(_, city) {
-                        $city.append(`<option value="${city.id}">${city.name}</option>`);
+                        $city.append(`<option value="${city.name}">${city.name}</option>`);
                     });
                 });
 
                 $city.on('change', function() {
-                    const cityId = $(this).val();
+                    const cityName = $(this).val();
+                    const cityObj = cities.find(c => c.name === cityName);
+                    const cityId = cityObj ? cityObj.id : null;
 
                     $subdistrict.html('<option value="">-- Select Subdistrict --</option>');
                     $village.html('<option value="">-- Select Village --</option>');
@@ -487,40 +462,44 @@
 
                     $.each(filteredSubs, function(_, sub) {
                         $subdistrict.append(
-                            `<option value="${sub.id}">${sub.name}</option>`
+                            `<option value="${sub.name}">${sub.name}</option>`
                         );
                     });
                 });
 
                 $subdistrict.on('change', function() {
-                    const subdistrictId = $(this).val();
+                    const subName = $(this).val();
+                    const subObj = subdistricts.find(s => s.name === subName);
+                    const subId = subObj ? subObj.id : null;
 
                     $village.html('<option value="">-- Select Village --</option>');
                     $postal.html('<option value="">-- Select Postal Code --</option>');
 
                     const filteredVillages = villages
-                        .filter(p => p.subdistrict_id == subdistrictId)
+                        .filter(v => v.sub_district_id == subId)
                         .sort((a, b) => a.name.localeCompare(b.name));
 
                     $.each(filteredVillages, function(_, vill) {
                         $village.append(
-                            `<option value="${vill.id}">${vill.name}</option>`
+                            `<option value="${vill.name}">${vill.name}</option>`
                         );
                     });
                 });
 
                 $village.on('change', function() {
-                    const villageId = $(this).val();
+                    const villName = $(this).val();
+                    const villObj = villages.find(v => v.name === villName);
+                    const villId = villObj ? villObj.id : null;
 
                     $postal.html('<option value="">-- Select Postal Code --</option>');
 
                     const filteredPostals = postals
-                        .filter(p => p.village_id == villageId)
+                        .filter(pc => pc.village_id == villId)
                         .sort((a, b) => a.name.localeCompare(b.name));
 
                     $.each(filteredPostals, function(_, pc) {
                         $postal.append(
-                            `<option value="${pc.id}">${pc.name}</option>`
+                            `<option value="${pc.name}">${pc.name}</option>`
                         );
                     });
                 });
