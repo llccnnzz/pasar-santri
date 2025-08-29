@@ -1,11 +1,10 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -15,7 +14,7 @@ class KycApplication extends Model implements HasMedia
 {
     use HasFactory, SoftDeletes, InteractsWithMedia;
 
-    protected $keyType = 'string';
+    protected $keyType   = 'string';
     public $incrementing = false;
 
     protected $fillable = [
@@ -26,8 +25,10 @@ class KycApplication extends Model implements HasMedia
         'gender',
         'nationality',
         'address',
+        'province',
         'city',
-        'state',
+        'subdistrict',
+        'village',
         'postal_code',
         'country',
         'phone',
@@ -36,7 +37,6 @@ class KycApplication extends Model implements HasMedia
         'document_expiry_date',
         'document_issued_country',
         'document_front_photo',
-        'document_back_photo',
         'selfie_photo',
         'additional_documents',
         'status',
@@ -51,22 +51,21 @@ class KycApplication extends Model implements HasMedia
     ];
 
     protected $casts = [
-        'id' => 'string',
-        'date_of_birth' => 'date',
+        'id'                   => 'string',
+        'date_of_birth'        => 'date',
         'document_expiry_date' => 'date',
-        'reviewed_at' => 'datetime',
-        'terms_accepted' => 'boolean',
-        'privacy_accepted' => 'boolean',
+        'reviewed_at'          => 'datetime',
+        'terms_accepted'       => 'boolean',
+        'privacy_accepted'     => 'boolean',
         'document_front_photo' => 'array',
-        'document_back_photo' => 'array',
-        'selfie_photo' => 'array',
+        'selfie_photo'         => 'array',
         'additional_documents' => 'array',
     ];
 
     protected static function boot()
     {
         parent::boot();
-        
+
         static::creating(function ($model) {
             if (empty($model->id)) {
                 $model->id = (string) Str::uuid();
@@ -146,33 +145,33 @@ class KycApplication extends Model implements HasMedia
 
     public function getStatusBadgeAttribute(): string
     {
-        return match($this->status) {
+        return match ($this->status) {
             'pending' => 'warning',
-            'under_review' => 'info',
-            'approved' => 'success',
-            'rejected' => 'danger',
-            default => 'secondary'
+            'under_review'    => 'info',
+            'approved'        => 'success',
+            'rejected'        => 'danger',
+            default           => 'secondary'
         };
     }
 
     public function getStatusLabelAttribute(): string
     {
-        return match($this->status) {
-            'pending' => 'Pending',
-            'under_review' => 'Under Review',
-            'approved' => 'Approved',
-            'rejected' => 'Rejected',
-            default => 'Unknown'
+        return match ($this->status) {
+            'pending'         => 'Pending',
+            'under_review'    => 'Under Review',
+            'approved'        => 'Approved',
+            'rejected'        => 'Rejected',
+            default           => 'Unknown'
         };
     }
 
     public function getDocumentTypeLabel(): string
     {
-        return match($this->document_type) {
-            'national_id' => 'National ID',
-            'passport' => 'Passport',
+        return match ($this->document_type) {
+            'national_id'     => 'National ID',
+            'passport'        => 'Passport',
             'driving_license' => 'Driving License',
-            default => ucfirst($this->document_type)
+            default           => ucfirst($this->document_type)
         };
     }
 
