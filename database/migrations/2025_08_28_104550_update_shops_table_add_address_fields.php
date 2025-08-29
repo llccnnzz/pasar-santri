@@ -11,11 +11,11 @@ return new class extends Migration
         Schema::table('shops', function (Blueprint $table) {
             $table->text('description')->change();
 
-            $table->string('province')->after('address');
-            $table->string('city')->after('address');
-            $table->string('subdistrict')->after('address');
-            $table->string('village')->after('address');
-            $table->string('postal_code')->after('address');
+            $table->string('province')->after('address')->nullable();
+            $table->string('city')->after('address')->nullable();
+            $table->string('subdistrict')->after('address')->nullable();
+            $table->string('village')->after('address')->nullable();
+            $table->string('postal_code')->after('address')->nullable();
         });
     }
 

@@ -9,8 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('kyc_applications', function (Blueprint $table) {
-            $table->string('subdistrict')->after('city');
-            $table->string('village')->after('subdistrict');
+            $table->string('subdistrict')->after('city')->nullable();
+            $table->string('village')->after('subdistrict')->nullable();
 
             $table->renameColumn('state', 'province');
         });
