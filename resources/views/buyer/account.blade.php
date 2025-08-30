@@ -373,12 +373,18 @@
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
+                                <label for="village" class="form-label">Village</label>
+                                <select class="form-control" id="village" name="village" required>
+                                    <option value="">-- Select Village --</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
                                 <label for="postal_code" class="form-label">Postal Code</label>
                                 <select class="form-control" id="postal_code" name="postal_code" required>
                                     <option value="">-- Select Postal Code --</option>
                                 </select>
                             </div>
-                            <div class="col-md-12 mb-3">
+                            <div class="col-md-6 mb-3">
                                 <label for="country" class="form-label">Country</label>
                                 <input type="text" class="form-control" id="country" name="country"
                                     value="Indonesia" required>
@@ -460,12 +466,19 @@
                             </div>
 
                             <div class="col-md-6 mb-3">
+                                <label for="edit_village" class="form-label">Village</label>
+                                <select class="form-control" id="edit_village" name="village" required>
+                                    <option value="">-- Select Village --</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
                                 <label for="edit_postal_code" class="form-label">Postal Code</label>
                                 <select class="form-control" id="edit_postal_code" name="postal_code" required>
                                     <option value="">-- Select Postal Code --</option>
                                 </select>
                             </div>
-                            <div class="col-md-12 mb-3">
+                            <div class="col-md-6 mb-3">
                                 <label for="edit_country" class="form-label">Country</label>
                                 <input type="text" class="form-control" id="edit_country" name="country" required>
                             </div>
@@ -500,12 +513,14 @@
         let provinces = [];
         let cities = [];
         let subdistricts = [];
+        let villages = [];
         let postals = [];
 
         function initAddressDropdown(prefix = '') {
             const $province = $(`#${prefix}province`);
             const $city = $(`#${prefix}city`);
             const $subdistrict = $(`#${prefix}subdistrict`);
+            const $village = $(`#${prefix}village`);
             const $postal = $(`#${prefix}postal_code`);
 
             // Load JSON (hanya sekali)
@@ -513,7 +528,7 @@
                 $.getJSON("{{ asset('assets/js/provinces.json') }}", function(data) {
                     provinces = data.sort((a, b) => a.name.localeCompare(b.name));
                     $.each(provinces, function(_, prov) {
-                        $province.append(`<option value="${prov.id}">${prov.name}</option>`);
+                        $province.append(`<option value="${prov.name}">${prov.name}</option>`);
                     });
                 });
                 $.getJSON("{{ asset('assets/js/cities.json') }}", function(data) {
@@ -522,7 +537,9 @@
                 $.getJSON("{{ asset('assets/js/sub_districts.json') }}", function(data) {
                     subdistricts = data;
                 });
-
+                $.getJSON("{{ asset('assets/js/villages.json') }}", function(data) {
+                    villages = data;
+                });
                 $.getJSON("{{ asset('assets/js/postal_codes.json') }}", function(data) {
                     postals = data;
                 });
@@ -530,10 +547,14 @@
 
             // Province -> City
             $province.on('change', function() {
-                const provId = $(this).val();
+                const provName = $(this).val();
+
+                const provObj = provinces.find(p => p.name === provName);
+                const provId = provObj ? provObj.id : null;
 
                 $city.html('<option value="">-- Select City --</option>');
                 $subdistrict.html('<option value="">-- Select Subdistrict --</option>');
+                $village.html('<option value="">-- Select Village --</option>');
                 $postal.html('<option value="">-- Select Postal Code --</option>');
 
                 const filteredCities = cities
@@ -541,15 +562,19 @@
                     .sort((a, b) => a.name.localeCompare(b.name));
 
                 $.each(filteredCities, function(_, city) {
-                    $city.append(`<option value="${city.id}">${city.name}</option>`);
+                    $city.append(`<option value="${city.name}">${city.name}</option>`);
                 });
             });
 
+
             // City -> Subdistrict
             $city.on('change', function() {
-                const cityId = $(this).val();
+                const cityName = $(this).val();
+                const cityObj = cities.find(c => c.name === cityName);
+                const cityId = cityObj ? cityObj.id : null;
 
                 $subdistrict.html('<option value="">-- Select Subdistrict --</option>');
+                $village.html('<option value="">-- Select Village --</option>');
                 $postal.html('<option value="">-- Select Postal Code --</option>');
 
                 const filteredSubs = subdistricts
@@ -557,21 +582,53 @@
                     .sort((a, b) => a.name.localeCompare(b.name));
 
                 $.each(filteredSubs, function(_, sub) {
-                    $subdistrict.append(`<option value="${sub.id}">${sub.name}</option>`);
+                    $subdistrict.append(
+                        `<option value="${sub.name}">${sub.name}</option>`
+                    );
                 });
             });
 
-            // Subdistrict -> Postal code
+            // Subdistrict -> Village
             $subdistrict.on('change', function() {
-                const subdistrictId = $(this).val();
+                const subName = $(this).val();
+                const subObj = subdistricts.find(s => s.name === subName);
+                const subId = subObj ? subObj.id : null;
+
+                $village.html('<option value="">-- Select Village --</option>');
                 $postal.html('<option value="">-- Select Postal Code --</option>');
 
-                const filteredPc = postals
-                    .filter(s => s.subdistrict_id == subdistrictId)
+                const filteredVillages = villages
+                    .filter(v => v.sub_district_id == subId)
                     .sort((a, b) => a.name.localeCompare(b.name));
 
-                $.each(filteredPc, function(_, pc) {
-                    $postal.append(`<option value="${pc.id}">${pc.name}</option>`);
+                $.each(filteredVillages, function(_, vill) {
+                    $village.append(
+                        `<option value="${vill.name}">${vill.name}</option>`
+                    );
+                });
+            });
+
+            // Village -> Postal Code
+            $village.on('change', function() {
+                const villName = $(this).val();
+                const subName = $subdistrict.val();
+
+                const subObj = subdistricts.find(s => s.name === subName);
+                const subId = subObj ? subObj.id : null;
+
+                const villObj = villages.find(v => v.name === villName && v.sub_district_id == subId);
+                const villId = villObj ? villObj.id : null;
+
+                $postal.html('<option value="">-- Select Postal Code --</option>');
+
+                const filteredPostals = postals
+                    .filter(pc => Array.isArray(pc.village_id) && pc.village_id.includes(villId))
+                    .sort((a, b) => a.name.localeCompare(b.name));
+
+                $.each(filteredPostals, function(_, pc) {
+                    $postal.append(
+                        `<option value="${pc.name}">${pc.name}</option>`
+                    );
                 });
             });
         }
@@ -664,8 +721,15 @@
                 setTimeout(() => {
                     $('#edit_subdistrict').val(address.subdistrict).trigger('change');
 
+                    // Delay untuk village
                     setTimeout(() => {
-                        $('#edit_postal_code').val(address.postal_code).trigger('change');
+                        $('#edit_village').val(address.village).trigger('change');
+
+                        // Delay untuk postal code
+                        setTimeout(() => {
+                            $('#edit_postal_code').val(address.postal_code).trigger(
+                                'change');
+                        }, 100);
                     }, 100);
                 }, 100);
             }, 100);

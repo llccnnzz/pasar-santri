@@ -27,7 +27,7 @@ class AddressController extends Controller
 
         $addressData = $request->only([
             'label', 'name', 'phone', 'address_line_1', 'address_line_2',
-            'province', 'city', 'subdistrict', 'postal_code', 'country',
+            'province', 'city', 'subdistrict', 'village', 'postal_code', 'country',
         ]);
 
         $addressData['is_primary'] = $request->boolean('is_primary');
@@ -48,7 +48,7 @@ class AddressController extends Controller
 
         $addressData = $request->only([
             'label', 'name', 'phone', 'address_line_1', 'address_line_2',
-            'province', 'city', 'subdistrict', 'postal_code', 'country',
+            'province', 'city', 'subdistrict', 'village', 'postal_code', 'country',
         ]);
 
         $addressData['is_primary'] = $request->boolean('is_primary');

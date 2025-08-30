@@ -508,13 +508,18 @@
 
                 $village.on('change', function() {
                     const villName = $(this).val();
-                    const villObj = villages.find(v => v.name === villName);
+                    const subName = $subdistrict.val();
+
+                    const subObj = subdistricts.find(s => s.name === subName);
+                    const subId = subObj ? subObj.id : null;
+
+                    const villObj = villages.find(v => v.name === villName && v.sub_district_id == subId);
                     const villId = villObj ? villObj.id : null;
 
                     $postal.html('<option value="">-- Select Postal Code --</option>');
 
                     const filteredPostals = postals
-                        .filter(pc => pc.village_id == villId)
+                        .filter(pc => Array.isArray(pc.village_id) && pc.village_id.includes(villId))
                         .sort((a, b) => a.name.localeCompare(b.name));
 
                     $.each(filteredPostals, function(_, pc) {
