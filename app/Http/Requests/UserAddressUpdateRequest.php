@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -22,6 +21,7 @@ class UserAddressUpdateRequest extends FormRequest
             'province'       => 'required|string|max:100',
             'city'           => 'required|string|max:100',
             'subdistrict'    => 'required|string|max:100',
+            'village'        => 'required|string|max:100',
             'postal_code'    => 'required|string|max:20',
             'country'        => 'required|string|max:100',
             'is_primary'     => 'boolean',
