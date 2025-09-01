@@ -1,6 +1,7 @@
 <?php
 namespace App\Console\Commands;
 
+use App\Models\ShippingMethod;
 use App\Services\BiteshipService;
 use Illuminate\Console\Command;
 
