@@ -1,14 +1,16 @@
 <?php
 namespace App\Models;
 
+use App\Models\ShopShippingMethod;
 use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 class Shop extends Model implements HasMedia
 {
-    use InteractsWithMedia, HasUuid;
+    use InteractsWithMedia, HasUuid, HasRelationships;
     protected $fillable = [
         'id',
         'user_id',
@@ -41,6 +43,14 @@ class Shop extends Model implements HasMedia
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function shippingMethods()
+    {
+        return $this->hasManyDeepFromRelations(
+            $this->hasMany(ShopShippingMethod::class),
+            (new ShopShippingMethod())->shippingMethod()
+        );
     }
 
     public function registerMediaCollections(): void
