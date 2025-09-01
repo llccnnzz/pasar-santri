@@ -115,12 +115,14 @@ Route::middleware('auth')->group(function () {
             // Shipping Method Setup
             Route::group(['prefix' => 'shipping'], function () {
                 Route::get('/', [SellerController::class, 'shippingList'])->name('seller.shipping.index');
-                Route::get('/create', [SellerController::class, 'shippingCreate'])->name('seller.shipping.create');
-                Route::post('/', [SellerController::class, 'shippingStore'])->name('seller.shipping.store');
-                Route::get('/{shipping}/edit', [SellerController::class, 'shippingEdit'])->name('seller.shipping.edit');
-                Route::put('/{shipping}', [SellerController::class, 'shippingUpdate'])->name('seller.shipping.update');
+                // Route::post('/', [SellerController::class, 'shippingStore'])->name('seller.shipping.store');
+                Route::post('/toggle', [SellerController::class, 'shippingToggle'])->name('seller.shipping.toggle');
+                // Route::get('/{shipping}/edit', [SellerController::class, 'shippingEdit'])->name('seller.shipping.edit');
+                // Route::put('/{shipping}', [SellerController::class, 'shippingUpdate'])->name('seller.shipping.update');
                 Route::delete('/{shipping}', [SellerController::class, 'shippingDestroy'])->name('seller.shipping.destroy');
-                Route::post('/{shipping}/toggle-status', [SellerController::class, 'toggleShippingStatus'])->name('seller.shipping.toggle-status');
+                Route::get('/test-biteship', [SellerController::class, 'testBiteship']);
+
+                // Route::post('/{shipping}/toggle-status', [SellerController::class, 'toggleShippingStatus'])->name('seller.shipping.toggle-status');
             });
 
             // Wallet & Withdraw Flow

@@ -4,6 +4,7 @@
 		<!--=== Required meta tags ===-->
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="csrf-token" content="{{ csrf_token() }}">
 
 		<!--=== CSS Link ===--> 
 		<link rel="stylesheet" href="/admin-assets/assets/css/bootstrap.min.css">
@@ -114,7 +115,7 @@
 				
 				<!-- Shipping Method Setup -->
 				<li class="{{ request()->routeIs('seller.shipping.*') ? 'mm-active' : '' }}">
-					<a href="#" class="menu-title">
+					<a href="{{ route('seller.shipping.index') }}" class="menu-title">
 						<span class="icon"><i data-feather="truck"></i></span>
 						<span class="title">Shipping Methods</span>
 					</a>

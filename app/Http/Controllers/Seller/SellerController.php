@@ -2,10 +2,13 @@
 namespace App\Http\Controllers\Seller;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ShippingToggleRequest;
 use App\Http\Requests\ShopSettingsUpdateRequest;
 use App\Http\Requests\ShopSetupStoreRequest;
 use App\Models\KycApplication;
+use App\Models\ShippingMethod;
 use App\Models\Shop;
+use App\Models\ShopShippingMethod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -30,37 +33,64 @@ class SellerController extends Controller
     // Shipping Method Setup
     public function shippingList(Request $request)
     {
-        $shop            = Auth::user()->shop;
-        $shippingMethods = $shop ? $shop->shippingMethods()->get() : collect();
-        return view('seller.shipping.index', compact('shippingMethods'));
+        $shop = $request->user()->shop;
+
+        $allMethods = ShippingMethod::where('active', true)->get();
+
+        $shopMethods = ShopShippingMethod::where('shop_id', $shop->id)
+            ->with('shippingMethod')
+            ->get();
+
+        $enabledMethods  = $shopMethods->where('enabled', true)->pluck('shipping_method_id')->toArray();
+        $disabledMethods = $shopMethods->where('enabled', false)->pluck('shipping_method_id')->toArray();
+
+        $inactiveGlobal = $allMethods->whereNotIn('id', $shopMethods->pluck('shipping_method_id'));
+
+        return view('seller.shipping.index', [
+            'enabledMethods'  => $allMethods->whereIn('id', $enabledMethods),
+            'disabledMethods' => $allMethods->whereIn('id', $disabledMethods),
+            'inactiveGlobal'  => $inactiveGlobal,
+        ]);
     }
 
-    public function shippingCreate()
+    public function shippingToggle(ShippingToggleRequest $request)
     {
-        return view('seller.shipping.create');
+        $shop     = $request->user()->shop;
+        $methodId = $request->input('shipping_method_id');
+        $enabled  = $request->input('enabled');
+
+        $record = ShopShippingMethod::firstOrCreate(
+            [
+                'shop_id'            => $shop->id,
+                'shipping_method_id' => $methodId,
+            ],
+            [
+                'enabled' => $enabled,
+            ]
+        );
+
+        if ($record->exists) {
+            $record->update(['enabled' => $enabled]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => $enabled ? 'Shipping method enabled' : 'Shipping method disabled',
+        ]);
     }
 
-    public function shippingStore(Request $request)
+    public function shippingDestroy(Request $request, $shipping)
     {
-        // Implementation for shipping method creation
-        return redirect()->route('seller.shipping.index')->with('success', 'Shipping method created successfully');
-    }
+        $shop = $request->user()->shop;
 
-    public function shippingEdit($shipping)
-    {
-        return view('seller.shipping.edit', compact('shipping'));
-    }
+        ShopShippingMethod::where('shop_id', $shop->id)
+            ->where('shipping_method_id', $shipping)
+            ->delete();
 
-    public function shippingUpdate(Request $request, $shipping)
-    {
-        // Implementation for shipping method update
-        return redirect()->route('seller.shipping.index')->with('success', 'Shipping method updated successfully');
-    }
-
-    public function shippingDestroy($shipping)
-    {
-        // Implementation for shipping method deletion
-        return redirect()->route('seller.shipping.index')->with('success', 'Shipping method deleted successfully');
+        return response()->json([
+            'success' => true,
+            'message' => 'Shipping method removed from your list',
+        ]);
     }
 
     // Shop Setup
