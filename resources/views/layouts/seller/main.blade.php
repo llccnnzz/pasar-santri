@@ -6,7 +6,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 		<meta name="csrf-token" content="{{ csrf_token() }}">
 
-		<!--=== CSS Link ===--> 
+		<!--=== CSS Link ===-->
 		<link rel="stylesheet" href="/admin-assets/assets/css/bootstrap.min.css">
 		<link rel="stylesheet" href="/admin-assets/assets/css/owl.theme.default.min.css">
 		<link rel="stylesheet" href="/admin-assets/assets/css/owl.carousel.min.css">
@@ -19,7 +19,7 @@
 		<link rel="stylesheet" href="/admin-assets/assets/css/magnific-popup.min.css">
 		<link rel="stylesheet" href="/admin-assets/assets/css/sweetalert2.min.css">
 		<link rel="stylesheet" href="/admin-assets/assets/css/style.css">
-		
+
 		<!--=== Favicon ===-->
 		<link rel="icon" type="image/png" href="/admin-assets/assets/images/favicon.png">
 		<!--=== Title ===-->
@@ -44,7 +44,7 @@
             </div>
         </div>
 		<!--=== End Preloader Section ===-->
-		
+
 		<!--=== Start Sidebar Menu Area ===-->
 		<div class="sidebar-menu-area" id="metismenu" data-simplebar>
 			<div class="d-flex justify-content-between align-items-center border-bottom border-color bg-white position-sticky top-0 z-1 main-logo-wrap">
@@ -60,7 +60,7 @@
 			</div>
 			<ul class="sidebar-menu o-sortable">
 				<li><span class="cat">SELLER DASHBOARD</span></li>
-				
+
 				<!-- Dashboard -->
 				<li class="{{ request()->routeIs('seller.dashboard') ? 'mm-active' : '' }}">
 					<a href="{{ route('seller.dashboard') }}" class="menu-title">
@@ -70,7 +70,7 @@
 				</li>
 
 				<li><span class="cat">INVENTORY</span></li>
-				
+
 				<!-- Product & SKU Management -->
 				<li class="{{ request()->routeIs('seller.products.*') ? 'mm-active' : '' }}">
 					<a href="{{ route('seller.products.index') }}" class="menu-title">
@@ -85,7 +85,7 @@
 						<span class="title">SKU Management</span>
 					</a>
 				</li> -->
-				
+
 				<!-- Category Management -->
 				<li class="{{ request()->routeIs('seller.categories.*') ? 'mm-active' : '' }}">
 					<a href="{{ route('seller.categories.index') }}" class="menu-title">
@@ -95,13 +95,13 @@
 				</li>
 
 				<li><span class="cat">ORDERS & SHIPPING</span></li>
-				
+
 				<!-- Orders Management -->
 				<li class="{{ request()->routeIs('seller.orders.*') ? 'mm-active' : '' }}">
 					<a href="#" class="has-arrow menu-title" aria-expanded="{{ request()->routeIs('seller.orders.*') ? 'true' : 'false' }}">
 						<span class="icon"><i data-feather="shopping-cart"></i></span>
 						<span class="title">Orders</span>
-						
+
 					</a>
 					<ul class="sidemenu-second-level">
 						<li><a href="{{ route('seller.orders.index') }}" class="{{ request()->routeIs('seller.orders.index') && !request()->get('status') ? 'active' : '' }}">All Orders</a></li>
@@ -112,7 +112,7 @@
 						<li><a href="{{ route('seller.orders.index') }}?status=cancelled" class="{{ request()->get('status') == 'cancelled' ? 'active' : '' }}">Cancelled</a></li>
 					</ul>
 				</li>
-				
+
 				<!-- Shipping Method Setup -->
 				<li class="{{ request()->routeIs('seller.shipping.*') ? 'mm-active' : '' }}">
 					<a href="{{ route('seller.shipping.index') }}" class="menu-title">
@@ -122,7 +122,7 @@
 				</li>
 
 				<li><span class="cat">FINANCIAL</span></li>
-				
+
 				<!-- Wallet & Withdraw Flow -->
 				<li class="{{ request()->routeIs('seller.wallet.*') ? 'mm-active' : '' }}">
 					<a href="{{ route('seller.wallet.index') }}" class="menu-title">
@@ -130,7 +130,7 @@
 						<span class="title">Seller Wallet</span>
 					</a>
 				</li>
-				
+
 				<!-- Bank Account Management -->
 				<li class="{{ request()->routeIs('seller.bank-accounts.*') ? 'mm-active' : '' }}">
 					<a href="{{ route('seller.bank-accounts.index') }}" class="menu-title">
@@ -140,7 +140,7 @@
 				</li>
 
 				<li><span class="cat">SETTINGS</span></li>
-				
+
 				<!-- KYC Verification -->
 				<li class="{{ request()->routeIs('kyc.*') ? 'mm-active' : '' }}">
 					<a href="{{ route('kyc.index') }}" class="menu-title">
@@ -167,7 +167,7 @@
 						@endif
 					</a>
 				</li>
-				
+
 				<!-- Test View for Development -->
 				<li class="{{ request()->routeIs('seller.test-view') ? 'mm-active' : '' }}">
 					<a href="{{ route('seller.test-view') }}" class="menu-title">
@@ -176,7 +176,7 @@
 						<span class="badge bg-warning ms-2">DEV</span>
 					</a>
 				</li>
-				
+
 				<!-- Shop Settings -->
 				<li class="{{ request()->routeIs('seller.shop.*') ? 'mm-active' : '' }}">
 					<a href="{{ route('seller.shop.settings') }}" class="menu-title">
@@ -184,7 +184,7 @@
 						<span class="title">Shop Settings</span>
 					</a>
 				</li>
-				
+
 				<!-- User Profile -->
 				<li class="{{ request()->routeIs('seller.profile.*') ? 'mm-active' : '' }}">
 					<a href="{{ route('seller.profile.index') }}" class="menu-title">
@@ -192,7 +192,7 @@
 						<span class="title">Profile Settings</span>
 					</a>
 				</li>
-				
+
 				<!-- Support & Help -->
 				<li>
 					<a href="#" class="has-arrow menu-title" aria-expanded="false">
@@ -245,7 +245,7 @@
 						<div class="col-lg-6 col-sm-6">
 							<div class="header-right-content float-lg-end float-md-end">
 								<ul class="list-unstyled ps-0 mb-0 d-flex justify-content-center justify-content-lg-end justify-content-md-end align-items-center">
-								
+
 
 									<li class="ms-lg-4 ms-md-4 ms-2">
 										<div class="dropdown mail">
@@ -267,10 +267,10 @@
 											</button>
 											<div class="dropdown-menu dropdown-lg p-0 border-0 box-shadow">
 												<h6 class="dropdown-item-text fs-15 fw-semibold m-0 py-3 border-bottom border-color d-flex justify-content-between align-items-center">
-													Apps 
+													Apps
 													<span class="text-white bg-danger fs-12 py-1 px-1 rounded-1 fw-normal">12</span>
-												</h6> 
-												
+												</h6>
+
 												<div class="h-255" data-simplebar>
 													<div class="apps-menu d-flex flex-wrap align-items-center justify-content-center">
 														<a href="javascript:;" class="dropdown-item m-2 border-1">
@@ -337,10 +337,10 @@
 											</button>
 											<div class="dropdown-menu dropdown-lg p-0 border-0 box-shadow">
 												<h6 class="dropdown-item-text fs-15 fw-semibold m-0 py-3 border-bottom border-color d-flex justify-content-between align-items-center">
-													Notifications 
+													Notifications
 													<span class="text-white bg-danger fs-12 py-1 px-1 rounded-1 fw-normal">08</span>
-												</h6> 
-												
+												</h6>
+
 												<div class="notification-menu h-400" data-simplebar>
 													<a href="notifications.html" class="dropdown-item py-3">
 														<small class="float-end ps-2 text-body fs-12">6 min ago</small>
@@ -494,43 +494,13 @@
 													</div>
 												</li>
 												<li>
-													<a class="dropdown-item d-flex align-items-center text-body" href="profile.html">
+													<a class="dropdown-item d-flex align-items-center text-body" href="/seller/profile">
 														<i data-feather="user"></i>
 														<span class="ms-2 fs-14">Profile</span>
 													</a>
 												</li>
 												<li>
-													<a class="dropdown-item d-flex align-items-center text-body" href="user-profile.html">
-														<i data-feather="command"></i>
-														<span class="ms-2 fs-14">User Profile</span>
-													</a>
-												</li>
-												<li>
-													<a class="dropdown-item d-flex align-items-center text-body" href="team.html">
-														<i data-feather="users"></i>
-														<span class="ms-2 fs-14">Team</span>
-													</a>
-												</li>
-												<li>
-													<a class="dropdown-item d-flex align-items-center text-body" href="user.html">
-														<i data-feather="list"></i>
-														<span class="ms-2 fs-14">User List</span>
-													</a>
-												</li>
-												<li>
-													<a class="dropdown-item d-flex align-items-center text-body" href="add-user.html">
-														<i data-feather="user-plus"></i>
-														<span class="ms-2 fs-14">Add User</span>
-													</a>
-												</li>
-												<li>
-													<a class="dropdown-item d-flex align-items-center text-body" href="account-settings.html">
-														<i data-feather="settings"></i>
-														<span class="ms-2 fs-14">Settings</span>
-													</a>
-												</li>
-												<li>
-													<a class="dropdown-item d-flex align-items-center text-body" href="logout.html">
+													<a class="dropdown-item d-flex align-items-center text-body" href="#" onclick="document.getElementById('form-logout').submit();">
 														<i data-feather="log-out"></i>
 														<span class="ms-2 fs-14">Logout</span>
 													</a>
@@ -544,6 +514,11 @@
 					</div>
 				</header>
 				<!--=== End Header Area ===-->
+                @if(auth()->user())
+                    <form style="display: none" id="form-logout" action="/logout" method="POST">
+                        @csrf
+                    </form>
+                @endif
 
 				@yield('content')
 			</div>
@@ -671,7 +646,7 @@
 		<!-- End Go Top Area -->
 
         <!--=== JS Link ===-->
-        <script src="/admin-assets/assets/js/jquery.min.js"></script> 
+        <script src="/admin-assets/assets/js/jquery.min.js"></script>
         <script src="/admin-assets/assets/js/bootstrap.bundle.min.js"></script>
         <script src="/admin-assets/assets/js/owl.carousel.min.js"></script>
         <script src="/admin-assets/assets/js/metisMenu.min.js"></script>
@@ -682,10 +657,10 @@
         <script src="/admin-assets/assets/js/html5sortable.js"></script>
 		<script src="/admin-assets/assets/js/members-list.js"></script>
 		<script src="/admin-assets/assets/js/jquery-ui.min.js"></script>
-		<script src="/admin-assets/assets/js/jquery.dataTables.js"></script>  
-		<script src="/admin-assets/assets/js/magnific-popup.min.js"></script>  
-		<script src="/admin-assets/assets/js/sweetalert2.all.min.js"></script>  
-		<script src="/admin-assets/assets/js/kanban-board.js"></script> 
+		<script src="/admin-assets/assets/js/jquery.dataTables.js"></script>
+		<script src="/admin-assets/assets/js/magnific-popup.min.js"></script>
+		<script src="/admin-assets/assets/js/sweetalert2.all.min.js"></script>
+		<script src="/admin-assets/assets/js/kanban-board.js"></script>
 		<!--=== Apex Charts ===-->
         <script src="/admin-assets/assets/js/apex/apexcharts.js"></script>
 		<!--=== Amcharts ===-->
