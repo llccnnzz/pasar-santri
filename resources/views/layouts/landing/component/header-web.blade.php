@@ -30,33 +30,29 @@
                     <div class="header-action-right">
                         <div class="header-action-2">
                             <div class="search-location">
-                                <form action="#">
-                                    <select class="select-active" id="location-selector">
-                                        @if(auth()->user() && auth()->user()->primary_address)
-                                            <option value="{{ auth()->user()->primary_address['id'] ?? '' }}">
-                                                {{ auth()->user()->primary_address['city'] ?? 'Your Location' }}, {{ auth()->user()->primary_address['state'] ?? '' }}
-                                            </option>
-                                        @else
-                                            <option value="">Your Location</option>
-                                        @endif
-                                        
-                                        @if(auth()->user() && auth()->user()->addresses)
-                                            @foreach(auth()->user()->addresses as $address)
-                                                @if(!isset($address['is_primary']) || !$address['is_primary'])
-                                                    <option value="{{ $address['id'] }}">
-                                                        {{ $address['city'] }}, {{ $address['province'] }}
-                                                    </option>
-                                                @endif
-                                            @endforeach
-                                        @endif
+                                <select name="address_id" class="select-active" id="location-selector" onchange="setPrimary(document.getElementById('location-selector').value)">
+                                    @if(auth()->user() && auth()->user()->primary_address)
+                                        <option value="{{ auth()->user()->primary_address['id'] ?? '' }}">
+                                            {{ auth()->user()->primary_address['city'] ?? 'Your Location' }}, {{ auth()->user()->primary_address['province'] ?? '' }}
+                                        </option>
+                                    @else
+                                        <option value="">Your Location</option>
+                                    @endif
 
-                                        @if(auth()->user())
-                                            <option value="manage" class="text-primary">+ Manage Addresses</option>
-                                        @else
-                                            <option value="login">Login to set location</option>
-                                        @endif
-                                    </select>
-                                </form>
+                                    @if(auth()->user() && auth()->user()->addresses)
+                                        @foreach(auth()->user()->addresses as $address)
+                                            @if(!isset($address['is_primary']) || !$address['is_primary'])
+                                                <option value="{{ $address['id'] }}">
+                                                    {{ $address['city'] }}, {{ $address['province'] }}
+                                                </option>
+                                            @endif
+                                        @endforeach
+                                    @endif
+
+                                    @if(!auth()->user())
+                                        <option value="login">Login to set location</option>
+                                    @endif
+                                </select>
                             </div>
                             @if(auth()->user())
                                 @php

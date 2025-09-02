@@ -223,7 +223,7 @@
                                                                             @if (!isset($address['is_primary']) || !$address['is_primary'])
                                                                                 <button type="button"
                                                                                     class="btn btn-outline-primary btn-sm"
-                                                                                    onclick="setPrimary('{{ $address['id'] }}')">
+                                                                                    onclick="setPrimary('{{ $address['id'] }}', true)">
                                                                                     Set as Primary
                                                                                 </button>
                                                                             @endif
@@ -644,52 +644,6 @@
         // Address data from PHP
         const addresses = @json($addresses);
         console.log('Addresses loaded:', addresses);
-
-        function setPrimary(addressId) {
-            console.log('Setting primary address:', addressId);
-
-            fetch('{{ route('addresses.setPrimary') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                    },
-                    body: JSON.stringify({
-                        address_id: addressId
-                    })
-                })
-                .then(response => {
-                    console.log('Response status:', response.status);
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Response data:', data);
-                    if (data.success) {
-                        if (typeof toastr !== 'undefined') {
-                            toastr.success('Primary address updated successfully!');
-                        } else {
-                            alert('Primary address updated successfully!');
-                        }
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1000);
-                    } else {
-                        if (typeof toastr !== 'undefined') {
-                            toastr.error(data.error || 'Failed to set primary address');
-                        } else {
-                            alert(data.error || 'Failed to set primary address');
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    if (typeof toastr !== 'undefined') {
-                        toastr.error('An error occurred');
-                    } else {
-                        alert('An error occurred');
-                    }
-                });
-        }
 
         // Edit address function
         function editAddress(addressId) {

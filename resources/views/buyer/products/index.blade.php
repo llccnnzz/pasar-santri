@@ -14,7 +14,7 @@
             <div class="container">
                 <div class="breadcrumb">
                     <a href="/" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
-                    <span></span> 
+                    <span></span>
                     @if(isset($searchQuery) && isset($selectedCategory) && $searchQuery && $selectedCategory)
                         Search: "{{ $searchQuery }}" in {{ $selectedCategory->name }}
                     @elseif(isset($searchQuery) && $searchQuery)
@@ -42,9 +42,9 @@
                                 <div class="card">
                                     <h5 class="mb-30">Search Products</h5>
                                     <div class="search-wrap">
-                                        <input type="text" 
-                                               id="filter-search-input" 
-                                               class="form-control" 
+                                        <input type="text"
+                                               id="filter-search-input"
+                                               class="form-control"
                                                placeholder="Search products..."
                                                value="{{ $searchQuery ?? '' }}">
                                         <button type="button" class="btn btn-primary btn-sm mt-2 w-100" id="apply-search-filter">
@@ -135,20 +135,20 @@
                                         <div class="row">
                                             <div class="col-6">
                                                 <label for="min-price" class="form-label">Min Price</label>
-                                                <input type="number" 
-                                                       id="min-price" 
-                                                       class="form-control form-control-sm" 
+                                                <input type="number"
+                                                       id="min-price"
+                                                       class="form-control form-control-sm"
                                                        placeholder="{{ $minPrice }}"
-                                                       min="{{ $minPrice }}" 
+                                                       min="{{ $minPrice }}"
                                                        max="{{ $maxPrice }}">
                                             </div>
                                             <div class="col-6">
                                                 <label for="max-price" class="form-label">Max Price</label>
-                                                <input type="number" 
-                                                       id="max-price" 
-                                                       class="form-control form-control-sm" 
+                                                <input type="number"
+                                                       id="max-price"
+                                                       class="form-control form-control-sm"
                                                        placeholder="{{ $maxPrice }}"
-                                                       min="{{ $minPrice }}" 
+                                                       min="{{ $minPrice }}"
                                                        max="{{ $maxPrice }}">
                                             </div>
                                         </div>
@@ -233,63 +233,8 @@
 @endsection
 
 @push('script')
+    @include('layouts.landing.component.product.card-handler')
     <script>
-        function addToWishlist(productId, token) {
-            // create execute submit form but stay in this page
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '/wishlist';
-            form.style.display = 'none';
-            const inputProductId = document.createElement('input');
-            inputProductId.type = 'hidden';
-            inputProductId.name = 'product_id';
-            inputProductId.value = productId;
-            const inputCsrf = document.createElement('input');
-            inputCsrf.type = 'hidden';
-            inputCsrf.name = '_token';
-            inputCsrf.value = token;
-            form.appendChild(inputCsrf);
-            form.appendChild(inputProductId);
-            document.body.appendChild(form);
-            form.submit();
-            toastr.success('Product added to Wishlist');
-        }
-
-        function addToCart(productId, quantity, token) {
-            // create execute submit form but stay in this page
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '/cart';
-            form.style.display = 'none';
-            const inputProductId = document.createElement('input');
-            inputProductId.type = 'hidden';
-            inputProductId.name = 'product_id';
-            inputProductId.value = productId;
-            const inputQuantity = document.createElement('input');
-            inputQuantity.type = 'hidden';
-            inputQuantity.name = 'quantity';
-            inputQuantity.value = quantity;
-            // add csrf token
-            const inputCsrf = document.createElement('input');
-            inputCsrf.type = 'hidden';
-            inputCsrf.name = '_token';
-            inputCsrf.value = token;
-            form.appendChild(inputCsrf);
-            form.appendChild(inputProductId);
-            form.appendChild(inputQuantity);
-            document.body.appendChild(form);
-            form.submit();
-
-            // create alert
-            const alert = document.createElement('div');
-            alert.className = 'alert alert-success';
-            alert.innerHTML = `<strong>Success!</strong> Product has been added to cart.`;
-            document.body.appendChild(alert);
-            setTimeout(() => {
-                alert.remove();
-            }, 3000);
-        }
-
         document.addEventListener('DOMContentLoaded', () => {
             const baseUrl = '/api/products';
 
@@ -306,7 +251,7 @@
 
             // Initialize state from URL parameters and server data
             const urlParams = new URLSearchParams(window.location.search);
-            
+
             // Set search from URL or server data
             @if(isset($searchQuery) && $searchQuery)
                 state.search = {!! json_encode($searchQuery) !!};
@@ -330,18 +275,18 @@
                 state.categories.forEach(cat => params.append('filter[categories][]', cat));
                 state.tags.forEach(tag => params.append('filter[tags][]', tag));
                 state.brands.forEach(brand => params.append('filter[brands][]', brand));
-                
+
                 // Add search filter
                 if (state.search && state.search.trim() !== '') {
                     params.set('filter[search]', state.search.trim());
                 }
-                
+
                 // Add price range filter
                 if (state.priceRange.min || state.priceRange.max) {
                     if (state.priceRange.min) params.set('filter[price_range][min]', state.priceRange.min);
                     if (state.priceRange.max) params.set('filter[price_range][max]', state.priceRange.max);
                 }
-                
+
                 if (state.sort) params.set('sort', state.sort);
                 params.set('page[number]', state.currentPage);
                 params.set('page[size]', state.perPage);
@@ -360,10 +305,10 @@
             async function fetchProducts() {
                 try {
                     showLoading(true);
-                    
+
                     const res = await fetch(`${baseUrl}?${buildQuery()}`);
                     if (!res.ok) throw new Error('Failed to fetch products');
-                    
+
                     const data = await res.json();
                     renderProducts(data.data);
                     renderPagination(data.meta, data.links);
@@ -429,14 +374,14 @@
                                     </div>
                                     <div class="product-card-bottom">
                                         <div class="product-price">
-                                        ${parseInt(product.final_price) > 0 && parseInt(product.final_price) < parseInt(product.price) ? 
+                                        ${parseInt(product.final_price) > 0 && parseInt(product.final_price) < parseInt(product.price) ?
                                             `<span>Rp ${formatPrice(product.final_price)}</span><br>
-                                            <span class="old-price">Rp ${formatPrice(product.price)}</span>` : 
+                                            <span class="old-price">Rp ${formatPrice(product.price)}</span>` :
                                             `<span>Rp ${formatPrice(product.price)}</span>`
                                         }
                                         </div>
                                         <div class="add-cart">
-                                            ${outOfStock ? 
+                                            ${outOfStock ?
                                                 '<a class="add" href="#" style="background: none; color: red; font-size: 12px" onclick="return false;">Out of Stock</a>' :
                                                 '<a class="add" href="#" onclick="addToCart(\'' + product.id + '\', 1, \'{{ csrf_token() }}\')"><i class="fi-rs-shopping-cart mr-5"></i>Add </a>'
                                             }
@@ -490,7 +435,7 @@
                         const searchInput = document.getElementById('filter-search-input');
                         state.search = searchInput.value.trim();
                         state.currentPage = 1;
-                        
+
                         // Update URL to reflect search
                         const url = new URL(window.location);
                         if (state.search) {
@@ -499,7 +444,7 @@
                             url.searchParams.delete('search');
                         }
                         window.history.pushState({}, '', url);
-                        
+
                         debouncedFetch();
                     });
                 }
@@ -512,12 +457,12 @@
                         searchInput.value = '';
                         state.search = '';
                         state.currentPage = 1;
-                        
+
                         // Update URL to remove search
                         const url = new URL(window.location);
                         url.searchParams.delete('search');
                         window.history.pushState({}, '', url);
-                        
+
                         debouncedFetch();
                     });
                 }
@@ -536,7 +481,7 @@
                 document.querySelectorAll('.category-filter').forEach(el => {
                     el.addEventListener('change', () => {
                         const categoryId = el.value;
-                        
+
                         if (el.checked && !state.categories.includes(categoryId)) {
                             state.categories.push(categoryId);
                         } else if (!el.checked) {
@@ -589,7 +534,7 @@
                 document.getElementById('apply-price-filter').addEventListener('click', () => {
                     const minPrice = document.getElementById('min-price').value;
                     const maxPrice = document.getElementById('max-price').value;
-                    
+
                     state.priceRange.min = minPrice ? parseInt(minPrice) : null;
                     state.priceRange.max = maxPrice ? parseInt(maxPrice) : null;
                     state.currentPage = 1;
