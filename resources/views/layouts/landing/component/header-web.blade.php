@@ -143,6 +143,8 @@
                                         </li>
                                         @if(auth()->user())
                                             <li><a href="#" onclick="document.getElementById('form-logout').submit();"><i class="fi fi-rs-sign-out mr-10"></i>Sign out</a></li>
+                                        @else
+                                            <li><a href="/login"><i class="fi fi-rs-sign-in mr-10"></i>Sign In</a></li>
                                         @endif
                                     </ul>
                                 </div>
