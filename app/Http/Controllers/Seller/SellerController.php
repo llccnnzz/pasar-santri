@@ -176,12 +176,11 @@ class SellerController extends Controller
                         'url' => $url,
                         'logo' => '/assets/imgs/theme/icons/social-'.$platform.'.svg'
                     ];
-                    $socialLinks[$platform] = $url;
                 }
             }
         }
 
-        $validated['social_links'] = $socialLinks;
+        $validated['social_links'] = json_encode($socialLinks);
 
         // Handle logo upload
         if ($request->hasFile('logo')) {
