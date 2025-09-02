@@ -29,6 +29,7 @@ class ShopBankUpdateRequest extends FormRequest
                     return $query->where('shop_id', $shop->id);
                 })->ignore($bankAccountId),
             ],
+            'account_name' => 'required|string|max:255',
             'is_default' => 'nullable|boolean',
         ];
     }
@@ -40,6 +41,7 @@ class ShopBankUpdateRequest extends FormRequest
             'bank_name.required' => 'Nama bank wajib diisi.',
             'account_number.required' => 'Nomor rekening wajib diisi.',
             'account_number.unique' => 'Nomor rekening ini sudah terdaftar di toko Anda.',
+            'account_name.required' => 'Nama pemilik rekening wajib diisi.',
         ];
     }
 }

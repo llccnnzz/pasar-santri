@@ -10,9 +10,10 @@ class ShopBank extends Model
     protected $fillable = [
         'shop_id',
         'bank_code',
-        'bank_name', 
+        'bank_name',
         'custom_bank_name',
         'account_number',
+        'account_name',
         'is_default',
     ];
 
