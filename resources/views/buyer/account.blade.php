@@ -265,8 +265,6 @@
                                                 <h5>Account Details</h5>
                                             </div>
                                             <div class="card-body">
-                                                <p>Already have an account? <a href="page-login.html">Log in instead!</a>
-                                                </p>
                                                 <form method="post" name="enq">
                                                     <div class="row">
                                                         <div class="form-group col-md-12">
