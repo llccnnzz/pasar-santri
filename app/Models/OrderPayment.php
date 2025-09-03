@@ -173,11 +173,4 @@ class OrderPayment extends Model
     {
         return $query->where('order_id', $orderId);
     }
-}space App\Models;
-
-use Illuminate\Database\Eloquent\Model;
-
-class OrderPayment extends Model
-{
-    //
 }

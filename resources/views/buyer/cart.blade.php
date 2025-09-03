@@ -242,7 +242,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <a href="/checkout" class="btn btn-primary btn-block w-100 mt-20">Proceed To CheckOut</a>
+                            <a href="{{ route('checkout.index') }}" class="btn btn-primary btn-block w-100 mt-20">Proceed To CheckOut</a>
                         </div>
                         
                         @if(isset($outOfStockItems) && $outOfStockItems > 0)

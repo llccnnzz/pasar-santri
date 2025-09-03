@@ -11,7 +11,9 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 class Shop extends Model implements HasMedia
 {
     use InteractsWithMedia, HasUuid, HasRelationships;
-    protected $fillable = [
+    public $incrementing = false;
+    protected $keyType   = 'string';
+    protected $fillable  = [
         'id',
         'user_id',
         'name',
