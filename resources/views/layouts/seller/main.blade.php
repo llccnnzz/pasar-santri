@@ -49,8 +49,7 @@
 		<div class="sidebar-menu-area" id="metismenu" data-simplebar>
 			<div class="d-flex justify-content-between align-items-center border-bottom border-color bg-white position-sticky top-0 z-1 main-logo-wrap">
 				<a href="index.html" class="main-logo d-flex align-items-center text-decoration-none">
-					<img class="logo" src="/admin-assets/assets/images/logo.png" alt="logo">
-					<span class="ms-3 logo-text">Dess</span>
+					<img class="logo" src="/admin-assets/assets/images/logo.png" style="height: 80px; width: auto" alt="logo">
 				</a>
 				<div class="responsive-burger-menu d-block d-xl-none">
 					<span class="top-bar"></span>
