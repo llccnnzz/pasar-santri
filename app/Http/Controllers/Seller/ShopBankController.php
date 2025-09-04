@@ -56,7 +56,7 @@ class ShopBankController extends Controller
         $bankAccount = ShopBank::create($validated);
 
         // If set as default, unset others
-        if ($validated['is_default']) {
+        if ($validated['is_default'] || ShopBank::where('shop_id', $shop['id'])->count() === 1) {
             $bankAccount->setAsDefault();
         }
 

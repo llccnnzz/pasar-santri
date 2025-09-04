@@ -1,6 +1,7 @@
 <?php
 namespace App\Console\Commands;
 
+use App\Models\ShippingMethod;
 use App\Services\BiteshipService;
 use Illuminate\Console\Command;
 
@@ -25,12 +26,12 @@ class SyncShippingMethods extends Command
         foreach ($response['couriers'] as $courier) {
             ShippingMethod::updateOrCreate(
                 [
-                    'courier_code' => $courier['code'],
-                    'service_code' => $courier['service_code'],
+                    'courier_code' => $courier['courier_code'],
+                    'service_code' => $courier['courier_service_code'],
                 ],
                 [
-                    'courier_name' => $courier['name'],
-                    'service_name' => $courier['service_name'] ?? '',
+                    'courier_name' => $courier['courier_name'],
+                    'service_name' => $courier['courier_service_name'] ?? '',
                     'description'  => $courier['description'] ?? null,
                     'active'       => true,
                 ]

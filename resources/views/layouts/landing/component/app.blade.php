@@ -11,7 +11,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="robots" content="@yield('robots', 'index, follow')" />
     <link rel="canonical" href="@yield('canonical', request()->url())" />
-    
+
     <!-- Open Graph Meta Tags -->
     <meta property="og:title" content="@yield('og_title', env('APP_NAME') . ' - Your Trusted Marketplace')" />
     <meta property="og:description" content="@yield('og_description', 'Discover quality products from trusted sellers in our marketplace. Shop with confidence and enjoy great deals on electronics, fashion, home & garden, and more.')" />
@@ -20,16 +20,16 @@
     <meta property="og:image" content="@yield('og_image', asset('/assets/imgs/theme/logo.png'))" />
     <meta property="og:site_name" content="{{ env('APP_NAME') }}" />
     <meta property="og:locale" content="en_US" />
-    
+
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="@yield('twitter_card', 'summary_large_image')" />
     <meta name="twitter:title" content="@yield('twitter_title', env('APP_NAME') . ' - Your Trusted Marketplace')" />
     <meta name="twitter:description" content="@yield('twitter_description', 'Discover quality products from trusted sellers in our marketplace. Shop with confidence and enjoy great deals on electronics, fashion, home & garden, and more.')" />
     <meta name="twitter:image" content="@yield('twitter_image', asset('/assets/imgs/theme/logo.png'))" />
-    
+
     <!-- Product Schema (for product pages) -->
     @stack('schema')
-    
+
     <!-- Favicon -->
     <link rel="shortcut icon" type="image/x-icon" href="/assets/imgs/theme/favicon.svg" />
     <!-- Template CSS -->
@@ -93,16 +93,16 @@
         }
     </script>
     @include('layouts.landing.component.toastr')
-    
+
     <!-- Location Selector Script -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const locationSelector = document.getElementById('location-selector');
-            
+
             if (locationSelector) {
                 locationSelector.addEventListener('change', function() {
                     const selectedValue = this.value;
-                    
+
                     if (selectedValue === 'manage') {
                         // Redirect to address management page
                         window.location.href = '{{ route("addresses.index") }}';
@@ -142,7 +142,57 @@
             }
         });
     </script>
-    
+
+    <script>
+        function setPrimary(addressId, shouldReload = false) {
+            console.log('Setting primary address:', addressId);
+
+            fetch('{{ route('addresses.setPrimary') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({
+                    address_id: addressId
+                })
+            })
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Response data:', data);
+                    if (data.success) {
+                        if (typeof toastr !== 'undefined') {
+                            toastr.success('Primary address updated successfully!');
+                        } else {
+                            alert('Primary address updated successfully!');
+                        }
+                        if (shouldReload) {
+                            setTimeout(() => {
+                                location.reload();
+                            }, 1000);
+                        }
+                    } else {
+                        if (typeof toastr !== 'undefined') {
+                            toastr.error(data.error || 'Failed to set primary address');
+                        } else {
+                            alert(data.error || 'Failed to set primary address');
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error('An error occurred');
+                    } else {
+                        alert('An error occurred');
+                    }
+                });
+        }
+    </script>
+
     @stack('script')
 </body>
 

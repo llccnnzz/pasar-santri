@@ -31,9 +31,9 @@
                                 <!-- Bank Selection -->
                                 <div class="mb-3">
                                     <label for="bank_name" class="form-label">Select Bank <span class="text-danger">*</span></label>
-                                    <select class="form-select @error('bank_name') is-invalid @enderror" 
-                                            id="bank_name" 
-                                            name="bank_name" 
+                                    <select class="form-select @error('bank_name') is-invalid @enderror"
+                                            id="bank_name"
+                                            name="bank_name"
                                             required>
                                         <option value="">Choose a bank...</option>
                                         <option value="BCA" data-code="BCA" data-logo="bca.png" {{ old('bank_name') == 'BCA' ? 'selected' : '' }}>Bank Central Asia (BCA)</option>
@@ -57,7 +57,7 @@
                                     <div class="form-text">
                                         Select your bank from the list or choose "Other" for unlisted banks
                                     </div>
-                                    
+
                                     <!-- Bank Logo Preview -->
                                     <div id="bank-logo-preview" class="mt-2" style="display: none;">
                                         <img id="bank-logo-img" src="" alt="Bank Logo" style="height: 40px; width: auto;">
@@ -67,10 +67,10 @@
                                 <!-- Custom Bank Name (shown when "Other" is selected) -->
                                 <div class="mb-3" id="custom-bank-name" style="display: none;">
                                     <label for="custom_bank_name" class="form-label">Bank Name <span class="text-danger">*</span></label>
-                                    <input type="text" 
-                                           class="form-control" 
-                                           id="custom_bank_name" 
-                                           name="custom_bank_name" 
+                                    <input type="text"
+                                           class="form-control"
+                                           id="custom_bank_name"
+                                           name="custom_bank_name"
                                            value="{{ old('custom_bank_name') }}"
                                            placeholder="Enter bank name">
                                     <div class="form-text">
@@ -81,10 +81,10 @@
                                 <!-- Bank Code (Auto-filled) -->
                                 <div class="mb-3">
                                     <label for="bank_code" class="form-label">Bank Code <span class="text-danger">*</span></label>
-                                    <input type="text" 
-                                           class="form-control @error('bank_code') is-invalid @enderror" 
-                                           id="bank_code" 
-                                           name="bank_code" 
+                                    <input type="text"
+                                           class="form-control @error('bank_code') is-invalid @enderror"
+                                           id="bank_code"
+                                           name="bank_code"
                                            value="{{ old('bank_code') }}"
                                            placeholder="Bank code will be auto-filled"
                                            maxlength="10"
@@ -101,10 +101,10 @@
                                 <!-- Account Number -->
                                 <div class="mb-3">
                                     <label for="account_number" class="form-label">Account Number <span class="text-danger">*</span></label>
-                                    <input type="text" 
-                                           class="form-control @error('account_number') is-invalid @enderror" 
-                                           id="account_number" 
-                                           name="account_number" 
+                                    <input type="text"
+                                           class="form-control @error('account_number') is-invalid @enderror"
+                                           id="account_number"
+                                           name="account_number"
                                            value="{{ old('account_number') }}"
                                            placeholder="Enter your bank account number"
                                            maxlength="50"
@@ -117,13 +117,31 @@
                                     </div>
                                 </div>
 
+                                <!-- Account Name -->
+                                <div class="mb-3">
+                                    <label for="account_name" class="form-label">Account Name <span class="text-danger">*</span></label>
+                                    <input type="text"
+                                           class="form-control @error('account_name') is-invalid @enderror"
+                                           id="account_name"
+                                           name="account_name"
+                                           value="{{ old('account_name') }}"
+                                           placeholder="Enter your bank account name"
+                                           required>
+                                    @error('account_name')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                    <div class="form-text">
+                                        Your complete bank account name
+                                    </div>
+                                </div>
+
                                 <!-- Set as Default -->
                                 <div class="mb-3">
                                     <div class="form-check">
-                                        <input class="form-check-input @error('is_default') is-invalid @enderror" 
-                                               type="checkbox" 
-                                               id="is_default" 
-                                               name="is_default" 
+                                        <input class="form-check-input @error('is_default') is-invalid @enderror"
+                                               type="checkbox"
+                                               id="is_default"
+                                               name="is_default"
                                                value="1"
                                                {{ old('is_default') ? 'checked' : '' }}>
                                         <label class="form-check-label" for="is_default">
@@ -204,7 +222,7 @@
         const bankCodeInput = document.getElementById('bank_code');
         const logoPreview = document.getElementById('bank-logo-preview');
         const logoImg = document.getElementById('bank-logo-img');
-        
+
         // Handle "Other" bank selection
         if (e.target.value === 'OTHER') {
             customBankDiv.style.display = 'block';
@@ -219,7 +237,7 @@
             bankCodeInput.value = bankCode;
             bankCodeInput.readOnly = true;
             bankCodeInput.placeholder = 'Bank code auto-filled';
-            
+
             // Show bank logo
             if (bankLogo) {
                 logoImg.src = '/admin-assets/assets/images/bank/' + bankLogo;
@@ -236,19 +254,19 @@
             logoPreview.style.display = 'none';
         }
     });
-    
+
     // Only allow numbers for account number
     document.getElementById('account_number').addEventListener('input', function(e) {
         e.target.value = e.target.value.replace(/[^0-9]/g, '');
     });
-    
+
     // Handle custom bank name input
     document.getElementById('custom_bank_name').addEventListener('input', function(e) {
         if (document.getElementById('bank_name').value === 'OTHER') {
             // Auto-generate bank code from custom name
             const customName = e.target.value.toUpperCase();
             const bankCodeInput = document.getElementById('bank_code');
-            
+
             // Extract first letters or meaningful abbreviation
             let code = '';
             const words = customName.split(' ');

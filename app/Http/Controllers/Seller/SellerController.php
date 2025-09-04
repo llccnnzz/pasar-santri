@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Seller;
 
 use App\Http\Controllers\Controller;
@@ -17,12 +18,12 @@ class SellerController extends Controller
     public function dashboard(Request $request)
     {
         $seller = Auth::user();
-        $shop   = $seller->shop;
+        $shop = $seller->shop;
 
         // Dashboard statistics
         $stats = [
             'total_products' => $shop ? $shop->products()->count() : 0,
-            'total_orders'   => 0,
+            'total_orders' => 0,
             'pending_orders' => 0,
             'total_earnings' => 0,
         ];
@@ -41,27 +42,27 @@ class SellerController extends Controller
             ->with('shippingMethod')
             ->get();
 
-        $enabledMethods  = $shopMethods->where('enabled', true)->pluck('shipping_method_id')->toArray();
+        $enabledMethods = $shopMethods->where('enabled', true)->pluck('shipping_method_id')->toArray();
         $disabledMethods = $shopMethods->where('enabled', false)->pluck('shipping_method_id')->toArray();
 
         $inactiveGlobal = $allMethods->whereNotIn('id', $shopMethods->pluck('shipping_method_id'));
 
         return view('seller.shipping.index', [
-            'enabledMethods'  => $allMethods->whereIn('id', $enabledMethods),
+            'enabledMethods' => $allMethods->whereIn('id', $enabledMethods),
             'disabledMethods' => $allMethods->whereIn('id', $disabledMethods),
-            'inactiveGlobal'  => $inactiveGlobal,
+            'inactiveGlobal' => $inactiveGlobal,
         ]);
     }
 
     public function shippingToggle(ShippingToggleRequest $request)
     {
-        $shop     = $request->user()->shop;
+        $shop = $request->user()->shop;
         $methodId = $request->input('shipping_method_id');
-        $enabled  = $request->input('enabled');
+        $enabled = $request->input('enabled');
 
         $record = ShopShippingMethod::firstOrCreate(
             [
-                'shop_id'            => $shop->id,
+                'shop_id' => $shop->id,
                 'shipping_method_id' => $methodId,
             ],
             [
@@ -108,7 +109,7 @@ class SellerController extends Controller
             ->where('status', 'approved')
             ->exists();
 
-        if (! $approvedKyc) {
+        if (!$approvedKyc) {
             return redirect()->route('kyc.index')
                 ->with('error', 'You must complete and get your KYC verification approved before setting up your shop.');
         }
@@ -130,12 +131,12 @@ class SellerController extends Controller
             ->where('status', 'approved')
             ->exists();
 
-        if (! $approvedKyc) {
+        if (!$approvedKyc) {
             return redirect()->route('kyc.index')
                 ->with('error', 'You must complete and get your KYC verification approved before setting up your shop.');
         }
 
-        $validated            = $request->validated();
+        $validated = $request->validated();
         $validated['user_id'] = $user['id'];
         $validated['is_open'] = true;
 
@@ -169,13 +170,17 @@ class SellerController extends Controller
         $socialLinks = [];
         if ($request->filled('social_links')) {
             foreach ($request['social_links'] as $platform => $url) {
-                if (! empty($url)) {
-                    $socialLinks[$platform] = $url;
+                if (!empty($url)) {
+                    $socialLinks[] = [
+                        'name' => ucfirst($platform),
+                        'url' => $url,
+                        'logo' => '/assets/imgs/theme/icons/social-'.$platform.'.svg'
+                    ];
                 }
             }
         }
 
-        $validated['social_links'] = $socialLinks;
+        $validated['social_links'] = json_encode($socialLinks);
 
         // Handle logo upload
         if ($request->hasFile('logo')) {
@@ -196,7 +201,7 @@ class SellerController extends Controller
     // Orders Management
     public function ordersList(Request $request)
     {
-        $shop   = Auth::user()->shop;
+        $shop = Auth::user()->shop;
         $orders = $shop ? $shop->orders()->with('user', 'items.product')->latest()->paginate(15) : collect();
         return view('seller.orders.index', compact('orders'));
     }

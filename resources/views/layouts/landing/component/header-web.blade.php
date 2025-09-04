@@ -10,7 +10,7 @@
         <div class="container">
             <div class="header-wrap">
                 <div class="logo logo-width-1">
-                    <a href="/"><img src="/assets/imgs/theme/logo.svg" alt="logo"/></a>
+                    <a href="/"><img src="/assets/imgs/theme/logo.png" alt="logo"/></a>
                 </div>
                 <div class="header-right">
                     <div class="search-style-2">
@@ -30,33 +30,29 @@
                     <div class="header-action-right">
                         <div class="header-action-2">
                             <div class="search-location">
-                                <form action="#">
-                                    <select class="select-active" id="location-selector">
-                                        @if(auth()->user() && auth()->user()->primary_address)
-                                            <option value="{{ auth()->user()->primary_address['id'] ?? '' }}">
-                                                {{ auth()->user()->primary_address['city'] ?? 'Your Location' }}, {{ auth()->user()->primary_address['state'] ?? '' }}
-                                            </option>
-                                        @else
-                                            <option value="">Your Location</option>
-                                        @endif
-                                        
-                                        @if(auth()->user() && auth()->user()->addresses)
-                                            @foreach(auth()->user()->addresses as $address)
-                                                @if(!isset($address['is_primary']) || !$address['is_primary'])
-                                                    <option value="{{ $address['id'] }}">
-                                                        {{ $address['city'] }}, {{ $address['province'] }}
-                                                    </option>
-                                                @endif
-                                            @endforeach
-                                        @endif
+                                <select name="address_id" class="select-active" id="location-selector" onchange="setPrimary(document.getElementById('location-selector').value)">
+                                    @if(auth()->user() && auth()->user()->primary_address)
+                                        <option value="{{ auth()->user()->primary_address['id'] ?? '' }}">
+                                            {{ auth()->user()->primary_address['city'] ?? 'Your Location' }}, {{ auth()->user()->primary_address['province'] ?? '' }}
+                                        </option>
+                                    @else
+                                        <option value="">Your Location</option>
+                                    @endif
 
-                                        @if(auth()->user())
-                                            <option value="manage" class="text-primary">+ Manage Addresses</option>
-                                        @else
-                                            <option value="login">Login to set location</option>
-                                        @endif
-                                    </select>
-                                </form>
+                                    @if(auth()->user() && auth()->user()->addresses)
+                                        @foreach(auth()->user()->addresses as $address)
+                                            @if(!isset($address['is_primary']) || !$address['is_primary'])
+                                                <option value="{{ $address['id'] }}">
+                                                    {{ $address['city'] }}, {{ $address['province'] }}
+                                                </option>
+                                            @endif
+                                        @endforeach
+                                    @endif
+
+                                    @if(!auth()->user())
+                                        <option value="login">Login to set location</option>
+                                    @endif
+                                </select>
                             </div>
                             @if(auth()->user())
                                 @php
@@ -147,6 +143,8 @@
                                         </li>
                                         @if(auth()->user())
                                             <li><a href="#" onclick="document.getElementById('form-logout').submit();"><i class="fi fi-rs-sign-out mr-10"></i>Sign out</a></li>
+                                        @else
+                                            <li><a href="/login"><i class="fi fi-rs-sign-in mr-10"></i>Sign In</a></li>
                                         @endif
                                     </ul>
                                 </div>
@@ -166,7 +164,7 @@
         <div class="container">
             <div class="header-wrap header-space-between position-relative">
                 <div class="logo logo-width-1 d-block d-lg-none">
-                    <a href="/"><img src="/assets/imgs/theme/logo.svg" alt="logo"/></a>
+                    <a href="/"><img src="/assets/imgs/theme/logo.png" alt="logo"/></a>
                 </div>
                 <div class="header-nav d-none d-lg-flex">
                     <div class="main-categori-wrap d-none d-lg-block">

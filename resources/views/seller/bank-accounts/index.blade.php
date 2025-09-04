@@ -156,7 +156,7 @@
                                                 <div class="d-flex align-items-center justify-content-between mb-1">
                                                         <span class="text-body">
                                                             <span class="text-dark fw-medium">Account:</span>
-                                                            {{ $bankAccount->formatted_account_number }}
+                                                            {{ $bankAccount->account_name }}
                                                         </span>
                                                     <button class="btn btn-sm btn-outline-secondary copy-btn"
                                                             onclick="copyToClipboard('{{ $bankAccount->account_number }}')"

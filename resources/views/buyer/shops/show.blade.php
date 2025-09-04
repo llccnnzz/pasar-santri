@@ -125,7 +125,7 @@
                                         <span><i class="fi-rs-apps-sort"></i>Sort by:</span>
                                     </div>
                                     <div class="sort-by-dropdown-wrap">
-                                        <span> 
+                                        <span>
                                             @switch(request('sort'))
                                                 @case('price_low') Price: Low to High @break
                                                 @case('price_high') Price: High to Low @break
@@ -151,78 +151,79 @@
                     </div>
                     <div class="row product-grid">
                         @forelse($products as $product)
-                        <div class="col-lg-1-5 col-md-4 col-12 col-sm-6">
-                            <div class="product-cart-wrap mb-30 {{ $product->stock <= 0 ? 'out-of-stock' : '' }}">
-                                <div class="product-img-action-wrap">
-                                    <div class="product-img product-img-zoom">
-                                        <a href="/{{ $product->slug }}">
-                                            @if($product->defaultImage)
-                                                <img class="default-img" src="{{ $product->defaultImage->getUrl() }}" alt="{{ $product->name }}" />
-                                            @else
-                                                <img class="default-img" src="/assets/imgs/shop/product-1-1.jpg" alt="{{ $product->name }}" />
-                                            @endif
-                                            @if($product->hoverImage)
-                                                <img class="hover-img" src="{{ $product->hoverImage->getUrl() }}" alt="{{ $product->name }}" />
-                                            @endif
-                                        </a>
-                                    </div>
-                                    <div class="product-action-1">
-                                        <a aria-label="Add To Wishlist" class="action-btn" href="{{ route('wishlist.index') }}"><i class="fi-rs-heart"></i></a>
-                                    </div>
-                                    @if($product->stock <= 0)
-                                    <div class="product-badges product-badges-position product-badges-mrg">
-                                        <span class="out-of-stock-badge">Out of Stock</span>
-                                    </div>
-                                    @elseif($product->is_featured)
-                                    <div class="product-badges product-badges-position product-badges-mrg">
-                                        <span class="hot">Hot</span>
-                                    </div>
-                                    @elseif($product->final_price && $product->final_price < $product->price)
-                                    <div class="product-badges product-badges-position product-badges-mrg">
-                                        <span class="sale">Sale</span>
-                                    </div>
-                                    @elseif($product->created_at->isAfter(now()->subDays(7)))
-                                    <div class="product-badges product-badges-position product-badges-mrg">
-                                        <span class="new">New</span>
-                                    </div>
-                                    @endif
-                                </div>
-                                <div class="product-content-wrap">
-                                    <div class="product-category">
-                                        @if($product->categories->first())
-                                            <a href="{{ route('products.index', ['category' => $product->categories->first()->slug]) }}">{{ $product->categories->first()->name }}</a>
-                                        @endif
-                                    </div>
-                                    <h2><a href="/{{ $product->slug }}">{{ $product->name }}</a></h2>
-                                    <div class="product-rate-cover">
-                                        <div class="product-rate d-inline-block">
-                                            <div class="product-rating" style="width: 85%"></div>
-                                        </div>
-                                        <span class="font-small ml-5 text-muted"> (4.2)</span>
-                                    </div>
-                                    <div>
-                                        <span class="font-small text-muted">By <a href="/s/{{ $product->shop->slug }}">{{ $product->shop->name }}</a></span>
-                                    </div>
-                                    <div class="product-card-bottom">
-                                        <div class="product-price">
-                                            @if($product->final_price && $product->final_price < $product->price)
-                                                <span>Rp. {{ number_format($product->final_price) }}</span><br>
-                                                <span class="old-price">Rp. {{ number_format($product->price) }}</span>
-                                            @else
-                                                <span>Rp. {{ number_format($product->price) }}</span>
-                                            @endif
-                                        </div>
-                                        <div class="add-cart">
-                                            @if($product->stock <= 0)
-                                                <a class="add" href="#" style="background: none; color: red; font-size: 12px" onclick="return false;">Out of Stock</a>
-                                            @else
-                                                <a class="add" href="{{ route('cart.index') }}"><i class="fi-rs-shopping-cart mr-5"></i>Add </a>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                            @include('layouts.landing.component.product.card', ['p' => $product])
+{{--                        <div class="col-lg-1-5 col-md-4 col-12 col-sm-6">--}}
+{{--                            <div class="product-cart-wrap mb-30 {{ $product->stock <= 0 ? 'out-of-stock' : '' }}">--}}
+{{--                                <div class="product-img-action-wrap">--}}
+{{--                                    <div class="product-img product-img-zoom">--}}
+{{--                                        <a href="/{{ $product->slug }}">--}}
+{{--                                            @if($product->defaultImage)--}}
+{{--                                                <img class="default-img" src="{{ $product->defaultImage->getUrl() }}" alt="{{ $product->name }}" />--}}
+{{--                                            @else--}}
+{{--                                                <img class="default-img" src="/assets/imgs/shop/product-1-1.jpg" alt="{{ $product->name }}" />--}}
+{{--                                            @endif--}}
+{{--                                            @if($product->hoverImage)--}}
+{{--                                                <img class="hover-img" src="{{ $product->hoverImage->getUrl() }}" alt="{{ $product->name }}" />--}}
+{{--                                            @endif--}}
+{{--                                        </a>--}}
+{{--                                    </div>--}}
+{{--                                    <div class="product-action-1">--}}
+{{--                                        <a aria-label="Add To Wishlist" class="action-btn" href="{{ route('wishlist.index') }}"><i class="fi-rs-heart"></i></a>--}}
+{{--                                    </div>--}}
+{{--                                    @if($product->stock <= 0)--}}
+{{--                                    <div class="product-badges product-badges-position product-badges-mrg">--}}
+{{--                                        <span class="out-of-stock-badge">Out of Stock</span>--}}
+{{--                                    </div>--}}
+{{--                                    @elseif($product->is_featured)--}}
+{{--                                    <div class="product-badges product-badges-position product-badges-mrg">--}}
+{{--                                        <span class="hot">Hot</span>--}}
+{{--                                    </div>--}}
+{{--                                    @elseif($product->final_price && $product->final_price < $product->price)--}}
+{{--                                    <div class="product-badges product-badges-position product-badges-mrg">--}}
+{{--                                        <span class="sale">Sale</span>--}}
+{{--                                    </div>--}}
+{{--                                    @elseif($product->created_at->isAfter(now()->subDays(7)))--}}
+{{--                                    <div class="product-badges product-badges-position product-badges-mrg">--}}
+{{--                                        <span class="new">New</span>--}}
+{{--                                    </div>--}}
+{{--                                    @endif--}}
+{{--                                </div>--}}
+{{--                                <div class="product-content-wrap">--}}
+{{--                                    <div class="product-category">--}}
+{{--                                        @if($product->categories->first())--}}
+{{--                                            <a href="{{ route('products.index', ['category' => $product->categories->first()->slug]) }}">{{ $product->categories->first()->name }}</a>--}}
+{{--                                        @endif--}}
+{{--                                    </div>--}}
+{{--                                    <h2><a href="/{{ $product->slug }}">{{ $product->name }}</a></h2>--}}
+{{--                                    <div class="product-rate-cover">--}}
+{{--                                        <div class="product-rate d-inline-block">--}}
+{{--                                            <div class="product-rating" style="width: 85%"></div>--}}
+{{--                                        </div>--}}
+{{--                                        <span class="font-small ml-5 text-muted"> (4.2)</span>--}}
+{{--                                    </div>--}}
+{{--                                    <div>--}}
+{{--                                        <span class="font-small text-muted">By <a href="/s/{{ $product->shop->slug }}">{{ $product->shop->name }}</a></span>--}}
+{{--                                    </div>--}}
+{{--                                    <div class="product-card-bottom">--}}
+{{--                                        <div class="product-price">--}}
+{{--                                            @if($product->final_price && $product->final_price < $product->price)--}}
+{{--                                                <span>Rp. {{ number_format($product->final_price) }}</span><br>--}}
+{{--                                                <span class="old-price">Rp. {{ number_format($product->price) }}</span>--}}
+{{--                                            @else--}}
+{{--                                                <span>Rp. {{ number_format($product->price) }}</span>--}}
+{{--                                            @endif--}}
+{{--                                        </div>--}}
+{{--                                        <div class="add-cart">--}}
+{{--                                            @if($product->stock <= 0)--}}
+{{--                                                <a class="add" href="#" style="background: none; color: red; font-size: 12px" onclick="return false;">Out of Stock</a>--}}
+{{--                                            @else--}}
+{{--                                                <a class="add" href="{{ route('cart.index') }}"><i class="fi-rs-shopping-cart mr-5"></i>Add </a>--}}
+{{--                                            @endif--}}
+{{--                                        </div>--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
                         <!--end product card-->
                         @empty
                         <div class="col-12">
@@ -296,7 +297,7 @@
                         <ul>
                             @foreach($categories as $category)
                             <li>
-                                <a href="{{ request()->fullUrlWithQuery(['category' => $category->slug]) }}"> 
+                                <a href="{{ request()->fullUrlWithQuery(['category' => $category->slug]) }}">
                                     @if($category->icon)
                                         <img src="{{ $category->icon->getUrl() }}" alt="{{ $category->name }}" />
                                     @else
@@ -321,14 +322,14 @@
                             <div class="price-filter">
                                 <div class="price-filter-inner">
                                     <div class="d-flex justify-content-between mb-3">
-                                        <div class="caption">Min: 
-                                            <input type="number" name="min_price" value="{{ request('min_price', $priceRange->min_price) }}" 
-                                                   min="{{ $priceRange->min_price }}" max="{{ $priceRange->max_price }}" 
+                                        <div class="caption">Min:
+                                            <input type="number" name="min_price" value="{{ request('min_price', $priceRange->min_price) }}"
+                                                   min="{{ $priceRange->min_price }}" max="{{ $priceRange->max_price }}"
                                                    class="form-control form-control-sm d-inline-block" style="width: 80px;">
                                         </div>
-                                        <div class="caption">Max: 
-                                            <input type="number" name="max_price" value="{{ request('max_price', $priceRange->max_price) }}" 
-                                                   min="{{ $priceRange->min_price }}" max="{{ $priceRange->max_price }}" 
+                                        <div class="caption">Max:
+                                            <input type="number" name="max_price" value="{{ request('max_price', $priceRange->max_price) }}"
+                                                   min="{{ $priceRange->min_price }}" max="{{ $priceRange->max_price }}"
                                                    class="form-control form-control-sm d-inline-block" style="width: 80px;">
                                         </div>
                                     </div>
@@ -343,3 +344,7 @@
         </div>
     </main>
 @endsection
+
+@push('script')
+    @include('layouts.landing.component.product.card-handler')
+@endpush

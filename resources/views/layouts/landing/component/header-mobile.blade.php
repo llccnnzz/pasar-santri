@@ -2,7 +2,7 @@
     <div class="mobile-header-wrapper-inner">
         <div class="mobile-header-top">
             <div class="mobile-header-logo">
-                <a href="/"><img src="/assets/imgs/theme/logo.svg" alt="logo" /></a>
+                <a href="/"><img src="/assets/imgs/theme/logo.png" alt="logo" /></a>
             </div>
             <div class="mobile-menu-close close-style-wrap close-style-position-inherit">
                 <button class="close-style search-close">
@@ -39,12 +39,12 @@
                 <div class="single-mobile-header-info">
                     @if(auth()->user() && auth()->user()->primary_address)
                         <a href="/me?page=address">
-                            <i class="fi-rs-marker"></i> 
+                            <i class="fi-rs-marker"></i>
                             {{ auth()->user()->primary_address['city'] ?? 'Your Location' }}, {{ auth()->user()->primary_address['state'] ?? '' }}
                         </a>
                     @else
                         <a href="{{ auth()->user() ? '/me?page=address' : route('login') }}">
-                            <i class="fi-rs-marker"></i> 
+                            <i class="fi-rs-marker"></i>
                             {{ auth()->user() ? 'Set Your Location' : 'Login to set location' }}
                         </a>
                     @endif

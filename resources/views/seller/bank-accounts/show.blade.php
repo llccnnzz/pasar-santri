@@ -56,6 +56,15 @@
 
                     <div class="row mb-4">
                         <div class="col-sm-3">
+                            <h6 class="mb-0">Account Name</h6>
+                        </div>
+                        <div class="col-sm-9 text-secondary">
+                            <span class="text-monospace">{{ $bankAccount->account_name }}</span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-sm-3">
                             <h6 class="mb-0">Status</h6>
                         </div>
                         <div class="col-sm-9 text-secondary">
@@ -95,13 +104,13 @@
                                 <a href="{{ route('seller.bank-accounts.edit', $bankAccount) }}" class="btn btn-primary">
                                     <i class="bx bx-edit-alt me-1"></i>Edit Account
                                 </a>
-                                
+
                                 @if(!$bankAccount->is_default)
-                                    <form action="{{ route('seller.bank-accounts.set-primary', $bankAccount) }}" 
-                                          method="POST" 
+                                    <form action="{{ route('seller.bank-accounts.set-primary', $bankAccount) }}"
+                                          method="POST"
                                           class="d-inline">
                                         @csrf
-                                        <button type="submit" 
+                                        <button type="submit"
                                                 class="btn btn-success"
                                                 onclick="return confirm('Are you sure you want to set this as your default bank account?')">
                                             <i class="bx bx-star me-1"></i>Set as Default
@@ -109,8 +118,8 @@
                                     </form>
                                 @endif
 
-                                <form action="{{ route('seller.bank-accounts.destroy', $bankAccount) }}" 
-                                      method="POST" 
+                                <form action="{{ route('seller.bank-accounts.destroy', $bankAccount) }}"
+                                      method="POST"
                                       class="d-inline"
                                       onsubmit="return confirm('Are you sure you want to delete this bank account? This action cannot be undone.')">
                                     @csrf
