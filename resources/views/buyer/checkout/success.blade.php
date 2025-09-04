@@ -1,24 +1,26 @@
 @extends('layouts.landing.component.app')
 
-@section('title') Checkout Success @endsection
-@section('description') @endsection
+@section('title', 'Pesanan Berhasil')
+@section('description', 'Halaman sukses checkout')
 
 @section('content')
 <main class="main">
-    <div class="page-header breadcrumb-wrap">
-        <div class="container">
-            <div class="breadcrumb">
-                <a href="/" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
-                <span></span> Checkout Success
-            </div>
-        </div>
-    </div>
+    <div class="container text-center my-5">
+        <h2 class="mb-3">🎉 Pesanan berhasil dibuat!</h2>
+        <p class="text-muted">Terima kasih sudah berbelanja di toko kami.</p>
 
-    <div class="container mb-80 mt-50 text-center">
-        <h2 class="mb-20">🎉 Pesanan Berhasil Dibuat</h2>
-        <p>Terima kasih, pesanan Anda sudah masuk dan otomatis dibayar.</p>
+        @if(session('orders'))
+            <p class="mt-3">ID Pesanan:</p>
+            <ul class="list-unstyled">
+                @foreach(session('orders') as $orderId)
+                    <li><code>{{ $orderId }}</code></li>
+                @endforeach
+            </ul>
+        @endif
 
-        <a href="{{ }}" class="btn btn-outline-primary mt-3">Kembali ke Profil</a>
+        <a href="{{ route('account') }}" class="btn btn-primary mt-4">
+            Lihat Pesanan Saya
+        </a>
     </div>
 </main>
 @endsection

@@ -55,6 +55,12 @@ class Shop extends Model implements HasMedia
         );
     }
 
+    public function shippingMethodsEnabled()
+    {
+        return $this->shippingMethods()
+            ->where('shop_shipping_methods.enabled', true);
+    }
+
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('logo')

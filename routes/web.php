@@ -46,7 +46,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/checkout/rates', [CheckoutController::class, 'rates'])->name('checkout.rates');
     Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
     Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
-    Route::get('/checkout/debug-rates', [CheckoutController::class, 'debugRates']);
 
     // Address management routes
     Route::get('/me/addresses', [AddressController::class, 'index'])->name('addresses.index');
