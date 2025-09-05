@@ -97,67 +97,72 @@
                         <div class="card p-3">
                             <h5 class="mb-3">Ringkasan Pesanan</h5>
 
-                            @foreach ($cartItems as $item)
-                                <div class="d-flex mb-4">
-                                    {{-- Foto produk --}}
-                                    <div style="width: 100px; height: 100px; overflow: hidden; border-radius: 10px; background:#f9f9f9;"
-                                        class="me-3">
-                                        <img src="{{ $item['image'] }}" alt="{{ $item['name'] }}" class="img-fluid"
-                                            style="object-fit: cover; width:100%; height:100%;">
+                            @php
+                                $grouped = collect($cartItems)->groupBy('shop_id');
+                                $grandTotalInit = 0;
+                            @endphp
+
+                            @foreach ($grouped as $shopId => $items)
+                                <div class="mb-4">
+                                    <h6 class="mb-3">{{ $items[0]['shop_name'] ?? 'Toko' }}</h6>
+
+                                    {{-- Produk di toko ini --}}
+                                    @php $shopSubtotal = 0; @endphp
+                                    @foreach ($items as $item)
+                                        @php
+                                            $qty = $item['available_quantity'];
+                                            $subtotal = $qty * $item['price'];
+                                            $shopSubtotal += $subtotal;
+                                        @endphp
+
+                                        <div class="d-flex mb-3">
+                                            {{-- Gambar 50% --}}
+                                            <div style="width: 50%; height: 120px; overflow: hidden; border-radius: 10px; background:#f9f9f9;"
+                                                class="me-3">
+                                                <img src="{{ $item['image'] }}" alt="{{ $item['name'] }}"
+                                                    class="img-fluid h-100 w-100" style="object-fit: cover;">
+                                            </div>
+
+                                            {{-- Informasi 50% --}}
+                                            <div class="flex-grow-1 small">
+                                                <p class="mb-2 fw-bold">{{ $item['name'] }}</p>
+                                                <p class="mb-1">Price: Rp{{ number_format($item['price'], 0, ',', '.') }}
+                                                </p>
+                                                <p class="mb-1">Qty: {{ $qty }}</p>
+                                                <p class="mb-0">Subtotal: Rp{{ number_format($subtotal, 0, ',', '.') }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    @endforeach
+
+                                    {{-- Total (subtotal semua produk per shop) --}}
+                                    <div class="d-flex justify-content-between fw-bold fs-6 mt-2">
+                                        <span>Total:</span>
+                                        <span id="total_shop_{{ $shopId }}">
+                                            Rp{{ number_format($shopSubtotal, 0, ',', '.') }}
+                                        </span>
                                     </div>
 
-                                    {{-- Detail produk --}}
-                                    <div class="flex-grow-1 d-flex flex-column justify-content-between">
-                                        <p class="fw-bold mb-2">{{ $item['name'] }}</p>
-
-                                        {{-- Qty + Harga --}}
-                                        <div class="d-flex align-items-center mb-2">
-                                            <button type="button" class="btn btn-sm btn-outline-secondary me-2 qty-minus"
-                                                data-id="{{ $item['id'] }}"
-                                                data-shop="{{ $item['shop_id'] }}">-</button>
-
-                                            <input type="number" class="form-control form-control-sm text-center item-qty"
-                                                style="width:70px;" value="{{ $item['quantity'] }}" min="1"
-                                                max="{{ $item['stock'] ?? 0 }}" data-id="{{ $item['id'] }}"
-                                                data-price="{{ $item['price'] }}" data-stock="{{ $item['stock'] ?? 0 }}"
-                                                data-shop="{{ $item['shop_id'] }}">
-
-                                            <button type="button" class="btn btn-sm btn-outline-secondary ms-2 qty-plus"
-                                                data-id="{{ $item['id'] }}"
-                                                data-shop="{{ $item['shop_id'] }}">+</button>
-
-                                            <span class="ms-auto fw-bold">
-                                                Rp{{ number_format($item['price'], 0, ',', '.') }}
-                                            </span>
-                                        </div>
-
-
-                                        <div class="d-flex justify-content-between small text-muted">
-                                            <span>Subtotal:</span>
-                                            <span id="subtotal_{{ $item['id'] }}">
-                                                Rp{{ number_format($item['quantity'] * $item['price'], 0, ',', '.') }}
-                                            </span>
-                                        </div>
-                                        <div class="d-flex justify-content-between small text-muted">
-                                            <span>Ongkir:</span>
-                                            <span id="shipping_{{ $item['id'] }}">Rp0</span>
-                                        </div>
-                                        <div class="d-flex justify-content-between mt-1 fw-bold">
-                                            <span>Total:</span>
-                                            <span id="total_{{ $item['id'] }}">
-                                                Rp{{ number_format($item['quantity'] * $item['price'], 0, ',', '.') }}
-                                            </span>
-                                        </div>
+                                    {{-- Ongkir per shop --}}
+                                    <div class="d-flex justify-content-between fs-6 mt-1">
+                                        <span>Ongkir:</span>
+                                        <span id="shipping_shop_{{ $shopId }}">Rp0</span>
                                     </div>
                                 </div>
+
+                                @php
+                                    $grandTotalInit += $shopSubtotal;
+                                @endphp
                             @endforeach
 
                             <hr>
-                            <div class="d-flex justify-content-between">
-                                <span><strong>Grand Total:</strong></span>
-                                <span id="grand_total" class="fw-bold">Rp0</span>
+                            {{-- Grand Total --}}
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fw-bold" style="font-size: 1.5rem;">Grand Total:</span>
+                                <span id="grand_total_all" class="fw-bold" style="font-size: 1.5rem;">
+                                    Rp{{ number_format($grandTotalInit, 0, ',', '.') }}
+                                </span>
                             </div>
-
                             <button type="submit" class="btn btn-primary w-100 mt-3">Buat Pesanan</button>
                         </div>
                     </div>
@@ -210,43 +215,6 @@
                     loadShippingMethods(this.dataset.id);
                 });
             });
-
-            // qty plus
-            document.querySelectorAll(".qty-plus").forEach(btn => {
-                btn.addEventListener("click", function() {
-                    const input = document.querySelector(".item-qty[data-id='" + this.dataset.id +
-                        "']");
-                    let qty = parseInt(input.value) || 0;
-                    const stock = parseInt(input.dataset.stock) || 0;
-                    if (qty < stock) input.value = qty + 1;
-                    updateTotals();
-                });
-            });
-
-            // qty minus
-            document.querySelectorAll(".qty-minus").forEach(btn => {
-                btn.addEventListener("click", function() {
-                    const input = document.querySelector(".item-qty[data-id='" + this.dataset.id +
-                        "']");
-                    let qty = parseInt(input.value) || 0;
-                    if (qty > 1) input.value = qty - 1;
-                    updateTotals();
-                });
-            });
-
-            // qty manual
-            document.querySelectorAll(".item-qty").forEach(input => {
-                input.addEventListener("input", function() {
-                    let qty = parseInt(this.value) || 1;
-                    const stock = parseInt(this.dataset.stock) || 0;
-                    if (qty < 1) qty = 1;
-                    if (stock > 0 && qty > stock) qty = stock;
-                    this.value = qty;
-                    updateTotals();
-                });
-            });
-
-            updateTotals();
         });
 
         function loadShippingMethods(addressId) {
@@ -283,57 +251,17 @@
                 });
         }
 
-        document.querySelectorAll(".qty-plus").forEach(btn => {
-            btn.addEventListener("click", function() {
-                const input = document.querySelector(".item-qty[data-id='" + this.dataset.id + "']");
-                let qty = parseInt(input.value) || 0;
-                const stock = parseInt(input.dataset.stock) || 0;
-                if (qty < stock) input.value = qty + 1;
-                updateTotals(this.dataset.shop);
-            });
-        });
-
-        document.querySelectorAll(".qty-minus").forEach(btn => {
-            btn.addEventListener("click", function() {
-                const input = document.querySelector(".item-qty[data-id='" + this.dataset.id + "']");
-                let qty = parseInt(input.value) || 0;
-                if (qty > 1) input.value = qty - 1;
-                updateTotals(this.dataset.shop);
-            });
-        });
-
-        document.querySelectorAll(".item-qty").forEach(input => {
-            input.addEventListener("input", function() {
-                let qty = parseInt(this.value) || 1;
-                const stock = parseInt(this.dataset.stock) || 0;
-                if (qty < 1) qty = 1;
-                if (stock > 0 && qty > stock) qty = stock;
-                this.value = qty;
-                updateTotals(this.dataset.shop);
-            });
-        });
-
-        function updateTotals(shopId = null) {
+        function updateTotals() {
             let grandTotal = 0;
 
-            document.querySelectorAll(".item-qty").forEach(input => {
-                const id = input.dataset.id;
-                const qty = parseInt(input.value) || 0;
-                const price = parseInt(input.dataset.price) || 0;
-
-                const subtotal = qty * price;
-                document.getElementById("subtotal_" + id).innerText = formatRupiah(subtotal);
-
-                const shipping = parseInt(document.getElementById("shipping_" + id).innerText.replace(/\D/g, "")) ||
-                    0;
-                const total = subtotal + shipping;
-
-                document.getElementById("total_" + id).innerText = formatRupiah(total);
-
-                grandTotal += total;
+            document.querySelectorAll("[id^='total_shop_']").forEach(shopTotalEl => {
+                const shopId = shopTotalEl.id.replace("total_shop_", "");
+                const subtotal = parseInt(shopTotalEl.innerText.replace(/\D/g, "")) || 0;
+                const shippingEl = document.getElementById("shipping_shop_" + shopId);
+                const shipping = parseInt(shippingEl.innerText.replace(/\D/g, "")) || 0;
+                grandTotal += subtotal + shipping;
             });
-
-            document.getElementById("grand_total").innerText = formatRupiah(grandTotal);
+            document.getElementById("grand_total_all").innerText = formatRupiah(grandTotal);
         }
 
         function loadRates(addressId, methodId, shopId) {
@@ -350,28 +278,11 @@
                 })
                 .then(res => res.json())
                 .then(data => {
-                    console.log("Response rates:", data);
-                    console.log("ShopId:", shopId);
-
                     const rate = data[shopId] || null;
-                    console.log("Picked rate:", rate);
-
                     if (!rate) return;
-
-                    document.querySelectorAll(`.item-qty[data-shop='${shopId}']`).forEach(input => {
-                        const id = input.dataset.id;
-                        const qty = parseInt(input.value) || 0;
-                        const price = parseInt(input.dataset.price) || 0;
-                        const subtotal = qty * price;
-
-                        console.log("Update item:", id, "Subtotal:", subtotal, "Ongkir:", rate.price);
-
-                        document.getElementById("shipping_" + id).innerText = formatRupiah(rate.price);
-                        document.getElementById("subtotal_" + id).innerText = formatRupiah(subtotal);
-                        document.getElementById("total_" + id).innerText = formatRupiah(subtotal + rate.price);
-                    });
-
-                    updateTotals(shopId);
+                    const shippingEl = document.getElementById("shipping_shop_" + shopId);
+                    shippingEl.innerText = formatRupiah(rate.price);
+                    updateTotals();
                 })
                 .catch(err => {
                     console.error("Error loadRates:", err);
