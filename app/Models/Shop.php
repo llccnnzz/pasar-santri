@@ -11,7 +11,9 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 class Shop extends Model implements HasMedia
 {
     use InteractsWithMedia, HasUuid, HasRelationships;
-    protected $fillable = [
+    public $incrementing = false;
+    protected $keyType   = 'string';
+    protected $fillable  = [
         'id',
         'user_id',
         'name',
@@ -51,6 +53,12 @@ class Shop extends Model implements HasMedia
             $this->hasMany(ShopShippingMethod::class),
             (new ShopShippingMethod())->shippingMethod()
         );
+    }
+
+    public function shippingMethodsEnabled()
+    {
+        return $this->shippingMethods()
+            ->where('shop_shipping_methods.enabled', true);
     }
 
     public function registerMediaCollections(): void

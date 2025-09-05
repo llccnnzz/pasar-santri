@@ -1,21 +1,22 @@
 <?php
 
-use App\Http\Controllers\AddressController;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\RobotsController;
-use App\Http\Controllers\Seller\CategoryController;
-use App\Http\Controllers\Seller\InventoryController;
-use App\Http\Controllers\Seller\KycController;
-use App\Http\Controllers\Seller\ProfileController;
-use App\Http\Controllers\Seller\SellerController;
-use App\Http\Controllers\Seller\ShopBankController;
-use App\Http\Controllers\Seller\WalletController;
 use App\Http\Controllers\ShopController;
+use App\Http\Controllers\RobotsController;
+use App\Http\Controllers\AddressController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\WishlistController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Seller\KycController;
+use App\Http\Controllers\Seller\SellerController;
+use App\Http\Controllers\Seller\WalletController;
+use App\Http\Controllers\Seller\ProfileController;
+use App\Http\Controllers\Seller\CategoryController;
+use App\Http\Controllers\Seller\ShopBankController;
+use App\Http\Controllers\Seller\InventoryController;
 
 Route::get('/', [ShopController::class, 'index'])->name('homepage');
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
@@ -38,6 +39,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
     Route::post('/wishlist', [WishlistController::class, 'add'])->name('wishlist.add');
     Route::delete('/wishlist/{productId}', [WishlistController::class, 'remove'])->name('wishlist.remove');
+
+    // Checkout management routes
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout/shipping-methods', [CheckoutController::class, 'getShippingMethods'])->name('checkout.shippingMethods');
+    Route::post('/checkout/rates', [CheckoutController::class, 'rates'])->name('checkout.rates');
+    Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+    Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
 
     // Address management routes
     Route::get('/me/addresses', [AddressController::class, 'index'])->name('addresses.index');
