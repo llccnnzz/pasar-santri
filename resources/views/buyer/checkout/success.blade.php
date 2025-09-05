@@ -6,14 +6,22 @@
 @section('content')
 <main class="main">
     <div class="container text-center my-5">
-        <h2 class="mb-3">🎉 Pesanan berhasil dibuat!</h2>
-        <p class="text-muted">Terima kasih sudah berbelanja di toko kami.</p>
+        <h2 class="mb-3">🎉 Pesanan Berhasil Dibuat!</h2>
+        <h5 class="text-muted mb-4">Terima kasih sudah berbelanja di toko kami.</h5>
 
-        @if(session('orders'))
-            <p class="mt-3">ID Pesanan:</p>
-            <ul class="list-unstyled">
-                @foreach(session('orders') as $orderId)
-                    <li><code>{{ $orderId }}</code></li>
+        <p class="text-muted">
+            Silahkan melanjutkan pembayaran pada aplikasi <strong>emaal</strong>.<br>
+            Berikut kode billing Anda:
+        </p>
+
+        @if($payments->count())
+            <ul class="list-unstyled mt-3">
+                @foreach($payments as $payment)
+                    <li>
+                        <span class="d-block fw-bold text-primary display-6">
+                            {{ $payment->reference_id }}
+                        </span>
+                    </li>
                 @endforeach
             </ul>
         @endif
