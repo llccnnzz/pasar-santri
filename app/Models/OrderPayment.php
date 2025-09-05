@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,13 +18,17 @@ class OrderPayment extends Model
         'value',
         'payment_fee',
         'json_callback',
+        'expired_at',
+        'paid_at',
     ];
 
     protected $casts = [
-        'value' => 'decimal:2',
-        'payment_fee' => 'decimal:2',
-        'json_callback' => 'array',
+        'value'             => 'decimal:2',
+        'payment_fee'       => 'decimal:2',
+        'json_callback'     => 'array',
         'payment_method_id' => 'integer',
+        'expired_at'        => 'datetime',
+        'paid_at'           => 'datetime',
     ];
 
     // Relationships
@@ -37,7 +40,7 @@ class OrderPayment extends Model
     // Utility Methods
     public function getStatusBadgeAttribute(): string
     {
-        return match($this->status) {
+        return match ($this->status) {
             'pending' => 'warning',
             'processing' => 'info',
             'success' => 'success',
@@ -50,7 +53,7 @@ class OrderPayment extends Model
 
     public function getStatusLabelAttribute(): string
     {
-        return match($this->status) {
+        return match ($this->status) {
             'pending' => 'Pending',
             'processing' => 'Processing',
             'success' => 'Success',
@@ -63,7 +66,7 @@ class OrderPayment extends Model
 
     public function getChannelLabelAttribute(): string
     {
-        return match($this->channel) {
+        return match ($this->channel) {
             'xendit' => 'Xendit',
             'midtrans' => 'Midtrans',
             'bank_transfer' => 'Bank Transfer',

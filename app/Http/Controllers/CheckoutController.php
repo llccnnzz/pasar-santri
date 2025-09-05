@@ -212,7 +212,7 @@ class CheckoutController extends Controller
                 $order = Order::create([
                     'user_id'        => $user->id,
                     'shop_id'        => $shopId,
-                    'status'         => 'confirmed',
+                    'status'         => 'pending',
                     'invoice'        => Order::generateInvoiceNumber(),
                     'order_details'  => [
                         'address'  => (array) $address,
@@ -238,10 +238,11 @@ class CheckoutController extends Controller
                 OrderPayment::create([
                     'order_id'          => $order->id,
                     'payment_method_id' => null,
-                    'channel'           => 'manual',
-                    'reference_id'      => 'AUTO-PAID-' . uniqid(),
-                    'status'            => 'success',
+                    'channel'           => 'emaal',
+                    'reference_id'      => Order::generateReferenceId(),
+                    'status'            => 'pending',
                     'value'             => $totalAmount,
+                    'expired_at'        => now()->addDay(),
                 ]);
 
                 $orders[] = $order;
@@ -263,6 +264,8 @@ class CheckoutController extends Controller
     public function success()
     {
         $orders = session('orders', []);
-        return view('buyer.checkout.success', compact('orders'));
+        $payments = OrderPayment::whereIn('order_id', $orders)->get(['reference_id']);
+
+        return view('buyer.checkout.success', compact('payments'));
     }
 }

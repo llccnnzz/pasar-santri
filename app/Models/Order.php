@@ -56,6 +56,12 @@ class Order extends Model
         });
     }
 
+    public static function generateReferenceId($length = 6)
+    {
+        $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        return substr(str_shuffle(str_repeat($characters, $length)), 0, $length);
+    }
+
     // Relationships
     public function user(): BelongsTo
     {
