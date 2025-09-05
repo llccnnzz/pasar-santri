@@ -54,7 +54,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="container mb-80 mt-50">
             <div class="row">
                 <div class="col-lg-8 mb-40">
@@ -71,7 +71,7 @@
                     </div>
                 </div>
             </div>
-            
+
             @if(session('message'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     {{ session('message') }}
@@ -100,7 +100,7 @@
                             <table class="table table-wishlist">
                                 <thead>
                                     <tr class="main-heading">
-                                        <th scope="col">&nbsp;</th>    
+                                        <th scope="col">&nbsp;</th>
                                         <th scope="col">Product</th>
                                         <th scope="col">Unit Price</th>
                                         <th scope="col">Quantity</th>
@@ -110,14 +110,14 @@
                                 </thead>
                                 <tbody>
                                     @foreach($cartItems as $i => $item)
-                                    <tr class="{{ $i === 0 ? 'pt-30' : '' }} {{ !$item['is_available'] ? 'out-of-stock' : '' }}" 
+                                    <tr class="{{ $i === 0 ? 'pt-30' : '' }} {{ !$item['is_available'] ? 'out-of-stock' : '' }}"
                                         data-product-id="{{ $item['id'] }}">
                                         <td class="image product-thumbnail pl-40">
                                             <img src="{{ $item['image'] ?? '/assets/imgs/shop/product-1-1.jpg' }}" alt="{{ $item['name'] }}" style="width: 80px; height: 80px; object-fit: cover;">
                                         </td>
                                         <td class="product-des product-name">
                                             <h6 class="mb-5">
-                                                <a class="product-name mb-10 text-heading {{ $item['is_available'] ? '' : 'text-muted' }}" 
+                                                <a class="product-name mb-10 text-heading {{ $item['is_available'] ? '' : 'text-muted' }}"
                                                    href="/{{ $item['slug'] }}">{{ $item['name'] }}</a>
                                             </h6>
                                             <div class="product-rate-cover">
@@ -140,9 +140,9 @@
                                             @if($item['is_available'])
                                                 <div class="quantity-controls">
                                                     <button type="button" onclick="updateQuantity('{{ $item['id'] }}', -1)">-</button>
-                                                    <input type="number" 
-                                                           value="{{ $item['quantity'] }}" 
-                                                           min="1" 
+                                                    <input type="number"
+                                                           value="{{ $item['quantity'] }}"
+                                                           min="1"
                                                            max="{{ $item['stock'] ?? 999 }}"
                                                            onchange="updateQuantityInput('{{ $item['id'] }}', this.value)"
                                                            class="quantity-input">
@@ -162,7 +162,7 @@
                                             <form method="POST" action="{{ route('cart.remove', $item['id']) }}" style="display: inline;">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="text-body border-0 bg-transparent" 
+                                                <button type="submit" class="text-body border-0 bg-transparent"
                                                         onclick="return confirm('Remove this item from cart?')">
                                                     <i class="fi-rs-trash"></i>
                                                 </button>
@@ -173,7 +173,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        
+
                         <div class="divider-2 mb-30"></div>
                         <div class="cart-action d-flex justify-content-between">
                             <a href="/products" class="btn">
@@ -185,7 +185,7 @@
                         </div>
                     @endif
                 </div>
-                
+
                 <div class="col-lg-4">
                     @if(!empty($cartItems))
                         <div class="border p-md-4 cart-totals ml-30">
@@ -200,51 +200,12 @@
                                                 <h4 id="cart-subtotal" class="text-brand text-end">Rp. {{ number_format($totals['subtotal']) }}</h4>
                                             </td>
                                         </tr>
-                                        <tr>
-                                            <td class="cart_total_label">
-                                                <h6 class="text-muted">Shipping</h6>
-                                            </td>
-                                            <td class="cart_total_amount shipping">
-                                                <h5 id="cart-shipping" class="text-heading text-end">
-                                                    @if($totals['shipping'] == 0)
-                                                        <span class="text-success">Free</span>
-                                                    @else
-                                                        Rp. {{ number_format($totals['shipping']) }}
-                                                    @endif
-                                                </h5>
-                                            </td>
-                                        </tr>
-                                        @if($totals['shipping'] == 0 && $totals['subtotal'] > 0)
-                                            <tr>
-                                                <td colspan="2">
-                                                    <small class="text-success">
-                                                        <i class="fi-rs-gift mr-5"></i>Free shipping on orders over Rp. 500,000
-                                                    </small>
-                                                </td>
-                                            </tr>
-                                        @endif
-                                        <tr>
-                                            <td class="cart_total_label">
-                                                <h6 class="text-muted">Tax ({{ $totals['tax_rate'] }}%)</h6>
-                                            </td>
-                                            <td class="cart_total_amount tax">
-                                                <h5 id="cart-tax" class="text-heading text-end">Rp. {{ number_format($totals['tax']) }}</h5>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="cart_total_label">
-                                                <h6 class="text-muted">Total</h6>
-                                            </td>
-                                            <td class="cart_total_amount total">
-                                                <h4 id="cart-total" class="text-brand text-end">Rp. {{ number_format($totals['total']) }}</h4>
-                                            </td>
-                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
                             <a href="{{ route('checkout.index') }}" class="btn btn-primary btn-block w-100 mt-20">Proceed To CheckOut</a>
                         </div>
-                        
+
                         @if(isset($outOfStockItems) && $outOfStockItems > 0)
                             <div class="alert alert-warning mt-20">
                                 <strong>Notice:</strong> {{ $outOfStockItems }} item(s) in your cart are out of stock and won't be included in checkout.
@@ -262,7 +223,7 @@
             const currentQuantity = parseInt(quantityInput.value);
             const newQuantity = Math.max(1, currentQuantity + change);
             const maxQuantity = parseInt(quantityInput.getAttribute('max'));
-            
+
             if (newQuantity <= maxQuantity) {
                 quantityInput.value = newQuantity;
                 submitQuantityUpdate(productId, newQuantity);
@@ -273,14 +234,14 @@
             const quantityInput = document.querySelector(`tr[data-product-id="${productId}"] .quantity-input`);
             const maxQuantity = parseInt(quantityInput.getAttribute('max'));
             const newQuantity = Math.max(1, Math.min(quantity, maxQuantity));
-            
+
             quantityInput.value = newQuantity;
             submitQuantityUpdate(productId, newQuantity);
         }
 
         function submitQuantityUpdate(productId, quantity) {
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            
+
             fetch(`/cart/${productId}/update-quantity`, {
                 method: 'PATCH',
                 headers: {
@@ -302,9 +263,6 @@
 
                     // Update the cart totals
                     document.getElementById('cart-subtotal').textContent = data.subtotal;
-                    document.getElementById('cart-shipping').textContent = data.shipping;
-                    document.getElementById('cart-tax').textContent = data.tax;
-                    document.getElementById('cart-total').textContent = data.total;
 
                     // Update the cart totals (reload page for simplicity)
                     // setTimeout(() => {
