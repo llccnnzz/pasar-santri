@@ -9,9 +9,9 @@
         <h5 class="text-muted">🎉 Pesanan Berhasil Dibuat!</h5>
         <h5 class="text-muted mb-4">Terima kasih sudah berbelanja di toko kami.</h5>
 
-        <h2 class="mb-3">
+        <h3 class="mb-3">
             Silahkan melanjutkan pembayaran pada aplikasi
-        </h2>
+        </h3>
             <img src="/assets/imgs/theme/emaal.png" style="height: 40px; width: auto">
         <h3 class="mb-3"><br>
             Berikut kode billing Anda:
