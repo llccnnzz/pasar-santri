@@ -44,12 +44,12 @@ class Order extends Model
     protected static function boot()
     {
         parent::boot();
-        
+
         static::creating(function ($model) {
             if (empty($model->id)) {
                 $model->id = (string) Str::uuid();
             }
-            
+
             if (empty($model->invoice)) {
                 $model->invoice = static::generateInvoiceNumber();
             }
@@ -87,17 +87,17 @@ class Order extends Model
     {
         $date = Carbon::now()->format('Y-m-d');
         $randomChars = strtoupper(Str::random(4));
-        
+
         // Ensure uniqueness
         do {
             $invoice = "INV/{$date}/{$randomChars}";
             $exists = static::where('invoice', $invoice)->exists();
-            
+
             if ($exists) {
                 $randomChars = strtoupper(Str::random(4));
             }
         } while ($exists);
-        
+
         return $invoice;
     }
 
@@ -105,10 +105,11 @@ class Order extends Model
     {
         return match($this->status) {
             'pending' => 'warning',
-            'confirmed' => 'info',
+            'paid' => 'info',
             'processing' => 'primary',
             'shipped' => 'secondary',
             'delivered' => 'success',
+            'finished' => 'success',
             'cancelled' => 'danger',
             'refunded' => 'dark',
             default => 'light'
@@ -119,10 +120,11 @@ class Order extends Model
     {
         return match($this->status) {
             'pending' => 'Pending',
-            'confirmed' => 'Confirmed',
+            'paid' => 'Confirmed',
             'processing' => 'Processing',
             'shipped' => 'Shipped',
             'delivered' => 'Delivered',
+            'finished' => 'Finished',
             'cancelled' => 'Cancelled',
             'refunded' => 'Refunded',
             default => ucfirst($this->status)

@@ -103,11 +103,11 @@
 
 					</a>
 					<ul class="sidemenu-second-level">
-						<li><a href="{{ route('seller.orders.index') }}" class="{{ request()->routeIs('seller.orders.index') && !request()->get('status') ? 'active' : '' }}">All Orders</a></li>
-						<li><a href="{{ route('seller.orders.index') }}?status=pending" class="{{ request()->get('status') == 'pending' ? 'active' : '' }}">Pending Orders</a></li>
+						<li><a href="{{ route('seller.orders.index') }}?status=paid" class="{{ request()->get('status') == 'paid' ? 'active' : '' }}">New Orders</a></li>
 						<li><a href="{{ route('seller.orders.index') }}?status=processing" class="{{ request()->get('status') == 'processing' ? 'active' : '' }}">Processing</a></li>
 						<li><a href="{{ route('seller.orders.index') }}?status=shipped" class="{{ request()->get('status') == 'shipped' ? 'active' : '' }}">Shipped</a></li>
 						<li><a href="{{ route('seller.orders.index') }}?status=delivered" class="{{ request()->get('status') == 'delivered' ? 'active' : '' }}">Delivered</a></li>
+                        <li><a href="{{ route('seller.orders.index') }}?status=finished" class="{{ request()->get('status') == 'finished' ? 'active' : '' }}">Finished</a></li>
 						<li><a href="{{ route('seller.orders.index') }}?status=cancelled" class="{{ request()->get('status') == 'cancelled' ? 'active' : '' }}">Cancelled</a></li>
 					</ul>
 				</li>
