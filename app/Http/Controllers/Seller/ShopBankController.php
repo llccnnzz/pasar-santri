@@ -12,9 +12,13 @@ use App\Http\Requests\ShopBankUpdateRequest;
 
 class ShopBankController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     public function index(Request $request)
     {
-        $shop = Auth::user()->shop;
+        $shop = auth()->user()->shop;
 
         $query = ShopBank::where('shop_id', $shop->id);
 
@@ -35,7 +39,7 @@ class ShopBankController extends Controller
 
     public function create()
     {
-        $shop = Auth::user()->shop;
+        $shop = auth()->user()->shop;
 
 
         return view('seller.bank-accounts.create');
@@ -43,7 +47,7 @@ class ShopBankController extends Controller
 
     public function store(ShopBankStoreRequest $request)
     {
-        $shop = Auth::user()->shop;
+        $shop = auth()->user()->shop;
 
 
         $validated = $request->validated();
@@ -66,7 +70,7 @@ class ShopBankController extends Controller
 
     public function show(ShopBank $bankAccount)
     {
-        $shop = Auth::user()->shop;
+        $shop = auth()->user()->shop;
 
 
         return view('seller.bank-accounts.show', compact('bankAccount'));
@@ -74,7 +78,7 @@ class ShopBankController extends Controller
 
     public function edit(ShopBank $bankAccount)
     {
-        $shop = Auth::user()->shop;
+        $shop = auth()->user()->shop;
 
 
         return view('seller.bank-accounts.edit', compact('bankAccount'));
@@ -82,7 +86,7 @@ class ShopBankController extends Controller
 
     public function update(ShopBankUpdateRequest $request, ShopBank $bankAccount)
     {
-        $shop = Auth::user()->shop;
+        $shop = auth()->user()->shop;
 
 
         $validated = $request->validated();
@@ -102,7 +106,7 @@ class ShopBankController extends Controller
 
     public function destroy(ShopBank $bankAccount)
     {
-        $shop = Auth::user()->shop;
+        $shop = auth()->user()->shop;
 
 
         // Check if this is the default account and there are other accounts
@@ -124,7 +128,7 @@ class ShopBankController extends Controller
 
     public function setPrimary(ShopBank $bankAccount)
     {
-        $shop = Auth::user()->shop;
+        $shop = auth()->user()->shop;
 
 
         $bankAccount->setAsDefault();

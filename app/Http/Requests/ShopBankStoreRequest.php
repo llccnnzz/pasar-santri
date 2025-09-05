@@ -15,7 +15,7 @@ class ShopBankStoreRequest extends FormRequest
 
     public function rules(): array
     {
-        $shop = Auth::user()->shop;
+        $shop = $this->user()->shop;
 
         return [
             'bank_code' => 'required|string|max:10',

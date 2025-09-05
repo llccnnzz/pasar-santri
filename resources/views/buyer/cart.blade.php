@@ -203,6 +203,9 @@
                                         <tr>
                                             <td class="cart_total_label">
                                                 <h6 class="text-muted">Platform Fee</h6>
+                                                <p>
+                                                    <small>{{ $paymentFeeConfig['type'] === 'fixed' ? 'Rp. '.$paymentFeeConfig['fixed'] : $paymentFeeConfig['percent'].'%, minimum Rp. '.$paymentFeeConfig['percent_min_value'] }}</small>
+                                                </p>
                                             </td>
                                             <td class="cart_total_amount subtotal">
                                                 <h4 id="cart-payment_fee" class="text-brand text-end">Rp. {{ number_format($summary['payment_fee']) }}</h4>

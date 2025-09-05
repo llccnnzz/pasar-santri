@@ -9,9 +9,13 @@ use Illuminate\Support\Facades\Auth;
 
 class KycController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     public function index()
     {
-        $user            = Auth::user();
+        $user            = auth()->user();
         $kycApplications = KycApplication::where('user_id', $user['id'])
             ->orderBy('created_at', 'desc')
             ->get();
@@ -24,7 +28,7 @@ class KycController extends Controller
 
     public function create()
     {
-        $user = Auth::user();
+        $user = auth()->user();
 
         // Check if user already has an approved KYC
         $approvedKyc = KycApplication::where('user_id', $user['id'])
@@ -51,7 +55,7 @@ class KycController extends Controller
 
     public function store(KycStoreRequest $request)
     {
-        $user = Auth::user();
+        $user = auth()->user();
 
         // Check if user already has pending/approved KYC
         $existingKyc = KycApplication::where('user_id', $user['id'])

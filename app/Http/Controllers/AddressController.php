@@ -13,14 +13,6 @@ class AddressController extends Controller
         $this->middleware('auth');
     }
 
-    public function index()
-    {
-        $user      = auth()->user();
-        $addresses = $user->addresses ?? [];
-
-        return view('user.addresses.index', compact('addresses'));
-    }
-
     public function store(UserAddressStoreRequest $request)
     {
         $user = auth()->user();

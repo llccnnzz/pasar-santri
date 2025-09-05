@@ -1,11 +1,14 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\GlobalVariable;
 use App\Models\Product;
+use App\Traits\CartTrait;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
+    use CartTrait;
     public function __construct()
     {
         $this->middleware('auth');
@@ -24,101 +27,24 @@ class CartController extends Controller
             ]);
         }
 
-        $cartItems  = json_decode($cart->items, true);
-        $productIds = collect($cartItems)->pluck('id')->toArray();
-
-        // Get current product data with fresh prices and stock
-        $products = Product::whereIn('id', $productIds)
-            ->with(['defaultImage', 'shop'])
-            ->get()
-            ->keyBy('id');
-
-        $subTotal         = 0;
-        $itemCount        = 0;
-        $updatedCartItems = [];
-
-        foreach ($cartItems as $item) {
-            $product = $products->get($item['id']);
-
-            if (! $product) {
-                // Product no longer exists, skip it
-                continue;
-            }
-
-            $isAvailable       = true;
-            $message           = null;
-            $availableQuantity = $item['quantity'];
-
-            // Check stock availability
-            if ($product->stock <= 0) {
-                $isAvailable       = false;
-                $message           = 'Out of Stock';
-                $availableQuantity = 0;
-            } elseif ($product->stock < $item['quantity']) {
-                $message           = "Only {$product->stock} available";
-                $availableQuantity = $product->stock;
-            }
-
-            // Use current product price (in case price changed)
-            $currentPrice = $product->final_price;
-            $itemTotal    = $currentPrice * $availableQuantity;
-
-            $updatedCartItems[] = [
-                'id'                 => $item['id'],
-                'quantity'           => $item['quantity'],
-                'available_quantity' => $availableQuantity,
-                'price'              => $currentPrice,
-                'original_price'     => $product->price,
-                'name'               => $product->name,
-                'description'        => $product->meta_description,
-                'weight'             => $product->weight,
-                'slug'               => $product->slug,
-                'image'              => $product->defaultImage ? $product->defaultImage->getFullUrl() : null,
-                'is_available'       => $isAvailable,
-                'message'            => $message,
-                'item_total'         => $itemTotal,
-                'shop_id'            => $product->shop->id,
-                'shop_name'          => $product->shop->name ?? 'Unknown Shop',
-                'stock'              => $product->stock,
-            ];
-
-            if ($isAvailable) {
-                $subTotal += $itemTotal;
-                $itemCount += $availableQuantity;
-            }
-        }
-
-        // Update cart with current data
-        $cart->update(['items' => json_encode($updatedCartItems)]);
-
-        // Calculate payment fee
-        if (env('FEE_TYPE') === 'percent') {
-            $paymentFee = $subTotal * (config('payment_fee.percent') / 100);
-            if ($paymentFee < config('payment_fee.percent_min_value')) {
-                $paymentFee = config('payment_fee.percent_min_value');
-            }
-        } else {
-            $paymentFee = config('payment_fee.fixed');
-        }
-
-        // Calculate total
-        $total = $subTotal + $paymentFee;
-
-        // Count out of stock items
-        $outOfStockItems = collect($updatedCartItems)->where('is_available', false)->count();
+        $cart = $this->handleCartData($cart);
 
         // Prepare totals array for view
         $summary = [
-            'subtotal'    => $subTotal,
-            'payment_fee' => $paymentFee,
-            'total'       => $total,
+            'subtotal'    => $cart['subTotal'],
+            'payment_fee' => $cart['paymentFee'],
+            'total'       => $cart['total'],
         ];
+        $cartItems = $cart['cartItems'];
+        $outOfStockItems = $cart['outOfStockItems'];
+        $paymentFeeConfig = $cart['paymentFeeConfig'];
 
         return view('buyer.cart', compact(
             'cartItems',
             'summary',
-            'outOfStockItems'
-        ))->with('cartItems', $updatedCartItems);
+            'outOfStockItems',
+            'paymentFeeConfig',
+        ));
     }
 
     public function add(Request $request)
@@ -286,13 +212,20 @@ class CartController extends Controller
         // Calculate new totals
         $itemTotal = $product->final_price * $request->quantity;
         $subTotal  = array_sum(array_column($cartItems, 'item_total'));
-        if (env('FEE_TYPE') === 'percent') {
-            $paymentFee = $subTotal * (config('payment_fee.percent') / 100);
-            if ($paymentFee < config('payment_fee.percent_min_value')) {
-                $paymentFee = config('payment_fee.percent_min_value');
+        $paymentFeeConfig = GlobalVariable::where('key','iLike', 'payment_fee%')->get()->mapWithKeys(function ($item) {
+            return [
+                str_replace('payment_fee_', '', $item['key']) => ($item['type'] === 'float' ? (float) $item['value'] : $item['value'])
+            ];
+        })->toArray();
+
+        // Calculate payment fee
+        if ($paymentFeeConfig['type'] === 'percent') {
+            $paymentFee = $subTotal * ($paymentFeeConfig['percent'] / 100);
+            if ($paymentFee < $paymentFeeConfig['percent_min_value']) {
+                $paymentFee = $paymentFeeConfig['percent_min_value'];
             }
         } else {
-            $paymentFee = config('payment_fee.fixed');
+            $paymentFee = $paymentFeeConfig['fixed'];
         }
 
         return response()->json([

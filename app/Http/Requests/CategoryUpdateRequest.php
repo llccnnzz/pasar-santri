@@ -13,7 +13,7 @@ class CategoryUpdateRequest extends FormRequest
 
     public function rules(): array
     {
-        $shop = Auth::user()->shop;
+        $shop = $this->user()->shop;
         $category = $this->route('category');
 
         return [

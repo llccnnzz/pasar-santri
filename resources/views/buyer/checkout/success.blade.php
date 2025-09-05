@@ -32,7 +32,7 @@
                     </li>
                     <li>
                         <span class="d-block fw-bold text-black-50 display-6">
-                            Rp. {{ number_format($payment->total_amount, 0) }}
+                            Rp. {{ number_format($payment->value, 0) }}
                         </span>
                     </li>
                 @endforeach
