@@ -109,7 +109,7 @@ class CheckoutController extends Controller
 
             $biteshipItems = [];
             foreach ($items as $it) {
-                $weightGram      = (int) round(($it['weight'] ?? 0) * 1000);
+                $weightGram      = (int) round(($it['weight'] ?? 0));
                 $biteshipItems[] = [
                     'name'     => $it['name'],
                     'value'    => (int) $it['price'],
@@ -239,9 +239,9 @@ class CheckoutController extends Controller
 
                 $orders[] = $order;
             }
-            
+
             $cart->update(['items' => json_encode([])]);
-            
+
             DB::commit();
 
             return redirect()->route('checkout.success')
