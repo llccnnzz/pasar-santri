@@ -123,4 +123,10 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'payment_fee' => [
+        'fixed' => env('PAYMENT_FEE_FIXED', 0.0),
+        'percent' => env('PAYMENT_FEE_PERCENT', 0.0),
+        'percent_min_value' => env('PAYMENT_FEE_PERCENT_MIN_VALUE', 0.0),
+    ]
+
 ];

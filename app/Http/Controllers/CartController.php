@@ -19,12 +19,8 @@ class CartController extends Controller
 
         if (! $cart || ! $cart->items) {
             return view('buyer.cart', [
-                'cartItems' => [],
-                'subTotal'  => 0,
-                'shipping'  => 0,
-                'tax'       => 0,
-                'total'     => 0,
-                'itemCount' => 0,
+                'cartItems'   => [],
+                'summary'    => [],
             ]);
         }
 
@@ -95,31 +91,32 @@ class CartController extends Controller
         // Update cart with current data
         $cart->update(['items' => json_encode($updatedCartItems)]);
 
-        // Calculate shipping
-        $shipping = $this->calculateShipping($subTotal, $itemCount);
-
-        // Calculate tax (11%)
-        $taxRate = 11;
-        $tax     = $subTotal * ($taxRate / 100);
+        // Calculate payment fee
+        if (env('FEE_TYPE') === 'percent') {
+            $paymentFee = $subTotal * (config('payment_fee.percent') / 100);
+            if ($paymentFee < config('payment_fee.percent_min_value')) {
+                $paymentFee = config('payment_fee.percent_min_value');
+            }
+        } else {
+            $paymentFee = config('payment_fee.fixed');
+        }
 
         // Calculate total
-        $total = $subTotal + $shipping + $tax;
+        $total = $subTotal + $paymentFee;
 
         // Count out of stock items
         $outOfStockItems = collect($updatedCartItems)->where('is_available', false)->count();
 
         // Prepare totals array for view
-        $totals = [
-            'subtotal' => $subTotal,
-            'shipping' => $shipping,
-            'tax'      => $tax,
-            'tax_rate' => $taxRate,
-            'total'    => $total,
+        $summary = [
+            'subtotal'    => $subTotal,
+            'payment_fee' => $paymentFee,
+            'total'       => $total,
         ];
 
         return view('buyer.cart', compact(
             'cartItems',
-            'totals',
+            'summary',
             'outOfStockItems'
         ))->with('cartItems', $updatedCartItems);
     }
@@ -289,16 +286,21 @@ class CartController extends Controller
         // Calculate new totals
         $itemTotal = $product->final_price * $request->quantity;
         $subTotal  = array_sum(array_column($cartItems, 'item_total'));
-        $shipping  = $this->calculateShipping(array_sum(array_column($cartItems, 'item_total')), array_sum(array_column($cartItems, 'quantity')));
-        $tax       = $subTotal * 0.11;
+        if (env('FEE_TYPE') === 'percent') {
+            $paymentFee = $subTotal * (config('payment_fee.percent') / 100);
+            if ($paymentFee < config('payment_fee.percent_min_value')) {
+                $paymentFee = config('payment_fee.percent_min_value');
+            }
+        } else {
+            $paymentFee = config('payment_fee.fixed');
+        }
 
         return response()->json([
-            'success'    => true,
-            'item_total' => 'Rp. ' . number_format($itemTotal),
-            'subtotal'   => 'Rp. ' . number_format($subTotal),
-            'shipping'   => 'Rp. ' . number_format($shipping),
-            'tax'        => 'Rp. ' . number_format($tax),
-            'total'      => 'Rp. ' . number_format($subTotal + $shipping + $tax),
+            'success'     => true,
+            'item_total'  => 'Rp. ' . number_format($itemTotal),
+            'subtotal'    => 'Rp. ' . number_format($subTotal),
+            'payment_fee' => 'Rp. ' . number_format($paymentFee),
+            'total'       => 'Rp. ' . number_format($subTotal + $paymentFee),
         ]);
     }
 
@@ -330,24 +332,5 @@ class CartController extends Controller
 
             return redirect()->route('cart.index')->with('errors', 'Failed to clear cart');
         }
-    }
-
-    private function calculateShipping($subTotal, $itemCount)
-    {
-        // Free shipping for orders above Rp 500,000
-        if ($subTotal >= 500000) {
-            return 0;
-        }
-
-                               // Base shipping rate
-        $baseShipping = 15000; // Rp 15,000 base
-
-        // Additional cost per item above 3 items
-        if ($itemCount > 3) {
-            $additionalItems = $itemCount - 3;
-            $baseShipping += ($additionalItems * 5000); // Rp 5,000 per additional item
-        }
-
-        return $baseShipping;
     }
 }
