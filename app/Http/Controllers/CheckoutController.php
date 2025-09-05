@@ -127,7 +127,7 @@ class CheckoutController extends Controller
                 continue;
             }
 
-            $rates = $biteship->getRates($originPostal, $destinationPostal, $biteshipItems, [$method->courier_code], 'kg');
+            $rates = $biteship->getRates($originPostal, $destinationPostal, $biteshipItems, [$method->courier_code]);
 
             $matchedRate = collect($rates)->firstWhere('courier_service_code', $method->service_code);
 
@@ -196,8 +196,7 @@ class CheckoutController extends Controller
                     $shop->postal_code,
                     $address['postal_code'],
                     $biteshipItems,
-                    [$shippingMethod->courier_code],
-                    'kg'
+                    [$shippingMethod->courier_code]
                 );
 
                 $pickedRate = collect($rates)->firstWhere('courier_service_code', $shippingMethod->service_code);

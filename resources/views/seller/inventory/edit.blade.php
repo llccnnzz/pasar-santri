@@ -305,7 +305,7 @@
 
                     <div class="col-lg-6">
                         <div class="form-group mb-25">
-                            <label class="fw-semibold fs-14 text-dark mb-2">Product Weight (kg)</label>
+                            <label class="fw-semibold fs-14 text-dark mb-2">Product Weight (gram)</label>
                             <div class="form-floating">
                                 <input type="number" step="0.01" min="0" class="form-control @error('weight') is-invalid @enderror"
                                        name="weight" id="weightInput" value="{{ old('weight', $product->weight) }}"

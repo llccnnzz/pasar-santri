@@ -43,7 +43,7 @@
                     @php
                         $images = $product->images;
                     @endphp
-                    
+
                     <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
                         <div class="carousel-inner">
                             <div class="carousel-item active">
@@ -73,18 +73,18 @@
                             <span class="carousel-control-next-icon" aria-hidden="true"></span>
                         </button>
                     </div>
-                        
+
                     <div class="row mt-3">
                         <div class="col-3">
-                            <img class="rounded-3 w-100 thumbnail active" 
-                                src="{{ $product->defaultImage?->getFullUrl() }}" 
+                            <img class="rounded-3 w-100 thumbnail active"
+                                src="{{ $product->defaultImage?->getFullUrl() }}"
                                 alt="{{ $product->name }}"
                                 onclick="goToSlide(0)"
                                 style="cursor: pointer; opacity: 1;">
                         </div>
                         <div class="col-3">
-                            <img class="rounded-3 w-100 thumbnail" 
-                                src="{{ $product->hoverImage?->getFullUrl() }}" 
+                            <img class="rounded-3 w-100 thumbnail"
+                                src="{{ $product->hoverImage?->getFullUrl() }}"
                                 alt="{{ $product->name }}"
                                 onclick="goToSlide(1)"
                                 style="cursor: pointer; opacity: 0.6;">
@@ -92,8 +92,8 @@
                         @if($images && count($images) > 0)
                             @foreach($images as $index => $image)
                             <div class="col-3">
-                                <img class="rounded-3 w-100 thumbnail" 
-                                    src="{{ $image->getFullUrl() }}" 
+                                <img class="rounded-3 w-100 thumbnail"
+                                    src="{{ $image->getFullUrl() }}"
                                     alt="{{ $product->name }}"
                                     onclick="goToSlide({{ $index+2 }})"
                                     style="cursor: pointer; opacity: 0.6;">
@@ -106,7 +106,7 @@
                 <div class="col-xl-7">
                     <div class="product-details-main-content ms-xxl-4 mt-4 mt-xl-0">
                         <h3>{{ $product->name }}</h3>
-                        
+
                         <div class="old-recent-price mb-3">
                             <span class="fs-24 fw-bold text-primary">Rp {{ number_format($product->price) }}</span>
                         </div>
@@ -129,7 +129,7 @@
                                 <li><span class="fw-semibold">Brand:</span> {{ $product->brand }}</li>
                             @endif
                             @if($product->weight)
-                                <li><span class="fw-semibold">Weight:</span> {{ $product->weight }} kg</li>
+                                <li><span class="fw-semibold">Weight:</span> {{ number_format($product->weight/1000,2) }} kg</li>
                             @endif
                             @if($product->dimensions)
                                 <li><span class="fw-semibold">Dimensions:</span> {{ $product->dimensions }}</li>
@@ -276,11 +276,11 @@
 function goToSlide(index) {
     const carousel = document.getElementById('productCarousel');
     const thumbnails = document.querySelectorAll('.thumbnail');
-    
+
     // Update carousel
     const carouselInstance = bootstrap.Carousel.getInstance(carousel) || new bootstrap.Carousel(carousel);
     carouselInstance.to(index);
-    
+
     // Update thumbnail opacity
     thumbnails.forEach((thumb, i) => {
         thumb.style.opacity = i === index ? '1' : '0.6';
