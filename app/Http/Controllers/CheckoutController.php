@@ -108,19 +108,27 @@ class CheckoutController extends Controller
             $originPostal = $shop->postal_code;
 
             $biteshipItems = [];
+
             foreach ($items as $it) {
-                $weightGram      = (int) round(($it['weight'] ?? 0));
+                $qty = (int) ($it['available_quantity'] ?? $it['quantity'] ?? 0);
+                if ($qty <= 0) {
+                    continue;
+                }
+
                 $biteshipItems[] = [
                     'name'     => $it['name'],
-                    'value'    => (int) $it['price'],
-                    'weight'   => $weightGram,
-                    'quantity' => (int) $it['quantity'],
+                    'value'    => (int) round($it['price'] ?? 0),
+                    'weight'   => (float) ($it['weight'] ?? 0),
+                    'quantity' => $qty,
                 ];
             }
 
-            $rates = $biteship->getRates($originPostal, $destinationPostal, $biteshipItems, [$method->courier_code]);
+            if (empty($biteshipItems)) {
+                continue;
+            }
 
-            // ✅ Filter sesuai service_code yang dipilih user
+            $rates = $biteship->getRates($originPostal, $destinationPostal, $biteshipItems, [$method->courier_code], 'kg');
+
             $matchedRate = collect($rates)->firstWhere('courier_service_code', $method->service_code);
 
             if ($matchedRate) {
@@ -138,7 +146,6 @@ class CheckoutController extends Controller
         $cartItems = is_string($cart->items) ? json_decode($cart->items, true) : ($cart->items ?? []);
         $addresses = $user->addresses ?? [];
 
-        // Pastikan alamat valid
         $address = collect($addresses)->firstWhere('id', $request->address_id);
         if (! $address) {
             return back()->with('error', 'Alamat tidak ditemukan.');
@@ -180,8 +187,8 @@ class CheckoutController extends Controller
                     return [
                         'name'     => $it['name'],
                         'value'    => (int) $it['price'],
-                        'weight'   => (int) round(($it['weight'] ?? 0) * 1000),
-                        'quantity' => (int) $it['quantity'],
+                        'weight'   => (float) round($it['weight'] ?? 0),
+                        'quantity' => (int) ($it['available_quantity'] ?? $it['quantity']),
                     ];
                 })->toArray();
 
@@ -189,7 +196,8 @@ class CheckoutController extends Controller
                     $shop->postal_code,
                     $address['postal_code'],
                     $biteshipItems,
-                    [$shippingMethod->courier_code]
+                    [$shippingMethod->courier_code],
+                    'kg'
                 );
 
                 $pickedRate = collect($rates)->firstWhere('courier_service_code', $shippingMethod->service_code);
