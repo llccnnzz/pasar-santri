@@ -272,18 +272,6 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'role:admin']], func
         Route::delete('/{promotion}', [AdminPromoController::class, 'destroy'])
             ->middleware('can:admin-dashboard|delete promo')
             ->name('admin.promos.destroy');
-
-        Route::post('/{promotion}/toggle-status', [AdminPromoController::class, 'toggleStatus'])
-            ->middleware('can:admin-dashboard|update promo')
-            ->name('admin.promos.toggle-status');
-
-        Route::get('/{promotion}/usage-report', [AdminPromoController::class, 'usageReport'])
-            ->middleware('can:admin-dashboard|show promo')
-            ->name('admin.promos.usage-report');
-
-        Route::post('/generate-code', [AdminPromoController::class, 'generateCode'])
-            ->middleware('can:admin-dashboard|create promo')
-            ->name('admin.promos.generate-code');
     });
 
     // ===================================================================
