@@ -311,33 +311,17 @@ Route::middleware('auth')->group(function () {
                 ->middleware('can:admin-dashboard|index shipping method')
                 ->name('admin.shipping.index');
 
-            Route::get('/create', [AdminShippingController::class, 'create'])
-                ->middleware('can:admin-dashboard|create shipping method')
-                ->name('admin.shipping.create');
-
-            Route::post('/', [AdminShippingController::class, 'store'])
-                ->middleware('can:admin-dashboard|create shipping method')
-                ->name('admin.shipping.store');
-
             Route::get('/{shippingMethod}', [AdminShippingController::class, 'show'])
                 ->middleware('can:admin-dashboard|show shipping method')
                 ->name('admin.shipping.show');
 
-            Route::get('/{shippingMethod}/edit', [AdminShippingController::class, 'edit'])
-                ->middleware('can:admin-dashboard|update shipping method')
-                ->name('admin.shipping.edit');
-
-            Route::put('/{shippingMethod}', [AdminShippingController::class, 'update'])
-                ->middleware('can:admin-dashboard|update shipping method')
-                ->name('admin.shipping.update');
-
-            Route::delete('/{shippingMethod}', [AdminShippingController::class, 'destroy'])
-                ->middleware('can:admin-dashboard|delete shipping method')
-                ->name('admin.shipping.destroy');
-
             Route::post('/{shippingMethod}/toggle-status', [AdminShippingController::class, 'toggleStatus'])
                 ->middleware('can:admin-dashboard|update shipping method')
                 ->name('admin.shipping.toggle-status');
+
+            Route::post('/courier/{courierCode}/toggle-status', [AdminShippingController::class, 'toggleCourierStatus'])
+                ->middleware('can:admin-dashboard|update shipping method')
+                ->name('admin.shipping.toggle-courier-status');
 
             Route::post('/sync-from-api', [AdminShippingController::class, 'syncFromApi'])
                 ->middleware('can:admin-dashboard|create shipping method')

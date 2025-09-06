@@ -15,6 +15,7 @@ class ShippingMethod extends Model
         'service_code',
         'service_name',
         'description',
+        'logo_url',
         'active',
     ];
 }
