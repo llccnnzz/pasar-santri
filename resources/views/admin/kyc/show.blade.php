@@ -94,41 +94,41 @@
                     <div class="col-md-6 mb-4">
                         <h6 class="mb-2">Document Front</h6>
                         <div class="document-preview">
-                            <img src="{{ $kycApplication->getFirstMediaUrl('document_front') }}" 
-                                 class="img-fluid rounded border" 
+                            <img src="{{ $kycApplication->getFirstMediaUrl('document_front') }}"
+                                 class="img-fluid rounded border"
                                  alt="Document Front"
                                  style="max-height: 200px; cursor: pointer;"
                                  onclick="showImageModal(this.src, 'Document Front')">
                         </div>
                     </div>
                     @endif
-                    
+
                     @if($kycApplication->getFirstMediaUrl('document_back'))
                     <div class="col-md-6 mb-4">
                         <h6 class="mb-2">Document Back</h6>
                         <div class="document-preview">
-                            <img src="{{ $kycApplication->getFirstMediaUrl('document_back') }}" 
-                                 class="img-fluid rounded border" 
+                            <img src="{{ $kycApplication->getFirstMediaUrl('document_back') }}"
+                                 class="img-fluid rounded border"
                                  alt="Document Back"
                                  style="max-height: 200px; cursor: pointer;"
                                  onclick="showImageModal(this.src, 'Document Back')">
                         </div>
                     </div>
                     @endif
-                    
+
                     @if($kycApplication->getFirstMediaUrl('selfie'))
                     <div class="col-md-6 mb-4">
                         <h6 class="mb-2">Selfie with Document</h6>
                         <div class="document-preview">
-                            <img src="{{ $kycApplication->getFirstMediaUrl('selfie') }}" 
-                                 class="img-fluid rounded border" 
+                            <img src="{{ $kycApplication->getFirstMediaUrl('selfie') }}"
+                                 class="img-fluid rounded border"
                                  alt="Selfie"
                                  style="max-height: 200px; cursor: pointer;"
                                  onclick="showImageModal(this.src, 'Selfie with Document')">
                         </div>
                     </div>
                     @endif
-                    
+
                     @if($kycApplication->getMedia('additional_docs')->count() > 0)
                     <div class="col-12">
                         <h6 class="mb-2">Additional Documents</h6>
@@ -136,8 +136,8 @@
                             @foreach($kycApplication->getMedia('additional_docs') as $media)
                             <div class="col-md-4 mb-3">
                                 <div class="document-preview">
-                                    <img src="{{ $media->getUrl() }}" 
-                                         class="img-fluid rounded border" 
+                                    <img src="{{ $media->getUrl() }}"
+                                         class="img-fluid rounded border"
                                          alt="Additional Document"
                                          style="max-height: 150px; cursor: pointer;"
                                          onclick="showImageModal(this.src, 'Additional Document')">
@@ -149,7 +149,7 @@
                     </div>
                     @endif
                 </div>
-                
+
                 @if(!$kycApplication->getFirstMediaUrl('document_front') && !$kycApplication->getFirstMediaUrl('document_back') && !$kycApplication->getFirstMediaUrl('selfie'))
                 <div class="text-center py-4">
                     <i data-feather="image" class="mb-2" style="width: 48px; height: 48px;" stroke="1.5"></i>
@@ -174,7 +174,7 @@
                             <p class="text-muted mb-0">{{ $kycApplication->created_at->format('M d, Y \a\t g:i A') }}</p>
                         </div>
                     </div>
-                    
+
                     @if($kycApplication->reviewed_at)
                     <div class="timeline-item">
                         <div class="timeline-marker bg-{{ $kycApplication->status === 'approved' ? 'success' : 'danger' }}"></div>
@@ -192,7 +192,7 @@
         </div>
         @endif
     </div>
-    
+
     <div class="col-lg-4">
         <!-- User Information -->
         <div class="card border-0 rounded-3 mb-4">
@@ -202,7 +202,7 @@
             <div class="card-body">
                 <div class="text-center mb-3">
                     <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center mx-auto" style="width: 80px; height: 80px;">
-                        <i data-feather="user" class="text-primary" style="width: 32px; height: 32px;"></i>
+                        <i data-feather="user" class="text-white" style="width: 32px; height: 32px;"></i>
                     </div>
                     <h5 class="mt-3 mb-1">{{ $kycApplication->user->name }}</h5>
                     <p class="text-muted mb-2">{{ $kycApplication->user->email }}</p>
@@ -210,7 +210,7 @@
                         <span class="badge bg-primary me-1">{{ ucfirst($role->name) }}</span>
                     @endforeach
                 </div>
-                
+
                 <div class="border-top pt-3">
                     <div class="row text-center">
                         <div class="col-6">
@@ -266,7 +266,7 @@
                     </div>
                 </div>
                 @endif
-                
+
                 @if($kycApplication->admin_notes)
                 <div class="mb-3">
                     <label class="form-label text-muted">Admin Notes</label>

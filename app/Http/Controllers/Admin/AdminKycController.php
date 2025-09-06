@@ -8,34 +8,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-/**
- * AdminKycController
- * 
- * Handles KYC (Know Your Customer) application management for administrators.
- * Provides comprehensive functionality for reviewing, approving, and rejecting
- * seller verification applications.
- * 
- * Features:
- * - List all KYC applications with filtering and search
- * - View individual application details with documents
- * - Approve applications (grants seller role)
- * - Reject applications with reasons (removes seller role)
- * - Bulk actions for multiple applications
- * - Statistics and notifications for pending applications
- * 
- * Views:
- * - resources/views/admin/kyc/index.blade.php - Applications listing
- * - resources/views/admin/kyc/show.blade.php - Application details
- * 
- * Middleware:
- * - ShareAdminData: Provides $pendingKycCount for layout
- * 
- * Permissions Required:
- * - admin-dashboard (basic access)
- * - index kyc (view applications)
- * - show kyc (view application details)
- * - update kyc (approve/reject applications)
- */
 class AdminKycController extends Controller
 {
     /**
@@ -44,7 +16,14 @@ class AdminKycController extends Controller
     public function index(Request $request)
     {
         $query = KycApplication::with(['user'])
-            ->orderBy('created_at', 'desc');
+            ->orderByRaw("
+                CASE status
+                    WHEN 'pending' THEN 1
+                    WHEN 'approved' THEN 2
+                    WHEN 'rejected' THEN 3
+                    ELSE 4
+                END
+            ");
 
         // Filter by status if provided
         if ($request->has('status') && $request->status !== '') {
@@ -71,7 +50,6 @@ class AdminKycController extends Controller
         $statistics = [
             'total' => KycApplication::count(),
             'pending' => KycApplication::pending()->count(),
-            'under_review' => KycApplication::underReview()->count(),
             'approved' => KycApplication::approved()->count(),
             'rejected' => KycApplication::rejected()->count(),
         ];

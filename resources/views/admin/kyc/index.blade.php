@@ -17,7 +17,7 @@
 
 <!-- Statistics Cards -->
 <div class="row mb-4">
-    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
         <div class="card status-card border-0 rounded-3 mb-3">
             <div class="card-body p-20">
                 <div class="d-flex align-items-center">
@@ -34,7 +34,7 @@
             </div>
         </div>
     </div>
-    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
         <div class="card status-card border-0 rounded-3 mb-3">
             <div class="card-body p-20">
                 <div class="d-flex align-items-center">
@@ -51,24 +51,7 @@
             </div>
         </div>
     </div>
-    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
-        <div class="card status-card border-0 rounded-3 mb-3">
-            <div class="card-body p-20">
-                <div class="d-flex align-items-center">
-                    <div class="flex-shrink-0">
-                        <div class="icon rounded-3 bg-info bg-opacity-10">
-                            <i data-feather="eye" class="text-info"></i>
-                        </div>
-                    </div>
-                    <div class="flex-grow-1 ms-3">
-                        <span class="d-block mb-1 text-muted">Under Review</span>
-                        <h4 class="fs-20 mb-0">{{ number_format($statistics['under_review']) }}</h4>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
         <div class="card status-card border-0 rounded-3 mb-3">
             <div class="card-body p-20">
                 <div class="d-flex align-items-center">
@@ -85,7 +68,7 @@
             </div>
         </div>
     </div>
-    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
         <div class="card status-card border-0 rounded-3 mb-3">
             <div class="card-body p-20">
                 <div class="d-flex align-items-center">
@@ -113,7 +96,6 @@
                 <select name="status" class="form-select">
                     <option value="">All Status</option>
                     <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
-                    <option value="under_review" {{ request('status') === 'under_review' ? 'selected' : '' }}>Under Review</option>
                     <option value="approved" {{ request('status') === 'approved' ? 'selected' : '' }}>Approved</option>
                     <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>Rejected</option>
                 </select>
@@ -167,7 +149,7 @@
                                     <div class="d-flex align-items-center">
                                         <div class="flex-shrink-0">
                                             <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                                <i data-feather="user" class="text-primary" style="width: 18px; height: 18px;"></i>
+                                                <i data-feather="user" class="text-white" style="width: 18px; height: 18px;"></i>
                                             </div>
                                         </div>
                                         <div class="flex-grow-1 ms-3">
@@ -181,9 +163,9 @@
                                 </td>
                                 <td>{{ $kyc->document_number }}</td>
                                 <td>
-                                    <span class="badge bg-{{ $kyc->status_badge }}">{{ $kyc->status_text }}</span>
+                                    <span class="badge bg-{{ $kyc->status_badge }}">{{ $kyc->status }}</span>
                                 </td>
-                                <td>{{ $kyc->created_at->format('M d, Y') }}</td>
+                                <td>{{ $kyc->created_at->format('M d, Y H:i') }}</td>
                                 <td>
                                     <div class="dropdown">
                                         <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
@@ -272,17 +254,17 @@
                             <option value="delete">Delete Selected</option>
                         </select>
                     </div>
-                    
+
                     <div id="rejectionReasonField" class="mb-3" style="display: none;">
                         <label class="form-label">Rejection Reason <span class="text-danger">*</span></label>
                         <textarea name="rejection_reason" class="form-control" rows="3" placeholder="Please provide a reason for rejection..."></textarea>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label class="form-label">Admin Notes (Optional)</label>
                         <textarea name="admin_notes" class="form-control" rows="2" placeholder="Any additional notes..."></textarea>
                     </div>
-                    
+
                     <div class="selected-count">
                         <p class="text-muted mb-0">Selected: <span id="selectedCount">0</span> applications</p>
                     </div>
@@ -369,23 +351,23 @@
 $(document).ready(function() {
     // Initialize Feather Icons
     feather.replace();
-    
+
     // Select All Functionality
     $('#selectAll').change(function() {
         $('.kyc-checkbox').prop('checked', this.checked);
         updateSelectedCount();
     });
-    
+
     $('.kyc-checkbox').change(function() {
         updateSelectedCount();
-        
+
         // Update select all checkbox
         const totalCheckboxes = $('.kyc-checkbox').length;
         const checkedCheckboxes = $('.kyc-checkbox:checked').length;
         $('#selectAll').prop('indeterminate', checkedCheckboxes > 0 && checkedCheckboxes < totalCheckboxes);
         $('#selectAll').prop('checked', checkedCheckboxes === totalCheckboxes);
     });
-    
+
     // Bulk Action Form
     $('#bulkAction').change(function() {
         const action = $(this).val();
@@ -398,7 +380,7 @@ $(document).ready(function() {
         }
         updateBulkActionButton();
     });
-    
+
     // Bulk Action Form Submission
     $('#bulkActionForm').submit(function(e) {
         const selectedIds = getSelectedIds();
@@ -407,12 +389,12 @@ $(document).ready(function() {
             alert('Please select at least one application.');
             return;
         }
-        
+
         // Add selected IDs to form
         selectedIds.forEach(id => {
             $(this).append(`<input type="hidden" name="kyc_ids[]" value="${id}">`);
         });
-        
+
         // Confirm action
         const action = $('#bulkAction').val();
         const count = selectedIds.length;
