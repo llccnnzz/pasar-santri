@@ -267,7 +267,7 @@ class CheckoutController extends Controller
 
             DB::commit();
 
-            return redirect('/checkout/success?order_id='.collect($orders)->pluck('id').join(','))
+            return redirect('/checkout/success?order_id='.join(',', collect($orders)->pluck('id')->toArray()))
                 ->with('message', 'Pesanan berhasil dibuat!');
         } catch (\Throwable $e) {
             DB::rollback();
