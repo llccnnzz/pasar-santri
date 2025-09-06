@@ -11,24 +11,26 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\BuyerOrderController;
 use App\Http\Controllers\Seller\KycController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Seller\OrderController;
 use App\Http\Controllers\Seller\SellerController;
 use App\Http\Controllers\Seller\WalletController;
+use App\Http\Controllers\Admin\AdminAdsController;
+
+// Admin Controllers
+use App\Http\Controllers\Admin\AdminKycController;
 use App\Http\Controllers\Seller\ProfileController;
 use App\Http\Controllers\Seller\CategoryController;
 use App\Http\Controllers\Seller\ShopBankController;
+use App\Http\Controllers\Admin\AdminOrderController;
+use App\Http\Controllers\Admin\AdminPromoController;
 use App\Http\Controllers\Seller\InventoryController;
-
-// Admin Controllers
-use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Admin\AdminKycController;
+use App\Http\Controllers\Admin\AdminBannerController;
 use App\Http\Controllers\Admin\AdminSellerController;
 use App\Http\Controllers\Admin\AdminProductController;
-use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminShippingController;
-use App\Http\Controllers\Admin\AdminBannerController;
-use App\Http\Controllers\Admin\AdminAdsController;
-use App\Http\Controllers\Admin\AdminPromoController;
 use App\Http\Controllers\Admin\AdminServiceFeeController;
 
 Route::get('/', [ShopController::class, 'index'])->name('homepage');
@@ -59,6 +61,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/checkout/rates', [CheckoutController::class, 'rates'])->name('checkout.rates');
     Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
     Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
+
+    // Orders management routes
+    Route::get('/me/orders', [BuyerOrderController::class, 'index'])->name('orders.index');
+    Route::get('/me/orders/{order}', [BuyerOrderController::class, 'show'])->name('orders.show');
 
     // Address management routes
     Route::get('/me/addresses', [AddressController::class, 'index'])->name('addresses.index');
@@ -165,9 +171,9 @@ Route::middleware('auth')->group(function () {
 
             // Orders Management
             Route::group(['prefix' => 'orders'], function () {
-                Route::get('/', [SellerController::class, 'ordersList'])->name('seller.orders.index');
-                Route::get('/{order}', [SellerController::class, 'ordersShow'])->name('seller.orders.show');
-                Route::put('/{order}/status', [SellerController::class, 'ordersUpdateStatus'])->name('seller.orders.update-status');
+                Route::get('/', [OrderController::class, 'index'])->name('seller.orders.index');
+                Route::get('/{order}', [OrderController::class, 'show'])->name('seller.orders.show');
+                Route::put('/{order}/status', [OrderController::class, 'updateStatus'])->name('seller.orders.update-status');
             });
 
             // Profile Management

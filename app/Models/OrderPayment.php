@@ -76,6 +76,7 @@ class OrderPayment extends Model
             'debit_card' => 'Debit Card',
             'qris' => 'QRIS',
             'virtual_account' => 'Virtual Account',
+            'emaal' => 'E-Maal',
             default => ucfirst(str_replace('_', ' ', $this->channel))
         };
     }

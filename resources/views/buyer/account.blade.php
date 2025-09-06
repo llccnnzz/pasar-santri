@@ -93,30 +93,46 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            <tr>
-                                                                <td>#1357</td>
-                                                                <td>March 45, 2020</td>
-                                                                <td>Processing</td>
-                                                                <td>$125.00 for 2 item</td>
-                                                                <td><a href="#" class="btn-small d-block">View</a>
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>#2468</td>
-                                                                <td>June 29, 2020</td>
-                                                                <td>Completed</td>
-                                                                <td>$364.00 for 5 item</td>
-                                                                <td><a href="#" class="btn-small d-block">View</a>
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>#2366</td>
-                                                                <td>August 02, 2020</td>
-                                                                <td>Completed</td>
-                                                                <td>$280.00 for 3 item</td>
-                                                                <td><a href="#" class="btn-small d-block">View</a>
-                                                                </td>
-                                                            </tr>
+                                                            @forelse($orders as $order)
+                                                                <tr>
+                                                                    {{-- Invoice --}}
+                                                                    <td>{{ $order->invoice }}</td>
+
+                                                                    {{-- Tanggal order --}}
+                                                                    <td>{{ $order->created_at ? $order->created_at->format('d M Y') : '-' }}
+                                                                    </td>
+
+                                                                    {{-- Status dengan badge --}}
+                                                                    <td>
+                                                                        <span class="badge bg-{{ $order->status_badge }}">
+                                                                            {{ $order->status_label }}
+                                                                        </span>
+                                                                    </td>
+
+                                                                    {{-- Total + jumlah item --}}
+                                                                    <td>
+                                                                        Rp
+                                                                        {{ number_format($order->total_amount, 0, ',', '.') }}
+                                                                        for {{ $order->order_items_count }}
+                                                                        item{{ $order->order_items_count > 1 ? 's' : '' }}
+                                                                    </td>
+
+                                                                    {{-- Action: tombol View --}}
+                                                                    <td>
+                                                                        <button type="button"
+                                                                            class="btn btn-sm btn-outline-primary btn-view-order"
+                                                                            data-id="{{ $order->id }}">
+                                                                            <i class="fi-rs-eye"></i> View
+                                                                        </button>
+                                                                    </td>
+                                                                </tr>
+                                                            @empty
+                                                                <tr>
+                                                                    <td colspan="5" class="text-center text-muted">
+                                                                        No orders found
+                                                                    </td>
+                                                                </tr>
+                                                            @endforelse
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -315,6 +331,62 @@
             </div>
         </div>
     </main>
+
+    <!-- Order Detail Modal -->
+    <div class="modal fade" id="orderModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Order Detail</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Bagian header -->
+                    <div class="mb-3">
+                        <strong>Invoice:</strong> <span class="order-invoice"></span><br>
+                        <strong>Date:</strong> <span class="order-date"></span><br>
+                        <strong>Status:</strong> <span class="order-status"></span><br>
+                        <strong>Shop:</strong> <span class="order-shop"></span>
+                    </div>
+
+                    <hr>
+
+                    <!-- Alamat -->
+                    <h6>Shipping Address</h6>
+                    <div class="order-address mb-3"></div>
+
+                    <hr>
+
+                    <!-- Items -->
+                    <h6>Items</h6>
+                    <table class="table table-sm order-items">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Product</th>
+                                <th>Qty</th>
+                                <th>Price</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+
+                    <hr>
+
+                    <!-- Ringkasan -->
+                    <h6>Payment Summary</h6>
+                    <div class="order-summary"></div>
+
+                    <hr>
+
+                    <!-- Payment info -->
+                    <h6>Latest Payment</h6>
+                    <div class="order-latest-payment"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Add Address Modal -->
     <div class="modal fade" id="addAddressModal" tabindex="-1">
@@ -739,5 +811,75 @@
                     }
                 });
         }
+        $(document).on('click', '.btn-view-order', function(e) {
+            e.preventDefault();
+            let orderId = $(this).data('id');
+
+            $.get("{{ url('/me/orders') }}/" + orderId, function(res) {
+                // Header
+                $('#orderModal .modal-title').text('Order ' + res.invoice);
+                $('#orderModal .order-invoice').text(res.invoice);
+                $('#orderModal .order-date').text(res.created_at);
+                $('#orderModal .order-status').html(
+                    `<span class="badge bg-${res.status_badge}">${res.status}</span>`
+                );
+                $('#orderModal .order-shop').text(res.shop ? res.shop.name : '-');
+
+                // Alamat
+                let addr = res.address;
+                if (addr) {
+                    $('#orderModal .order-address').html(`
+                <strong>${addr.name}</strong><br>
+                ${addr.address_line_1 ?? ''}<br>
+                ${addr.city ?? ''}, ${addr.province ?? ''} ${addr.postal_code ?? ''}<br>
+                ${addr.country ?? ''}<br>
+                Phone: ${addr.phone ?? ''}
+            `);
+                }
+
+                // Items
+                let itemsHtml = '';
+                res.items.forEach(i => {
+                    itemsHtml += `
+                <tr>
+                    <td><img src="${i.image}" alt="" width="40"></td>
+                    <td>${i.name}</td>
+                    <td>${i.quantity}</td>
+                    <td>Rp ${parseInt(i.price).toLocaleString('id-ID')}</td>
+                    <td>Rp ${parseInt(i.item_total).toLocaleString('id-ID')}</td>
+                </tr>`;
+                });
+                $('#orderModal .order-items tbody').html(itemsHtml);
+
+                // Payment summary
+                let pay = res.payment;
+                if (pay) {
+                    $('#orderModal .order-summary').html(`
+                Subtotal: Rp ${parseInt(pay.subtotal).toLocaleString('id-ID')}<br>
+                Shipping: Rp ${parseInt(pay.shipping_cost).toLocaleString('id-ID')}<br>
+                Discount: Rp ${parseInt(pay.discount_amount).toLocaleString('id-ID')}<br>
+                Total: <strong>Rp ${parseInt(pay.total_amount).toLocaleString('id-ID')}</strong>
+            `);
+                }
+
+                // Latest payment
+                let lp = res.latest_payment;
+                if (lp) {
+                    $('#orderModal .order-latest-payment').html(`
+                Method: ${lp.channel}<br>
+                Status: ${lp.status}<br>
+                Value: Rp ${parseInt(lp.value).toLocaleString('id-ID')}<br>
+                Fee: Rp ${parseInt(lp.payment_fee).toLocaleString('id-ID')}<br>
+                Total Paid: Rp ${parseInt(lp.total_amount).toLocaleString('id-ID')}
+            `);
+                } else {
+                    $('#orderModal .order-latest-payment').html('<em>No payment recorded</em>');
+                }
+
+                // Tampilkan modal
+                let modal = new bootstrap.Modal(document.getElementById('orderModal'));
+                modal.show();
+            });
+        });
     </script>
 @endpush
