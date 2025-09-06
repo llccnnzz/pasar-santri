@@ -179,41 +179,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'role:admin']], func
             ->middleware('can:admin-dashboard|index banner')
             ->name('admin.banners.index');
 
-        Route::get('/create', [AdminBannerController::class, 'create'])
-            ->middleware('can:admin-dashboard|create banner')
-            ->name('admin.banners.create');
-
-        Route::post('/', [AdminBannerController::class, 'store'])
-            ->middleware('can:admin-dashboard|create banner')
-            ->name('admin.banners.store');
-
-        Route::get('/{banner}', [AdminBannerController::class, 'show'])
-            ->middleware('can:admin-dashboard|show banner')
-            ->name('admin.banners.show');
-
-        Route::get('/{banner}/edit', [AdminBannerController::class, 'edit'])
-            ->middleware('can:admin-dashboard|update banner')
-            ->name('admin.banners.edit');
-
         Route::put('/{banner}', [AdminBannerController::class, 'update'])
             ->middleware('can:admin-dashboard|update banner')
             ->name('admin.banners.update');
-
-        Route::delete('/{banner}', [AdminBannerController::class, 'destroy'])
-            ->middleware('can:admin-dashboard|delete banner')
-            ->name('admin.banners.destroy');
-
-        Route::post('/{banner}/toggle-status', [AdminBannerController::class, 'toggleStatus'])
-            ->middleware('can:admin-dashboard|update banner')
-            ->name('admin.banners.toggle-status');
-
-        Route::post('/reorder', [AdminBannerController::class, 'reorder'])
-            ->middleware('can:admin-dashboard|update banner')
-            ->name('admin.banners.reorder');
-
-        Route::get('/{banner}/analytics', [AdminBannerController::class, 'analytics'])
-            ->middleware('can:admin-dashboard|show banner')
-            ->name('admin.banners.analytics');
     });
 
     // ===================================================================
