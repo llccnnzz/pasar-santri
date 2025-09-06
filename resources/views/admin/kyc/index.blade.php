@@ -22,7 +22,7 @@
             <div class="card-body p-20">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0">
-                        <div class="icon rounded-3 bg-primary bg-opacity-10">
+                        <div class="icon rounded-3">
                             <i data-feather="file-text" class="text-primary"></i>
                         </div>
                     </div>
@@ -39,7 +39,7 @@
             <div class="card-body p-20">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0">
-                        <div class="icon rounded-3 bg-warning bg-opacity-10">
+                        <div class="icon rounded-3">
                             <i data-feather="clock" class="text-warning"></i>
                         </div>
                     </div>
@@ -56,7 +56,7 @@
             <div class="card-body p-20">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0">
-                        <div class="icon rounded-3 bg-success bg-opacity-10">
+                        <div class="icon rounded-3">
                             <i data-feather="check-circle" class="text-success"></i>
                         </div>
                     </div>
@@ -73,7 +73,7 @@
             <div class="card-body p-20">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0">
-                        <div class="icon rounded-3 bg-danger bg-opacity-10">
+                        <div class="icon rounded-3">
                             <i data-feather="x-circle" class="text-danger"></i>
                         </div>
                     </div>
