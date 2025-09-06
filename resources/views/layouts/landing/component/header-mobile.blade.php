@@ -40,7 +40,7 @@
                     @if(auth()->user() && auth()->user()->primary_address)
                         <a href="/me?page=address">
                             <i class="fi-rs-marker"></i>
-                            {{ auth()->user()->primary_address['city'] ?? 'Your Location' }}, {{ auth()->user()->primary_address['state'] ?? '' }}
+                            {{ auth()->user()->primary_address['subdistrict'] ?? 'Your Location' }}, {{ auth()->user()->primary_address['city'] ?? '' }}, {{ auth()->user()->primary_address['state'] ?? '' }}
                         </a>
                     @else
                         <a href="{{ auth()->user() ? '/me?page=address' : route('login') }}">
