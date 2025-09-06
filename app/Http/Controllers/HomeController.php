@@ -1,7 +1,7 @@
 <?php
-
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -30,7 +30,12 @@ class HomeController extends Controller
     public function account(Request $request)
     {
         $currentUser = $request->user();
-        $addresses = $currentUser->addresses ?? [];
-        return view('buyer.account', compact('currentUser', 'addresses'));
+        $addresses   = $currentUser->addresses ?? [];
+        $orders      = Order::with('shop')
+            ->forUser($currentUser->id)
+            ->latest('created_at')
+            ->get();
+
+        return view('buyer.account', compact('currentUser', 'addresses', 'orders'));
     }
 }
