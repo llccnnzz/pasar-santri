@@ -52,6 +52,14 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'role:admin']], func
         Route::get('/{user}/shop', [AdminSellerController::class, 'showShop'])
             ->middleware('can:admin-dashboard|show seller')
             ->name('admin.sellers.shop');
+
+        Route::post('/{user}/suspend-shop', [AdminSellerController::class, 'suspendShop'])
+            ->middleware('can:admin-dashboard|update seller')
+            ->name('admin.sellers.suspend-shop');
+
+        Route::post('/{user}/unsuspend-shop', [AdminSellerController::class, 'unsuspendShop'])
+            ->middleware('can:admin-dashboard|update seller')
+            ->name('admin.sellers.unsuspend-shop');
     });
 
     // ===================================================================

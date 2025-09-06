@@ -36,6 +36,7 @@ class User extends Authenticatable
         'login_attempts',
         'last_login_at',
         'notification_preferences',
+        'is_active',
     ];
 
     /**
@@ -231,5 +232,20 @@ class User extends Authenticatable
             'push_orders' => true,
             'push_marketing' => false,
         ];
+    }
+
+    public function products()
+    {
+        return $this->hasManyThrough(Product::class, Shop::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasManyThrough(Order::class, Shop::class);
+    }
+
+    public function kycApplications()
+    {
+        return $this->hasMany(KycApplication::class);
     }
 }
