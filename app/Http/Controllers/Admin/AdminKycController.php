@@ -8,6 +8,34 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * AdminKycController
+ * 
+ * Handles KYC (Know Your Customer) application management for administrators.
+ * Provides comprehensive functionality for reviewing, approving, and rejecting
+ * seller verification applications.
+ * 
+ * Features:
+ * - List all KYC applications with filtering and search
+ * - View individual application details with documents
+ * - Approve applications (grants seller role)
+ * - Reject applications with reasons (removes seller role)
+ * - Bulk actions for multiple applications
+ * - Statistics and notifications for pending applications
+ * 
+ * Views:
+ * - resources/views/admin/kyc/index.blade.php - Applications listing
+ * - resources/views/admin/kyc/show.blade.php - Application details
+ * 
+ * Middleware:
+ * - ShareAdminData: Provides $pendingKycCount for layout
+ * 
+ * Permissions Required:
+ * - admin-dashboard (basic access)
+ * - index kyc (view applications)
+ * - show kyc (view application details)
+ * - update kyc (approve/reject applications)
+ */
 class AdminKycController extends Controller
 {
     /**
@@ -57,7 +85,7 @@ class AdminKycController extends Controller
     public function show(KycApplication $kycApplication)
     {
         $kycApplication->load(['user', 'reviewer']);
-        
+
         return view('admin.kyc.show', compact('kycApplication'));
     }
 
@@ -95,7 +123,7 @@ class AdminKycController extends Controller
 
         } catch (\Exception $e) {
             DB::rollback();
-            
+
             return redirect()
                 ->back()
                 ->with('error', 'Failed to approve KYC application. Please try again.');
@@ -137,7 +165,7 @@ class AdminKycController extends Controller
 
         } catch (\Exception $e) {
             DB::rollback();
-            
+
             return redirect()
                 ->back()
                 ->with('error', 'Failed to reject KYC application. Please try again.');
@@ -150,7 +178,7 @@ class AdminKycController extends Controller
     public function pendingCount()
     {
         $count = KycApplication::pending()->count();
-        
+
         return response()->json(['count' => $count]);
     }
 
@@ -234,7 +262,7 @@ class AdminKycController extends Controller
 
         } catch (\Exception $e) {
             DB::rollback();
-            
+
             return redirect()
                 ->back()
                 ->with('error', 'Failed to perform bulk action. Please try again.');
