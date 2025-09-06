@@ -3,7 +3,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="position-relative newsletter-inner">
+                    <div class="position-relative newsletter-inner" style="background-image: url({{ $bannerPromotion['footline'] }})">
                         <div class="newsletter-content">
                             <h2 class="mb-20">
                                 Stay home & get your daily <br />
@@ -15,7 +15,6 @@
                                 <button class="btn" type="submit">Subscribe</button>
                             </form>
                         </div>
-                        <img src="/assets/imgs/banner/banner-9.png" alt="newsletter" />
                     </div>
                 </div>
             </div>
@@ -99,8 +98,8 @@
                 <div class="col">
                     <div class="widget-about font-md mb-md-3 mb-lg-3 mb-xl-0">
                         <div class="logo mb-30">
-                            <a href="index.html" class="mb-15"><img src="/assets/imgs/theme/logo.svg" alt="logo" /></a>
-                            <p class="font-lg text-heading">Awesome grocery store website template</p>
+                            <a href="index.html" class="mb-15"><img src="/assets/imgs/theme/logo.png" style="height: 100px; width: auto" alt="logo" /></a>
+                            <p class="font-lg text-heading">@yield('description', 'Discover quality products from trusted sellers in our marketplace. Shop with confidence and enjoy great deals on electronics, fashion, home & garden, and more.')</p>
                         </div>
                         <ul class="contact-infor">
                             <li><img src="/assets/imgs/theme/icons/icon-location.svg" alt="" /><strong>Address: </strong> <span>5171 W Campbell Ave undefined Kent, Utah 53127 United States</span></li>
@@ -177,16 +176,12 @@
                 <div class="footer-bottom"></div>
             </div>
             <div class="col-xl-4 col-lg-6 col-md-6">
-                <p class="font-sm mb-0">&copy; 2024, <strong class="text-brand">Nest</strong> - HTML Ecommerce Template <br />All rights reserved</p>
+                <p class="font-sm mb-0">&copy; {{ now()->format('Y') }}, <strong class="text-brand">Pasar Santri</strong> All rights reserved</p>
             </div>
             <div class="col-xl-4 col-lg-6 text-center d-none d-xl-block">
                 <div class="hotline d-lg-inline-flex mr-30">
                     <img src="/assets/imgs/theme/icons/phone-call.svg" alt="hotline" />
-                    <p>1900 - 6666<span>Working 8:00 - 22:00</span></p>
-                </div>
-                <div class="hotline d-lg-inline-flex">
-                    <img src="/assets/imgs/theme/icons/phone-call.svg" alt="hotline" />
-                    <p>1900 - 8888<span>24/7 Support Center</span></p>
+                    <p>0333-8917529<span>Working 7:00 - 22:00</span></p>
                 </div>
             </div>
             <div class="col-xl-4 col-lg-6 col-md-6 text-end d-none d-md-block">
