@@ -43,7 +43,7 @@
                                         @foreach(auth()->user()->addresses as $address)
                                             @if(!isset($address['is_primary']) || !$address['is_primary'])
                                                 <option value="{{ $address['id'] }}">
-                                                    {{ $address['city'] }}, {{ $address['province'] }}
+                                                    {{ $address['subdistrict'] }}, {{ $address['city'] }}, {{ $address['province'] }}
                                                 </option>
                                             @endif
                                         @endforeach
