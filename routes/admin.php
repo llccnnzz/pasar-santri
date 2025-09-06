@@ -326,41 +326,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'role:admin']], func
             ->middleware('can:admin-dashboard|index service fee')
             ->name('admin.service-fees.index');
 
-        Route::get('/create', [AdminServiceFeeController::class, 'create'])
-            ->middleware('can:admin-dashboard|create service fee')
-            ->name('admin.service-fees.create');
-
-        Route::post('/', [AdminServiceFeeController::class, 'store'])
-            ->middleware('can:admin-dashboard|create service fee')
-            ->name('admin.service-fees.store');
-
-        Route::get('/{serviceFee}', [AdminServiceFeeController::class, 'show'])
-            ->middleware('can:admin-dashboard|show service fee')
-            ->name('admin.service-fees.show');
-
-        Route::get('/{serviceFee}/edit', [AdminServiceFeeController::class, 'edit'])
-            ->middleware('can:admin-dashboard|update service fee')
-            ->name('admin.service-fees.edit');
-
         Route::put('/{serviceFee}', [AdminServiceFeeController::class, 'update'])
             ->middleware('can:admin-dashboard|update service fee')
             ->name('admin.service-fees.update');
-
-        Route::delete('/{serviceFee}', [AdminServiceFeeController::class, 'destroy'])
-            ->middleware('can:admin-dashboard|delete service fee')
-            ->name('admin.service-fees.destroy');
-
-        Route::post('/{serviceFee}/toggle-status', [AdminServiceFeeController::class, 'toggleStatus'])
-            ->middleware('can:admin-dashboard|update service fee')
-            ->name('admin.service-fees.toggle-status');
-
-        Route::get('/calculator/test', [AdminServiceFeeController::class, 'testCalculator'])
-            ->middleware('can:admin-dashboard|show service fee')
-            ->name('admin.service-fees.test-calculator');
-
-        Route::get('/revenue/report', [AdminServiceFeeController::class, 'revenueReport'])
-            ->middleware('can:admin-dashboard|show service fee')
-            ->name('admin.service-fees.revenue-report');
     });
 
     // ===================================================================
