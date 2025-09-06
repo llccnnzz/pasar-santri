@@ -153,6 +153,8 @@ class SellerController extends Controller
                 ->toMediaCollection('logo');
         }
 
+        $user->assignRole('seller');
+
         return redirect()->route('seller.shop.settings')->with('success', 'Your shop has been created successfully! You can now configure additional settings.');
     }
 
