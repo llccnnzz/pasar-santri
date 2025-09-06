@@ -227,6 +227,14 @@ Route::middleware('auth')->group(function () {
                 ->middleware('permission:admin-dashboard|index kyc')
                 ->name('admin.kyc.index');
 
+            Route::get('/pending-count', [AdminKycController::class, 'pendingCount'])
+                ->middleware('permission:admin-dashboard|index kyc')
+                ->name('admin.kyc.pending-count');
+
+            Route::post('/bulk-action', [AdminKycController::class, 'bulkAction'])
+                ->middleware('permission:admin-dashboard|update kyc')
+                ->name('admin.kyc.bulk-action');
+
             Route::get('/{kycApplication}', [AdminKycController::class, 'show'])
                 ->middleware('permission:admin-dashboard|show kyc')
                 ->name('admin.kyc.show');
@@ -239,13 +247,6 @@ Route::middleware('auth')->group(function () {
                 ->middleware('permission:admin-dashboard|update kyc')
                 ->name('admin.kyc.reject');
 
-            Route::get('/pending/count', [AdminKycController::class, 'pendingCount'])
-                ->middleware('permission:admin-dashboard|index kyc')
-                ->name('admin.kyc.pending-count');
-
-            Route::post('/bulk-action', [AdminKycController::class, 'bulkAction'])
-                ->middleware('permission:admin-dashboard|update kyc')
-                ->name('admin.kyc.bulk-action');
         });
 
         // ===================================================================
