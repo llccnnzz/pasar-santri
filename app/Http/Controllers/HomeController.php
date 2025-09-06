@@ -16,15 +16,9 @@ class HomeController extends Controller
         $this->middleware('auth');
     }
 
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
     public function index(Request $request)
     {
-        $currentUser = $request->user();
-        return view('buyer.account', compact('currentUser'));
+        return redirect('/me');
     }
 
     public function account(Request $request)
