@@ -110,10 +110,7 @@ class RoleAndPermissionSeeder extends Seeder
 
                 // Service Fee Management
                 'admin-dashboard|index service fee',
-                'admin-dashboard|show service fee',
-                'admin-dashboard|create service fee',
                 'admin-dashboard|update service fee',
-                'admin-dashboard|delete service fee',
 
                 // Analytics & Reports
                 'admin-dashboard|show analytics',
