@@ -13,7 +13,7 @@ class ShopSettingsUpdateRequest extends FormRequest
 
     public function rules(): array
     {
-        $shop = Auth::user()->shop;
+        $shop = $this->user()->shop;
 
         return [
             'name'                   => 'required|string|max:255|unique:shops,name,' . $shop->id,

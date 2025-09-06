@@ -7,36 +7,44 @@ use App\Models\ShippingMethod;
 use App\Models\Shop;
 use App\Models\ShopShippingMethod;
 use App\Services\BiteshipService;
+use App\Traits\CartTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class CheckoutController extends Controller
 {
-    public function index()
+    use CartTrait;
+
+    public function __construct()
     {
-        $user = Auth::user();
-        $cart = $user->cart;
+        $this->middleware('auth');
+    }
+    public function index(Request $request)
+    {
+        $currentUser = $request->user();
+        $currentUser->load('cart');
+        $cart = $currentUser->cart;
 
-        $cartItems = [];
-        if ($cart) {
-            if (is_array($cart->items)) {
-                $cartItems = $cart->items;
-            } elseif (is_string($cart->items)) {
-                $decoded   = json_decode($cart->items, true);
-                $cartItems = is_array($decoded) ? $decoded : [];
-            }
-        }
-
-        $addresses       = $user->addresses ?? [];
+        $addresses       = $currentUser->addresses ?? [];
         $shippingOptions = [];
 
-        return view('buyer.checkout.index', compact('cart', 'cartItems', 'addresses', 'shippingOptions'));
+        $cartData = $this->handleCartData($cart, true);
+        $cartItems = $cartData['cartItems'];
+        $paymentFeeConfig = $cartData['paymentFeeConfig'];
+
+        return view('buyer.checkout.index', compact(
+            'cart',
+            'cartItems',
+            'addresses',
+            'shippingOptions',
+            'paymentFeeConfig',
+        ));
     }
 
     public function getShippingMethods(Request $request)
     {
-        $user = Auth::user();
+        $user = auth()->user();
         $cart = $user->cart;
 
         $cartItems = [];
@@ -77,7 +85,7 @@ class CheckoutController extends Controller
 
     public function rates(Request $request, BiteshipService $biteship)
     {
-        $user      = Auth::user();
+        $user      = auth()->user();
         $addressId = $request->address_id;
         $methodId  = $request->method_id;
 
@@ -141,9 +149,12 @@ class CheckoutController extends Controller
 
     public function store(Request $request, BiteshipService $biteship)
     {
-        $user      = Auth::user();
+        $user      = auth()->user();
         $cart      = $user->cart;
-        $cartItems = is_string($cart->items) ? json_decode($cart->items, true) : ($cart->items ?? []);
+        $cartData = $this->handleCartData($cart, true);
+
+        $cartItems = $cartData['cartItems'];
+        $paymentFeeConfig = $cartData['paymentFeeConfig'];
         $addresses = $user->addresses ?? [];
 
         $address = collect($addresses)->firstWhere('id', $request->address_id);
@@ -207,7 +218,10 @@ class CheckoutController extends Controller
 
                 $shippingCost = $pickedRate['price'] ?? 0;
                 $subtotal     = collect($items)->sum(fn($it) => (float) $it['item_total']);
-                $totalAmount  = $subtotal + $shippingCost;
+                $paymentFee = ($paymentFeeConfig['type'] === 'fixed')
+                    ? $paymentFeeConfig['fixed']
+                    : max(($paymentFeeConfig['percent'] / 100) * $subtotal, $paymentFeeConfig['percent_min_value']);
+                $totalAmount  = $subtotal + $shippingCost + $paymentFee;
 
                 $order = Order::create([
                     'user_id'        => $user->id,
@@ -229,7 +243,7 @@ class CheckoutController extends Controller
                     'payment_detail' => [
                         'subtotal'        => (float) $subtotal,
                         'shipping_cost'   => (float) $shippingCost,
-                        'tax_amount'      => 0,
+                        'payment_fee'     => (float) $paymentFee,
                         'discount_amount' => 0,
                         'total_amount'    => (float) $totalAmount,
                     ],
@@ -242,6 +256,7 @@ class CheckoutController extends Controller
                     'reference_id'      => Order::generateReferenceId(),
                     'status'            => 'pending',
                     'value'             => $totalAmount,
+                    'payment_fee'       => $paymentFee,
                     'expired_at'        => now()->addDay(),
                 ]);
 
@@ -252,19 +267,25 @@ class CheckoutController extends Controller
 
             DB::commit();
 
-            return redirect()->route('checkout.success')
-                ->with('message', 'Pesanan berhasil dibuat!')
-                ->with('orders', collect($orders)->pluck('id'));
+            return redirect('/checkout/success?order_id='.collect($orders)->pluck('id').join(','))
+                ->with('message', 'Pesanan berhasil dibuat!');
         } catch (\Throwable $e) {
             DB::rollback();
             return back()->with('error', $e->getMessage());
         }
     }
 
-    public function success()
+    public function success(Request $request)
     {
-        $orders = session('orders', []);
-        $payments = OrderPayment::whereIn('order_id', $orders)->get(['reference_id']);
+        $orderIds = $request->query('order_id');
+
+        $orders = $orderIds ? explode(',', $orderIds) : [];
+
+        $payments = OrderPayment::whereIn('order_id', $orders)
+            ->where('status','pending')
+            ->where('expired_at', '>', now())
+            ->orderBy('created_at', 'DESC')
+            ->get()->take(1);
 
         return view('buyer.checkout.success', compact('payments'));
     }

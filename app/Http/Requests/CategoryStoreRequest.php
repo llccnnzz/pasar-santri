@@ -14,7 +14,7 @@ class CategoryStoreRequest extends FormRequest
 
     public function rules(): array
     {
-        $shop = Auth::user()->shop;
+        $shop = $this->user()->shop;
 
         return [
             'name' => 'required|string|max:255|unique:categories,name,NULL,id,shop_id,' . $shop->id,

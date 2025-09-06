@@ -15,9 +15,13 @@ use Illuminate\Support\Facades\Auth;
 
 class SellerController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     public function dashboard(Request $request)
     {
-        $seller = Auth::user();
+        $seller = auth()->user();
         $shop = $seller->shop;
 
         // Dashboard statistics
@@ -97,7 +101,7 @@ class SellerController extends Controller
     // Shop Setup
     public function shopSetup()
     {
-        $user = Auth::user();
+        $user = auth()->user();
 
         // If user already has a shop, redirect to settings
         if ($user->shop) {
@@ -119,7 +123,7 @@ class SellerController extends Controller
 
     public function shopSetupStore(ShopSetupStoreRequest $request)
     {
-        $user = Auth::user();
+        $user = auth()->user();
 
         // If user already has a shop, redirect to settings
         if ($user->shop) {
@@ -155,14 +159,14 @@ class SellerController extends Controller
     // Shop Settings
     public function shopSettings()
     {
-        $shop = Auth::user()->shop;
+        $shop = auth()->user()->shop;
 
         return view('seller.shop.settings', compact('shop'));
     }
 
     public function shopSettingsUpdate(ShopSettingsUpdateRequest $request)
     {
-        $shop = Auth::user()->shop;
+        $shop = auth()->user()->shop;
 
         $validated = $request->validated();
 
@@ -201,7 +205,7 @@ class SellerController extends Controller
     // Orders Management
     public function ordersList(Request $request)
     {
-        $shop = Auth::user()->shop;
+        $shop = auth()->user()->shop;
         $orders = $shop ? $shop->orders()->with('user', 'items.product')->latest()->paginate(15) : collect();
         return view('seller.orders.index', compact('orders'));
     }

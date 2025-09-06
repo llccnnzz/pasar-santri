@@ -11,9 +11,13 @@ use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     public function index(Request $request)
     {
-        $shop = Auth::user()->shop;
+        $shop = auth()->user()->shop;
 
         $query = Category::where('shop_id', $shop->id);
 
@@ -38,7 +42,7 @@ class CategoryController extends Controller
 
     public function store(CategoryStoreRequest $request)
     {
-        $shop      = Auth::user()->shop;
+        $shop      = auth()->user()->shop;
         $validated = $request->validated();
 
         // Generate slug if not provided
@@ -63,7 +67,7 @@ class CategoryController extends Controller
 
     public function show(Category $category)
     {
-        $shop = Auth::user()->shop;
+        $shop = auth()->user()->shop;
 
         if ($category->shop_id !== $shop->id) {
             abort(404);
@@ -76,7 +80,7 @@ class CategoryController extends Controller
 
     public function edit(Category $category)
     {
-        $shop = Auth::user()->shop;
+        $shop = auth()->user()->shop;
 
         if ($category->shop_id !== $shop->id) {
             abort(404);
@@ -87,7 +91,7 @@ class CategoryController extends Controller
 
     public function update(CategoryUpdateRequest $request, Category $category)
     {
-        $shop = Auth::user()->shop;
+        $shop = auth()->user()->shop;
 
         if ($category->shop_id !== $shop->id) {
             abort(404);
@@ -119,7 +123,7 @@ class CategoryController extends Controller
 
     public function destroy(Category $category)
     {
-        $shop = Auth::user()->shop;
+        $shop = auth()->user()->shop;
 
         if ($category->shop_id !== $shop->id) {
             abort(404);

@@ -15,7 +15,7 @@ class ShopBankUpdateRequest extends FormRequest
 
     public function rules(): array
     {
-        $shop = Auth::user()->shop;
+        $shop = $this->user()->shop;
         $bankAccountId = $this->route('bankAccount')->id;
 
         return [

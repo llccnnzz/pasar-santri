@@ -14,9 +14,13 @@ use App\Http\Requests\WalletWithdrawRequest;
 
 class WalletController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     public function index()
     {
-        $shop = Auth::user()->shop;
+        $shop = auth()->user()->shop;
 
         // Get or create shop balance
         $balance = ShopBalance::firstOrCreate(
@@ -47,7 +51,7 @@ class WalletController extends Controller
 
     public function transactions(Request $request)
     {
-        $shop = Auth::user()->shop;
+        $shop = auth()->user()->shop;
 
 
         $query = ShopBalanceLog::where('shop_id', $shop->id)->with('shopBank');
@@ -85,7 +89,7 @@ class WalletController extends Controller
 
     public function withdrawForm()
     {
-        $shop = Auth::user()->shop;
+        $shop = auth()->user()->shop;
 
 
         $balance = ShopBalance::where('shop_id', $shop->id)->first();
@@ -101,7 +105,7 @@ class WalletController extends Controller
 
     public function withdrawRequest(WalletWithdrawRequest $request)
     {
-        $shop = Auth::user()->shop;
+        $shop = auth()->user()->shop;
 
         $balance = ShopBalance::where('shop_id', $shop->id)->first();
 
@@ -152,7 +156,7 @@ class WalletController extends Controller
 
     public function withdrawHistory(Request $request)
     {
-        $shop = Auth::user()->shop;
+        $shop = auth()->user()->shop;
 
 
         $query = ShopBalanceLog::where('shop_id', $shop->id)
@@ -171,7 +175,7 @@ class WalletController extends Controller
 
     public function earnings(Request $request)
     {
-        $shop = Auth::user()->shop;
+        $shop = auth()->user()->shop;
 
 
         $query = ShopBalanceLog::where('shop_id', $shop->id)
@@ -202,7 +206,7 @@ class WalletController extends Controller
 
     public function transactionDetails($id)
     {
-        $shop = Auth::user()->shop;
+        $shop = auth()->user()->shop;
 
         $transaction = ShopBalanceLog::where('shop_id', $shop->id)
             ->where('id', $id)

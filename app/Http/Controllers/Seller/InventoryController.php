@@ -18,9 +18,13 @@ use App\Http\Requests\InventoryBulkStatusUpdateRequest;
 
 class InventoryController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     public function index(Request $request)
     {
-        $shop = Auth::user()->shop;
+        $shop = auth()->user()->shop;
 
         $query = Product::where('shop_id', $shop->id)->with(['categories', 'variants']);
 
@@ -41,7 +45,7 @@ class InventoryController extends Controller
 
     public function create()
     {
-        $shop = Auth::user()->shop;
+        $shop = auth()->user()->shop;
 
         // Get global categories (without shop_id) and local categories (with current shop_id)
         $globalCategories = Category::whereNull('shop_id')->orderBy('name')->get();
@@ -52,7 +56,7 @@ class InventoryController extends Controller
 
     public function store(InventoryStoreRequest $request)
     {
-        $shop = Auth::user()->shop;
+        $shop = auth()->user()->shop;
         $validated = $request->validated();
 
         // Validate that global categories exist and don't belong to any shop
@@ -156,7 +160,7 @@ class InventoryController extends Controller
 
     public function show(Product $product)
     {
-        $shop = Auth::user()->shop;
+        $shop = auth()->user()->shop;
 
         if (!$shop || $product->shop_id !== $shop->id) {
             abort(404);
@@ -169,7 +173,7 @@ class InventoryController extends Controller
 
     public function edit(Product $product)
     {
-        $shop = Auth::user()->shop;
+        $shop = auth()->user()->shop;
 
         if (!$shop || $product->shop_id !== $shop->id) {
             abort(404);
@@ -187,7 +191,7 @@ class InventoryController extends Controller
 
     public function update(InventoryUpdateRequest $request, Product $product)
     {
-        $shop = Auth::user()->shop;
+        $shop = auth()->user()->shop;
 
         if (!$shop || $product->shop_id !== $shop->id) {
             abort(404);
@@ -255,7 +259,7 @@ class InventoryController extends Controller
 
     public function destroy(Product $product)
     {
-        $shop = Auth::user()->shop;
+        $shop = auth()->user()->shop;
 
         if (!$shop || $product->shop_id !== $shop->id) {
             abort(404);
@@ -278,7 +282,7 @@ class InventoryController extends Controller
 
     public function addVariant(InventoryAddVariantRequest $request, Product $product)
     {
-        $shop = Auth::user()->shop;
+        $shop = auth()->user()->shop;
 
         if (!$shop || $product->shop_id !== $shop->id) {
             abort(404);
@@ -301,7 +305,7 @@ class InventoryController extends Controller
 
     public function removeVariant(ProductVariant $variant)
     {
-        $shop = Auth::user()->shop;
+        $shop = auth()->user()->shop;
         $product = $variant->product;
 
         if (!$shop || $product->shop_id !== $shop->id) {
@@ -315,7 +319,7 @@ class InventoryController extends Controller
 
     public function bulkStatusUpdate(InventoryBulkStatusUpdateRequest $request)
     {
-        $shop = Auth::user()->shop;
+        $shop = auth()->user()->shop;
 
         if (!$shop) {
             return response()->json(['error' => 'Shop not found'], 404);
@@ -330,7 +334,7 @@ class InventoryController extends Controller
 
     public function bulkDelete(InventoryBulkDeleteRequest $request)
     {
-        $shop = Auth::user()->shop;
+        $shop = auth()->user()->shop;
 
         if (!$shop) {
             return response()->json(['error' => 'Shop not found'], 404);

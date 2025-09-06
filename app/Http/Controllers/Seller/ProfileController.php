@@ -11,12 +11,16 @@ use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display profile overview
      */
     public function index()
     {
-        $user = Auth::user();
+        $user = auth()->user();
         return view('seller.profile.index', compact('user'));
     }
 
@@ -25,7 +29,7 @@ class ProfileController extends Controller
      */
     public function edit()
     {
-        $user = Auth::user();
+        $user = auth()->user();
         return view('seller.profile.edit', compact('user'));
     }
 
@@ -34,7 +38,7 @@ class ProfileController extends Controller
      */
     public function update(Request $request)
     {
-        $user = Auth::user();
+        $user = auth()->user();
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -68,7 +72,7 @@ class ProfileController extends Controller
      */
     public function security()
     {
-        $user = Auth::user();
+        $user = auth()->user();
         return view('seller.profile.security', compact('user'));
     }
 
@@ -82,7 +86,7 @@ class ProfileController extends Controller
             'password' => 'required|min:8|confirmed',
         ]);
 
-        $user = Auth::user();
+        $user = auth()->user();
 
         if (!Hash::check($request->current_password, $user->password)) {
             return back()->withErrors(['current_password' => 'Current password is incorrect.']);
@@ -101,7 +105,7 @@ class ProfileController extends Controller
      */
     public function withdrawalPin()
     {
-        $user = Auth::user();
+        $user = auth()->user();
         return view('seller.profile.withdrawal-pin', compact('user'));
     }
 
@@ -110,7 +114,7 @@ class ProfileController extends Controller
      */
     public function updateWithdrawalPin(Request $request)
     {
-        $user = Auth::user();
+        $user = auth()->user();
 
         $rules = [
             'pin' => 'required|digits:6|confirmed',
@@ -132,7 +136,7 @@ class ProfileController extends Controller
 
         try {
             $user->setWithdrawalPin($request->pin);
-            
+
             $message = $user->hasWithdrawalPin() ? 'Withdrawal PIN updated successfully!' : 'Withdrawal PIN set successfully!';
             return back()->with('success', $message);
         } catch (\InvalidArgumentException $e) {
@@ -149,7 +153,7 @@ class ProfileController extends Controller
             'pin' => 'required|digits:6',
         ]);
 
-        $user = Auth::user();
+        $user = auth()->user();
 
         if (!$user->hasWithdrawalPin()) {
             return response()->json(['success' => false, 'message' => 'Withdrawal PIN not set.']);

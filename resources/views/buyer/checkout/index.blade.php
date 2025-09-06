@@ -83,9 +83,7 @@
                                 </div>
                                 <div class="card-body">
                                     <select class="form-control" name="payment_method" id="payment_method">
-                                        <option value="auto">Auto Paid (sementara)</option>
-                                        <option value="transfer">Transfer Bank</option>
-                                        <option value="cod">COD</option>
+                                        <option value="auto">Emaal</option>
                                     </select>
                                 </div>
                             </div>
@@ -113,6 +111,9 @@
                                             $qty = $item['available_quantity'];
                                             $subtotal = $qty * $item['price'];
                                             $shopSubtotal += $subtotal;
+                                            $shopPaymentFee = ($paymentFeeConfig['type'] === 'fixed')
+                                                ? $paymentFeeConfig['fixed']
+                                                : max(($paymentFeeConfig['percent'] / 100) * $shopSubtotal, $paymentFeeConfig['percent_min_value']);
                                         @endphp
 
                                         <div class="d-flex mb-3">
@@ -143,6 +144,13 @@
                                         </span>
                                     </div>
 
+                                    <div class="d-flex justify-content-between fw-bold fs-6 mt-2">
+                                        <span>Payment fee:<br>{{ $paymentFeeConfig['type'] === 'fixed' ? 'Rp. '.$paymentFeeConfig['fixed'] : $paymentFeeConfig['percent'].'%, minimum Rp. '.$paymentFeeConfig['percent_min_value'] }}</span>
+                                        <span id="total_payment_fee_{{ $shopId }}">
+                                            Rp{{ number_format($shopPaymentFee, 0, ',', '.') }}
+                                        </span>
+                                    </div>
+
                                     {{-- Ongkir per shop --}}
                                     <div class="d-flex justify-content-between fs-6 mt-1">
                                         <span>Ongkir:</span>
@@ -151,7 +159,7 @@
                                 </div>
 
                                 @php
-                                    $grandTotalInit += $shopSubtotal;
+                                    $grandTotalInit += ($shopSubtotal + $shopPaymentFee);
                                 @endphp
                             @endforeach
 
@@ -259,7 +267,9 @@
                 const subtotal = parseInt(shopTotalEl.innerText.replace(/\D/g, "")) || 0;
                 const shippingEl = document.getElementById("shipping_shop_" + shopId);
                 const shipping = parseInt(shippingEl.innerText.replace(/\D/g, "")) || 0;
-                grandTotal += subtotal + shipping;
+                const paymentFeeEl = document.getElementById("total_payment_fee_" + shopId);
+                const paymentFee = parseInt(paymentFeeEl.innerText.replace(/\D/g, "")) || 0;
+                grandTotal += subtotal + shipping + paymentFee;
             });
             document.getElementById("grand_total_all").innerText = formatRupiah(grandTotal);
         }

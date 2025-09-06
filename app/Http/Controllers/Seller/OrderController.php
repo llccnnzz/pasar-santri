@@ -11,13 +11,17 @@ use Illuminate\Validation\Rule;
 
 class OrderController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of orders for the authenticated seller's shop.
      */
     public function index(Request $request)
     {
-        $shop = Auth::user()->shop;
-        
+        $shop = auth()->user()->shop;
+
         $query = Order::with(['user', 'payments'])
             ->where('shop_id', $shop->id);
 
@@ -173,8 +177,8 @@ class OrderController extends Controller
      */
     public function export(Request $request)
     {
-        $shop = Auth::user()->shop;
-        
+        $shop = auth()->user()->shop;
+
         $query = Order::with(['user', 'payments'])
             ->where('shop_id', $shop->id);
 

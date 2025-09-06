@@ -197,7 +197,26 @@
                                                 <h6 class="text-muted">Subtotal</h6>
                                             </td>
                                             <td class="cart_total_amount subtotal">
-                                                <h4 id="cart-subtotal" class="text-brand text-end">Rp. {{ number_format($totals['subtotal']) }}</h4>
+                                                <h4 id="cart-subtotal" class="text-brand text-end">Rp. {{ number_format($summary['subtotal']) }}</h4>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="cart_total_label">
+                                                <h6 class="text-muted">Platform Fee</h6>
+                                                <p>
+                                                    <small>{{ $paymentFeeConfig['type'] === 'fixed' ? 'Rp. '.$paymentFeeConfig['fixed'] : $paymentFeeConfig['percent'].'%, minimum Rp. '.$paymentFeeConfig['percent_min_value'] }}</small>
+                                                </p>
+                                            </td>
+                                            <td class="cart_total_amount subtotal">
+                                                <h4 id="cart-payment_fee" class="text-brand text-end">Rp. {{ number_format($summary['payment_fee']) }}</h4>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="cart_total_label">
+                                                <h6 class="text-muted">Subtotal</h6>
+                                            </td>
+                                            <td class="cart_total_amount subtotal">
+                                                <h4 id="cart-total" class="text-brand text-end">Rp. {{ number_format($summary['total']) }}</h4>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -263,6 +282,8 @@
 
                     // Update the cart totals
                     document.getElementById('cart-subtotal').textContent = data.subtotal;
+                    document.getElementById('cart-payment_fee').textContent = data.payment_fee;
+                    document.getElementById('cart-total').textContent = data.total;
 
                     // Update the cart totals (reload page for simplicity)
                     // setTimeout(() => {

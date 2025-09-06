@@ -1,11 +1,14 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\GlobalVariable;
 use App\Models\Product;
+use App\Traits\CartTrait;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
+    use CartTrait;
     public function __construct()
     {
         $this->middleware('auth');
@@ -19,109 +22,29 @@ class CartController extends Controller
 
         if (! $cart || ! $cart->items) {
             return view('buyer.cart', [
-                'cartItems' => [],
-                'subTotal'  => 0,
-                'shipping'  => 0,
-                'tax'       => 0,
-                'total'     => 0,
-                'itemCount' => 0,
+                'cartItems'   => [],
+                'summary'    => [],
             ]);
         }
 
-        $cartItems  = json_decode($cart->items, true);
-        $productIds = collect($cartItems)->pluck('id')->toArray();
-
-        // Get current product data with fresh prices and stock
-        $products = Product::whereIn('id', $productIds)
-            ->with(['defaultImage', 'shop'])
-            ->get()
-            ->keyBy('id');
-
-        $subTotal         = 0;
-        $itemCount        = 0;
-        $updatedCartItems = [];
-
-        foreach ($cartItems as $item) {
-            $product = $products->get($item['id']);
-
-            if (! $product) {
-                // Product no longer exists, skip it
-                continue;
-            }
-
-            $isAvailable       = true;
-            $message           = null;
-            $availableQuantity = $item['quantity'];
-
-            // Check stock availability
-            if ($product->stock <= 0) {
-                $isAvailable       = false;
-                $message           = 'Out of Stock';
-                $availableQuantity = 0;
-            } elseif ($product->stock < $item['quantity']) {
-                $message           = "Only {$product->stock} available";
-                $availableQuantity = $product->stock;
-            }
-
-            // Use current product price (in case price changed)
-            $currentPrice = $product->final_price;
-            $itemTotal    = $currentPrice * $availableQuantity;
-
-            $updatedCartItems[] = [
-                'id'                 => $item['id'],
-                'quantity'           => $item['quantity'],
-                'available_quantity' => $availableQuantity,
-                'price'              => $currentPrice,
-                'original_price'     => $product->price,
-                'name'               => $product->name,
-                'description'        => $product->meta_description,
-                'weight'             => $product->weight,
-                'slug'               => $product->slug,
-                'image'              => $product->defaultImage ? $product->defaultImage->getFullUrl() : null,
-                'is_available'       => $isAvailable,
-                'message'            => $message,
-                'item_total'         => $itemTotal,
-                'shop_id'            => $product->shop->id,
-                'shop_name'          => $product->shop->name ?? 'Unknown Shop',
-                'stock'              => $product->stock,
-            ];
-
-            if ($isAvailable) {
-                $subTotal += $itemTotal;
-                $itemCount += $availableQuantity;
-            }
-        }
-
-        // Update cart with current data
-        $cart->update(['items' => json_encode($updatedCartItems)]);
-
-        // Calculate shipping
-        $shipping = $this->calculateShipping($subTotal, $itemCount);
-
-        // Calculate tax (11%)
-        $taxRate = 11;
-        $tax     = $subTotal * ($taxRate / 100);
-
-        // Calculate total
-        $total = $subTotal + $shipping + $tax;
-
-        // Count out of stock items
-        $outOfStockItems = collect($updatedCartItems)->where('is_available', false)->count();
+        $cart = $this->handleCartData($cart);
 
         // Prepare totals array for view
-        $totals = [
-            'subtotal' => $subTotal,
-            'shipping' => $shipping,
-            'tax'      => $tax,
-            'tax_rate' => $taxRate,
-            'total'    => $total,
+        $summary = [
+            'subtotal'    => $cart['subTotal'],
+            'payment_fee' => $cart['paymentFee'],
+            'total'       => $cart['total'],
         ];
+        $cartItems = $cart['cartItems'];
+        $outOfStockItems = $cart['outOfStockItems'];
+        $paymentFeeConfig = $cart['paymentFeeConfig'];
 
         return view('buyer.cart', compact(
             'cartItems',
-            'totals',
-            'outOfStockItems'
-        ))->with('cartItems', $updatedCartItems);
+            'summary',
+            'outOfStockItems',
+            'paymentFeeConfig',
+        ));
     }
 
     public function add(Request $request)
@@ -289,16 +212,28 @@ class CartController extends Controller
         // Calculate new totals
         $itemTotal = $product->final_price * $request->quantity;
         $subTotal  = array_sum(array_column($cartItems, 'item_total'));
-        $shipping  = $this->calculateShipping(array_sum(array_column($cartItems, 'item_total')), array_sum(array_column($cartItems, 'quantity')));
-        $tax       = $subTotal * 0.11;
+        $paymentFeeConfig = GlobalVariable::where('key','iLike', 'payment_fee%')->get()->mapWithKeys(function ($item) {
+            return [
+                str_replace('payment_fee_', '', $item['key']) => ($item['type'] === 'float' ? (float) $item['value'] : $item['value'])
+            ];
+        })->toArray();
+
+        // Calculate payment fee
+        if ($paymentFeeConfig['type'] === 'percent') {
+            $paymentFee = $subTotal * ($paymentFeeConfig['percent'] / 100);
+            if ($paymentFee < $paymentFeeConfig['percent_min_value']) {
+                $paymentFee = $paymentFeeConfig['percent_min_value'];
+            }
+        } else {
+            $paymentFee = $paymentFeeConfig['fixed'];
+        }
 
         return response()->json([
-            'success'    => true,
-            'item_total' => 'Rp. ' . number_format($itemTotal),
-            'subtotal'   => 'Rp. ' . number_format($subTotal),
-            'shipping'   => 'Rp. ' . number_format($shipping),
-            'tax'        => 'Rp. ' . number_format($tax),
-            'total'      => 'Rp. ' . number_format($subTotal + $shipping + $tax),
+            'success'     => true,
+            'item_total'  => 'Rp. ' . number_format($itemTotal),
+            'subtotal'    => 'Rp. ' . number_format($subTotal),
+            'payment_fee' => 'Rp. ' . number_format($paymentFee),
+            'total'       => 'Rp. ' . number_format($subTotal + $paymentFee),
         ]);
     }
 
@@ -330,24 +265,5 @@ class CartController extends Controller
 
             return redirect()->route('cart.index')->with('errors', 'Failed to clear cart');
         }
-    }
-
-    private function calculateShipping($subTotal, $itemCount)
-    {
-        // Free shipping for orders above Rp 500,000
-        if ($subTotal >= 500000) {
-            return 0;
-        }
-
-                               // Base shipping rate
-        $baseShipping = 15000; // Rp 15,000 base
-
-        // Additional cost per item above 3 items
-        if ($itemCount > 3) {
-            $additionalItems = $itemCount - 3;
-            $baseShipping += ($additionalItems * 5000); // Rp 5,000 per additional item
-        }
-
-        return $baseShipping;
     }
 }
