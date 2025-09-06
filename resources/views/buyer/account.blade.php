@@ -48,11 +48,6 @@
                                                 role="tab" aria-controls="account-detail" aria-selected="false">
                                                 <i class="fi-rs-user mr-10"></i>Account details</a>
                                         </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="#"
-                                                onclick="document.getElementById('form-logout').submit()"><i
-                                                    class="fi-rs-sign-out mr-10"></i>Logout</a>
-                                        </li>
                                     </ul>
                                 </div>
                             </div>
@@ -571,10 +566,6 @@
             </div>
         </div>
     </div>
-
-    <form style="display: none" id="form-logout" action="/logout" method="POST">
-        @csrf
-    </form>
 @endsection
 
 @push('script')

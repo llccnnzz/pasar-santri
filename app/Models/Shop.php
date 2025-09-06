@@ -29,12 +29,18 @@ class Shop extends Model implements HasMedia
         'social_links',
         'is_open',
         'is_featured',
+        'is_suspended',
+        'suspended_reason',
+        'suspended_at',
+        'suspended_by',
     ];
 
     protected $casts = [
         'social_links' => 'array',
         'is_open'      => 'boolean',
         'is_featured'  => 'boolean',
+        'is_suspended' => 'boolean',
+        'suspended_at' => 'datetime',
     ];
 
     public function products()
@@ -45,6 +51,11 @@ class Shop extends Model implements HasMedia
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function suspendedBy()
+    {
+        return $this->belongsTo(User::class, 'suspended_by');
     }
 
     public function shippingMethods()
@@ -86,5 +97,42 @@ class Shop extends Model implements HasMedia
     public function getFullAddressAttribute()
     {
         return "{$this->address}, {$this->subdistrict}, {$this->city}, {$this->province}, {$this->village}, {$this->postal_code}, {$this->country}";
+    }
+
+    // Scopes for suspension status
+    public function scopeNotSuspended($query)
+    {
+        return $query->where('is_suspended', false);
+    }
+
+    public function scopeSuspended($query)
+    {
+        return $query->where('is_suspended', true);
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('is_open', true)->where('is_suspended', false);
+    }
+
+    // Helper methods
+    public function isSuspended()
+    {
+        return $this->is_suspended;
+    }
+
+    public function isActive()
+    {
+        return $this->is_open && !$this->is_suspended;
+    }
+
+    public function canAcceptOrders()
+    {
+        return $this->isActive();
+    }
+
+    public function categories()
+    {
+        return $this->hasMany(Category::class, 'shop_id');
     }
 }

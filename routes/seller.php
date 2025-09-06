@@ -39,11 +39,11 @@ Route::group(['prefix' => 'seller', 'middleware' => ['auth']], function () {
 
     // All other seller routes require shop
     Route::group(['middleware' => ['has.shop']], function () {
-        // Dashboard
+        // Dashboard (always accessible, even for suspended shops)
         Route::get('/dashboard', [SellerController::class, 'dashboard'])->name('seller.dashboard');
 
-        // Product & SKU Management
-        Route::group(['prefix' => 'products'], function () {
+        // Product & SKU Management (requires non-suspended shop)
+        Route::group(['prefix' => 'products', 'middleware' => ['check.shop.suspension']], function () {
             Route::get('/', [InventoryController::class, 'index'])->name('seller.products.index');
             Route::get('/create', [InventoryController::class, 'create'])->name('seller.products.create');
             Route::post('/', [InventoryController::class, 'store'])->name('seller.products.store');
@@ -57,8 +57,8 @@ Route::group(['prefix' => 'seller', 'middleware' => ['auth']], function () {
             Route::post('/bulk-delete', [InventoryController::class, 'bulkDelete'])->name('seller.products.bulk-delete');
         });
 
-        // Category Management
-        Route::group(['prefix' => 'categories'], function () {
+        // Category Management (requires non-suspended shop)
+        Route::group(['prefix' => 'categories', 'middleware' => ['check.shop.suspension']], function () {
             Route::get('/', [CategoryController::class, 'index'])->name('seller.categories.index');
             Route::get('/create', [CategoryController::class, 'create'])->name('seller.categories.create');
             Route::post('/', [CategoryController::class, 'store'])->name('seller.categories.store');
@@ -68,8 +68,8 @@ Route::group(['prefix' => 'seller', 'middleware' => ['auth']], function () {
             Route::delete('/{category}', [CategoryController::class, 'destroy'])->name('seller.categories.destroy');
         });
 
-        // Bank Account Management
-        Route::group(['prefix' => 'bank-accounts'], function () {
+        // Bank Account Management (requires non-suspended shop)
+        Route::group(['prefix' => 'bank-accounts', 'middleware' => ['check.shop.suspension']], function () {
             Route::get('/', [ShopBankController::class, 'index'])->name('seller.bank-accounts.index');
             Route::get('/create', [ShopBankController::class, 'create'])->name('seller.bank-accounts.create');
             Route::post('/', [ShopBankController::class, 'store'])->name('seller.bank-accounts.store');
@@ -85,8 +85,8 @@ Route::group(['prefix' => 'seller', 'middleware' => ['auth']], function () {
             return view('seller.test-view');
         })->name('seller.test-view');
 
-        // Shipping Method Setup
-        Route::group(['prefix' => 'shipping'], function () {
+        // Shipping Method Setup (requires non-suspended shop)
+        Route::group(['prefix' => 'shipping', 'middleware' => ['check.shop.suspension']], function () {
             Route::get('/', [SellerController::class, 'shippingList'])->name('seller.shipping.index');
             // Route::post('/', [SellerController::class, 'shippingStore'])->name('seller.shipping.store');
             Route::post('/toggle', [SellerController::class, 'shippingToggle'])->name('seller.shipping.toggle');
@@ -98,8 +98,8 @@ Route::group(['prefix' => 'seller', 'middleware' => ['auth']], function () {
             // Route::post('/{shipping}/toggle-status', [SellerController::class, 'toggleShippingStatus'])->name('seller.shipping.toggle-status');
         });
 
-        // Wallet & Withdraw Flow
-        Route::group(['prefix' => 'wallet'], function () {
+        // Wallet & Withdraw Flow (requires non-suspended shop)
+        Route::group(['prefix' => 'wallet', 'middleware' => ['check.shop.suspension']], function () {
             Route::get('/', [WalletController::class, 'index'])->name('seller.wallet.index');
             Route::get('/transactions', [WalletController::class, 'transactions'])->name('seller.wallet.transactions');
             Route::get('/withdraw', [WalletController::class, 'withdrawForm'])->name('seller.wallet.withdraw.form');
@@ -109,20 +109,20 @@ Route::group(['prefix' => 'seller', 'middleware' => ['auth']], function () {
             Route::get('/transaction/{id}', [WalletController::class, 'transactionDetails'])->name('seller.wallet.transaction.details');
         });
 
-        // Shop Settings (require existing shop)
-        Route::group(['prefix' => 'shop'], function () {
+        // Shop Settings (require existing shop, requires non-suspended shop)
+        Route::group(['prefix' => 'shop', 'middleware' => ['check.shop.suspension']], function () {
             Route::get('/settings', [SellerController::class, 'shopSettings'])->name('seller.shop.settings');
             Route::put('/settings', [SellerController::class, 'shopSettingsUpdate'])->name('seller.shop.settings.update');
         });
 
-        // Orders Management
+        // Orders Management (view orders allowed, but status updates restricted for suspended shops)
         Route::group(['prefix' => 'orders'], function () {
             Route::get('/', [OrderController::class, 'index'])->name('seller.orders.index');
             Route::get('/{order}', [OrderController::class, 'show'])->name('seller.orders.show');
-            Route::put('/{order}/status', [OrderController::class, 'updateStatus'])->name('seller.orders.update-status');
+            Route::put('/{order}/status', [OrderController::class, 'updateStatus'])->name('seller.orders.update-status')->middleware('check.shop.suspension');
         });
 
-        // Profile Management
+        // Profile Management (always accessible)
         Route::group(['prefix' => 'profile'], function () {
             Route::get('/', [ProfileController::class, 'index'])->name('seller.profile.index');
             Route::get('/edit', [ProfileController::class, 'edit'])->name('seller.profile.edit');
