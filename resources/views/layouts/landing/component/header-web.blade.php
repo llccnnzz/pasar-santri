@@ -33,7 +33,7 @@
                                 <select name="address_id" class="select-active" id="location-selector" onchange="setPrimary(document.getElementById('location-selector').value)">
                                     @if(auth()->user() && auth()->user()->primary_address)
                                         <option value="{{ auth()->user()->primary_address['id'] ?? '' }}">
-                                            {{ auth()->user()->primary_address['city'] ?? 'Your Location' }}, {{ auth()->user()->primary_address['province'] ?? '' }}
+                                            {{ auth()->user()->primary_address['subdistrict'] ?? 'Your Location' }}, {{ auth()->user()->primary_address['city'] ?? '' }}, {{ auth()->user()->primary_address['province'] ?? '' }}
                                         </option>
                                     @else
                                         <option value="">Your Location</option>
