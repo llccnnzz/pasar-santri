@@ -6,12 +6,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasPermissions;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasRoles;
+    use HasFactory, Notifiable, HasRoles, HasPermissions;
 
     /**
      * The attributes that are mass assignable.
@@ -93,7 +94,7 @@ class User extends Authenticatable
     public function addAddress(array $address)
     {
         $addresses = $this->addresses ?? [];
-        
+
         // If this is set as primary, remove primary from others
         if (isset($address['is_primary']) && $address['is_primary']) {
             foreach ($addresses as &$existingAddress) {
@@ -104,7 +105,7 @@ class User extends Authenticatable
         // Add unique ID to address
         $address['id'] = uniqid();
         $addresses[] = $address;
-        
+
         $this->addresses = $addresses;
         $this->save();
     }
@@ -115,7 +116,7 @@ class User extends Authenticatable
     public function updateAddress(string $addressId, array $updatedData)
     {
         $addresses = $this->addresses ?? [];
-        
+
         foreach ($addresses as &$address) {
             if ($address['id'] === $addressId) {
                 // If setting as primary, remove primary from others
@@ -124,12 +125,12 @@ class User extends Authenticatable
                         $otherAddress['is_primary'] = false;
                     }
                 }
-                
+
                 $address = array_merge($address, $updatedData);
                 break;
             }
         }
-        
+
         $this->addresses = $addresses;
         $this->save();
     }
@@ -141,7 +142,7 @@ class User extends Authenticatable
     {
         $addresses = $this->addresses ?? [];
         $addresses = array_filter($addresses, fn($address) => $address['id'] !== $addressId);
-        
+
         $this->addresses = array_values($addresses);
         $this->save();
     }

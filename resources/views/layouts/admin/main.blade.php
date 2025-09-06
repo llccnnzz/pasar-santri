@@ -639,6 +639,47 @@
 <script src="/admin-assets/assets/js/amcharts/Animated.js"></script>
 <script src="/admin-assets/assets/js/apex/ecommerce-chart.js"></script>
 <script src="/admin-assets/assets/js/custom.js"></script>
+
+<!-- Flash Messages -->
+<script>
+@if(session('success'))
+    Swal.fire({
+        title: 'Success!',
+        text: '{{ session('success') }}',
+        icon: 'success',
+        timer: 3000,
+        showConfirmButton: false
+    });
+@endif
+
+@if(session('error'))
+    Swal.fire({
+        title: 'Error!',
+        text: '{{ session('error') }}',
+        icon: 'error',
+        confirmButtonText: 'OK'
+    });
+@endif
+
+@if(session('warning'))
+    Swal.fire({
+        title: 'Warning!',
+        text: '{{ session('warning') }}',
+        icon: 'warning',
+        confirmButtonText: 'OK'
+    });
+@endif
+
+@if(session('info'))
+    Swal.fire({
+        title: 'Info',
+        text: '{{ session('info') }}',
+        icon: 'info',
+        confirmButtonText: 'OK'
+    });
+@endif
+</script>
+
 @stack('scripts')
 </body>
 </html>
