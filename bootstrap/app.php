@@ -15,6 +15,14 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'has.shop' => \App\Http\Middleware\HasShop::class,
             'has.approved.kyc' => \App\Http\Middleware\HasApprovedKyc::class,
+            'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
+            'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+            'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
+            'share.admin.data' => \App\Http\Middleware\ShareAdminData::class,
+        ]);
+        
+        $middleware->web(append: [
+            \App\Http\Middleware\ShareAdminData::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

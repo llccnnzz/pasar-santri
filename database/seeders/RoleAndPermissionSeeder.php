@@ -60,35 +60,67 @@ class RoleAndPermissionSeeder extends Seeder
 
             ],
             'admin' => [
+                // Seller Management
                 'admin-dashboard|index seller',
                 'admin-dashboard|show seller',
                 'admin-dashboard|update seller',
 
+                // KYC Management
+                'admin-dashboard|index kyc',
+                'admin-dashboard|show kyc',
+                'admin-dashboard|update kyc',
+
+                // Product Management
                 'admin-dashboard|index product',
                 'admin-dashboard|show product',
                 'admin-dashboard|update product',
 
+                // Order Management
                 'admin-dashboard|index order',
                 'admin-dashboard|show order',
                 'admin-dashboard|update order',
 
+                // Shipping Method Management
                 'admin-dashboard|index shipping method',
                 'admin-dashboard|show shipping method',
                 'admin-dashboard|create shipping method',
                 'admin-dashboard|update shipping method',
                 'admin-dashboard|delete shipping method',
 
+                // Banner Management
                 'admin-dashboard|index banner',
                 'admin-dashboard|show banner',
                 'admin-dashboard|create banner',
                 'admin-dashboard|update banner',
                 'admin-dashboard|delete banner',
 
+                // Product Ads Management
                 'admin-dashboard|index ads',
                 'admin-dashboard|show ads',
                 'admin-dashboard|create ads',
                 'admin-dashboard|update ads',
                 'admin-dashboard|delete ads',
+
+                // Promo Management
+                'admin-dashboard|index promo',
+                'admin-dashboard|show promo',
+                'admin-dashboard|create promo',
+                'admin-dashboard|update promo',
+                'admin-dashboard|delete promo',
+
+                // Service Fee Management
+                'admin-dashboard|index service fee',
+                'admin-dashboard|show service fee',
+                'admin-dashboard|create service fee',
+                'admin-dashboard|update service fee',
+                'admin-dashboard|delete service fee',
+
+                // Analytics & Reports
+                'admin-dashboard|show analytics',
+
+                // System Settings
+                'admin-dashboard|show settings',
+                'admin-dashboard|update settings',
             ]
         ];
 

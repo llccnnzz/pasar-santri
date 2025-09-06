@@ -72,6 +72,8 @@ class RegisterController extends Controller
         $currentUser->cart()->create(['items' => json_encode([])]);
         $currentUser->wishlist()->create(['items' => json_encode([])]);
 
+        $currentUser->assignRole('customer');
+
         return $currentUser;
     }
 }
