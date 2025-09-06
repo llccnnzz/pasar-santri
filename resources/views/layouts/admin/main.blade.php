@@ -101,14 +101,6 @@
 
         <li><span class="cat">PRODUCT MANAGEMENT</span></li>
 
-        <!-- Products -->
-        <li class="{{ request()->routeIs('admin.products.*') ? 'mm-active' : '' }}">
-            <a href="{{ route('admin.products.index') }}" class="menu-title">
-                <span class="icon"><i data-feather="package"></i></span>
-                <span class="title">Products</span>
-            </a>
-        </li>
-
         <!-- Product Ads -->
         <li class="{{ request()->routeIs('admin.ads.*') ? 'mm-active' : '' }}">
             <a href="{{ route('admin.ads.index') }}" class="menu-title">
@@ -118,14 +110,6 @@
         </li>
 
         <li><span class="cat">ORDER MANAGEMENT</span></li>
-
-        <!-- Orders -->
-        <li class="{{ request()->routeIs('admin.orders.*') ? 'mm-active' : '' }}">
-            <a href="{{ route('admin.orders.index') }}" class="menu-title">
-                <span class="icon"><i data-feather="shopping-cart"></i></span>
-                <span class="title">Orders</span>
-            </a>
-        </li>
 
         <!-- Shipping -->
         <li class="{{ request()->routeIs('admin.shipping.*') ? 'mm-active' : '' }}">
@@ -160,24 +144,6 @@
             <a href="{{ route('admin.service-fees.index') }}" class="menu-title">
                 <span class="icon"><i data-feather="dollar-sign"></i></span>
                 <span class="title">Service Fees</span>
-            </a>
-        </li>
-
-        <li><span class="cat">SYSTEM</span></li>
-
-        <!-- Settings -->
-        <li class="{{ request()->routeIs('admin.settings.*') ? 'mm-active' : '' }}">
-            <a href="{{ route('admin.settings.index') }}" class="menu-title">
-                <span class="icon"><i data-feather="settings"></i></span>
-                <span class="title">Settings</span>
-            </a>
-        </li>
-
-        <!-- Reports -->
-        <li class="{{ request()->routeIs('admin.analytics.*') ? 'mm-active' : '' }}">
-            <a href="{{ route('admin.analytics.dashboard') }}" class="menu-title">
-                <span class="icon"><i data-feather="bar-chart-2"></i></span>
-                <span class="title">Reports</span>
             </a>
         </li>
     </ul>

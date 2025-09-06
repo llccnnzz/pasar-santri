@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\GlobalVariable;
 use App\Models\Product;
 use App\Models\Shop;
 use Illuminate\Http\Request;
@@ -52,7 +53,13 @@ class ShopController extends Controller
             'canonical' => route('homepage'),
         ];
 
-        return view('welcome', array_merge($homepageData, compact('seoData')));
+        $bannerPromotion = GlobalVariable::where('key','iLike', 'banner_promotion%')->get()->mapWithKeys(function ($item) {;
+            return [
+                str_replace('banner_promotion_', '', $item['key']) => ($item['type'] === 'array' ? json_decode($item['value'], true) : $item['value'])
+            ];
+        })->toArray();
+
+        return view('welcome', array_merge($homepageData, compact('seoData', 'bannerPromotion')));
     }
 
     public function list(Request $request)
@@ -157,7 +164,7 @@ class ShopController extends Controller
         // Prepare SEO data for shop page
         $seoData = [
             'title' => $shop->name . ' - Shop | ' . env('APP_NAME'),
-            'description' => $shop->description ?: 
+            'description' => $shop->description ?:
                             'Shop from ' . $shop->name . ' on ' . env('APP_NAME') . '. Discover quality products with great deals and reliable service.',
             'keywords' => $shop->name . ', shop, marketplace, products, ' . ($shop->categories ?? 'electronics, fashion, home garden'),
             'canonical' => request()->url(),
