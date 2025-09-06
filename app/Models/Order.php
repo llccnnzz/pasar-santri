@@ -112,6 +112,7 @@ class Order extends Model
         return match($this->status) {
             'pending' => 'warning',
             'paid' => 'info',
+            'confirmed' => 'info',
             'processing' => 'primary',
             'shipped' => 'secondary',
             'delivered' => 'success',
@@ -126,7 +127,8 @@ class Order extends Model
     {
         return match($this->status) {
             'pending' => 'Pending',
-            'paid' => 'Confirmed',
+            'paid' => 'Paid',
+            'confirmed' => 'Confirmed',
             'processing' => 'Processing',
             'shipped' => 'Shipped',
             'delivered' => 'Delivered',
