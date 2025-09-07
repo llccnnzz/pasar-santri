@@ -119,7 +119,7 @@
     @if($groupedMethods->count() > 0)
         @foreach($groupedMethods as $courier)
             <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 mb-4">
-                <div class="card border-0 rounded-3 courier-card cursor-pointer"
+                <div class="card border-0 rounded-3 courier-card cursor-pointer" style="background-color: {{ $courier['active_services'] === 0 ? '#ffcaca' : '#fff' }}"
                      onclick="showCourierMethods('{{ $courier['courier_code'] }}', '{{ $courier['courier_name'] }}')">
                     <div class="card-body p-4">
                         <div class="d-flex align-items-center justify-content-between mb-3">

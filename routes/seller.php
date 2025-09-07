@@ -88,14 +88,8 @@ Route::group(['prefix' => 'seller', 'middleware' => ['auth']], function () {
         // Shipping Method Setup (requires non-suspended shop)
         Route::group(['prefix' => 'shipping', 'middleware' => ['check.shop.suspension']], function () {
             Route::get('/', [SellerController::class, 'shippingList'])->name('seller.shipping.index');
-            // Route::post('/', [SellerController::class, 'shippingStore'])->name('seller.shipping.store');
             Route::post('/toggle', [SellerController::class, 'shippingToggle'])->name('seller.shipping.toggle');
-            // Route::get('/{shipping}/edit', [SellerController::class, 'shippingEdit'])->name('seller.shipping.edit');
-            // Route::put('/{shipping}', [SellerController::class, 'shippingUpdate'])->name('seller.shipping.update');
-            Route::delete('/{shipping}', [SellerController::class, 'shippingDestroy'])->name('seller.shipping.destroy');
-            Route::get('/test-biteship', [SellerController::class, 'testBiteship']);
-
-            // Route::post('/{shipping}/toggle-status', [SellerController::class, 'toggleShippingStatus'])->name('seller.shipping.toggle-status');
+            Route::post('/bulk-toggle', [SellerController::class, 'shippingBulkToggle'])->name('seller.shipping.bulk-toggle');
         });
 
         // Wallet & Withdraw Flow (requires non-suspended shop)
