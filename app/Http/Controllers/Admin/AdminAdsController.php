@@ -178,31 +178,19 @@ class AdminAdsController extends Controller
 
         // Flash sale requires valid_until
         if ($productAd->category === ProductAd::CATEGORY_FLASH_SALE) {
-            $rules['valid_until'] = 'required|date|after:now';
+            $rules['valid_until'] = 'nullable|after:now';
         }
 
         // Hot promo requires sort_order
         if ($productAd->category === ProductAd::CATEGORY_HOT_PROMO) {
-            $rules['sort_order'] = 'required|integer|min:0';
+            $rules['sort_order'] = 'nullable|integer|min:0';
         }
 
         $validated = $request->validate($rules);
 
-        try {
-            DB::beginTransaction();
+        $productAd->update($validated);
 
-            $productAd->update($validated);
-
-            DB::commit();
-
-            return redirect()->route('admin.ads.show', $productAd)
-                           ->with('success', 'Product ad updated successfully!');
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->withInput()
-                        ->with('error', 'Failed to update product ad: ' . $e->getMessage());
-        }
+        return redirect()->back()->with('success', 'Product ad updated successfully!');
     }
 
     /**
@@ -291,13 +279,13 @@ class AdminAdsController extends Controller
     {
         try {
             $products = ProductAd::getAutoSuggestProducts($category, 20);
-            
+
             $suggestions = $products->map(function ($product) {
                 $variant = $product->variants->first();
                 $finalPrice = $variant ? ($variant->final_price ?? $variant->price) : 0;
                 $originalPrice = $variant ? $variant->price : 0;
-                $discount = $originalPrice > 0 && $finalPrice < $originalPrice 
-                    ? round((($originalPrice - $finalPrice) / $originalPrice) * 100, 1) 
+                $discount = $originalPrice > 0 && $finalPrice < $originalPrice
+                    ? round((($originalPrice - $finalPrice) / $originalPrice) * 100, 1)
                     : 0;
 
                 return [
@@ -306,8 +294,8 @@ class AdminAdsController extends Controller
                     'sku' => $product->sku,
                     'price' => 'Rp' . number_format($finalPrice, 0, ',', '.'),
                     'discount' => $discount > 0 ? $discount . '%' : null,
-                    'image' => $product->media->isNotEmpty() 
-                        ? $product->media->first()->getUrl() 
+                    'image' => $product->media->isNotEmpty()
+                        ? $product->media->first()->getUrl()
                         : null
                 ];
             });
