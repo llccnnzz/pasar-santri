@@ -18,4 +18,9 @@ class ShippingMethod extends Model
         'logo_url',
         'active',
     ];
+
+    public function shopShippingMethods()
+    {
+        return $this->hasMany(ShopShippingMethod::class);
+    }
 }

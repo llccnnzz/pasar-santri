@@ -61,12 +61,21 @@ class CheckoutController extends Controller
         $result  = [];
 
         foreach ($grouped as $shopId => $items) {
-            $shop = Shop::with('shippingMethodsEnabled')->find($shopId);
+            $shop = Shop::find($shopId);
             if (! $shop) {
                 continue;
             }
 
-            $methods = $shop->shippingMethodsEnabled->map(function ($method) {
+            // Get shipping methods that are:
+            // 1. Enabled by the seller (shop_shipping_methods.enabled = true)
+            // 2. AND active by admin (shipping_methods.active = true)
+            $methods = ShippingMethod::whereHas('shopShippingMethods', function ($query) use ($shopId) {
+                $query->where('shop_id', $shopId)
+                      ->where('enabled', true);
+            })
+            ->where('active', true) // Admin must have enabled it
+            ->get()
+            ->map(function ($method) {
                 return [
                     'shipping_method_id' => $method->id,
                     'courier_code'       => $method->courier_code,
@@ -96,9 +105,12 @@ class CheckoutController extends Controller
         }
         $destinationPostal = $address['postal_code'];
 
-        $method = ShippingMethod::where('id', $methodId)->first();
+        // Check if the shipping method exists and is active (enabled by admin)
+        $method = ShippingMethod::where('id', $methodId)
+            ->where('active', true)
+            ->first();
         if (! $method) {
-            return response()->json(['error' => 'Metode pengiriman tidak ditemukan.'], 422);
+            return response()->json(['error' => 'Metode pengiriman tidak ditemukan atau tidak aktif.'], 422);
         }
 
         $cart      = $user->cart;
@@ -111,6 +123,16 @@ class CheckoutController extends Controller
             $shop = Shop::where('id', $shopId)->first();
             if (! $shop || empty($shop->postal_code)) {
                 continue;
+            }
+
+            // Check if this shop has enabled this shipping method
+            $shopShippingMethod = ShopShippingMethod::where('shop_id', $shopId)
+                ->where('shipping_method_id', $methodId)
+                ->where('enabled', true)
+                ->first();
+
+            if (! $shopShippingMethod) {
+                continue; // Skip if shop hasn't enabled this method
             }
 
             $originPostal = $shop->postal_code;
@@ -187,12 +209,18 @@ class CheckoutController extends Controller
                 $shopShipping = ShopShippingMethod::with('shippingMethod')
                     ->where('shop_id', $shopId)
                     ->where('shipping_method_id', $methodId)
+                    ->where('enabled', true) // Seller must have enabled it
                     ->first();
                 if (! $shopShipping) {
-                    throw new \Exception("Kurir tidak valid untuk toko $shopName");
+                    throw new \Exception("Kurir tidak valid atau tidak aktif untuk toko $shopName");
                 }
 
                 $shippingMethod = $shopShipping->shippingMethod;
+                
+                // Additional check: Admin must have enabled the shipping method
+                if (! $shippingMethod || ! $shippingMethod->active) {
+                    throw new \Exception("Metode pengiriman {$shippingMethod->courier_name} - {$shippingMethod->service_name} tidak tersedia");
+                }
 
                 $biteshipItems = collect($items)->map(function ($it) {
                     return [
