@@ -83,6 +83,7 @@ class CheckoutController extends Controller
                     'courier_name'       => $method->courier_name,
                     'service_name'       => $method->service_name,
                     'description'        => $method->description,
+                    'logo_url'           => $method->logo_url,
                 ];
             });
 
@@ -216,7 +217,7 @@ class CheckoutController extends Controller
                 }
 
                 $shippingMethod = $shopShipping->shippingMethod;
-                
+
                 // Additional check: Admin must have enabled the shipping method
                 if (! $shippingMethod || ! $shippingMethod->active) {
                     throw new \Exception("Metode pengiriman {$shippingMethod->courier_name} - {$shippingMethod->service_name} tidak tersedia");
