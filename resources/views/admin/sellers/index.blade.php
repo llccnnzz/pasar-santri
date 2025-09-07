@@ -1,256 +1,80 @@
 @extends('layouts.admin.main')
 
+@section('title', 'Seller Management')
+
 @section('content')
-<div class="main-content">
-    <div class="page-content">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h4 class="card-title mb-0">Seller Management</h4>
+<!--=== Start Seller Management Area ===-->
+<div class="card border-0 rounded-3 mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h2 class="mb-0">Seller Management</h2>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
+        <div class="card status-card border-0 rounded-3 mb-3">
+            <div class="card-body p-20">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="icon rounded-3">
+                            <i data-feather="users" class="text-primary"></i>
                         </div>
-
-                        <!-- Statistics Cards -->
-                        <div class="card-body">
-                            <div class="row mb-4">
-                                <div class="col-xl-3 col-md-6">
-                                    <div class="card bg-primary text-white">
-                                        <div class="card-body">
-                                            <div class="d-flex align-items-center">
-                                                <div class="flex-grow-1">
-                                                    <h5 class="text-white">{{ $statistics['total'] }}</h5>
-                                                    <p class="mb-0">Total Sellers</p>
-                                                </div>
-                                                <div class="flex-shrink-0">
-                                                    <i class="ri-user-line fs-1"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-xl-3 col-md-6">
-                                    <div class="card bg-success text-white">
-                                        <div class="card-body">
-                                            <div class="d-flex align-items-center">
-                                                <div class="flex-grow-1">
-                                                    <h5 class="text-white">{{ $statistics['active'] }}</h5>
-                                                    <p class="mb-0">Active Sellers</p>
-                                                </div>
-                                                <div class="flex-shrink-0">
-                                                    <i class="ri-user-check-line fs-1"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-xl-3 col-md-6">
-                                    <div class="card bg-warning text-white">
-                                        <div class="card-body">
-                                            <div class="d-flex align-items-center">
-                                                <div class="flex-grow-1">
-                                                    <h5 class="text-white">{{ $statistics['suspended'] }}</h5>
-                                                    <p class="mb-0">Suspended Shops</p>
-                                                </div>
-                                                <div class="flex-shrink-0">
-                                                    <i class="ri-user-forbid-line fs-1"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-xl-3 col-md-6">
-                                    <div class="card bg-info text-white">
-                                        <div class="card-body">
-                                            <div class="d-flex align-items-center">
-                                                <div class="flex-grow-1">
-                                                    <h5 class="text-white">{{ $statistics['with_shops'] }}</h5>
-                                                    <p class="mb-0">With Shops</p>
-                                                </div>
-                                                <div class="flex-shrink-0">
-                                                    <i class="ri-store-line fs-1"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Filter and Search -->
-                            <div class="row mb-3">
-                                <div class="col-md-8">
-                                    <form method="GET" class="d-flex gap-2">
-                                        <input type="text" name="search" class="form-control" placeholder="Search sellers or shops..."
-                                               value="{{ request('search') }}">
-                                        <select name="status" class="form-select">
-                                            <option value="">All Statuses</option>
-                                            <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
-                                            <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactive</option>
-                                            <option value="suspended" {{ request('status') === 'suspended' ? 'selected' : '' }}>Suspended</option>
-                                            <option value="no_shop" {{ request('status') === 'no_shop' ? 'selected' : '' }}>No Shop</option>
-                                        </select>
-                                        <button type="submit" class="btn btn-primary">
-                                            <i class="ri-search-line"></i> Search
-                                        </button>
-                                        <a href="{{ route('admin.sellers.index') }}" class="btn btn-secondary">
-                                            <i class="ri-refresh-line"></i> Reset
-                                        </a>
-                                    </form>
-                                </div>
-                                <div class="col-md-4 text-end">
-                                    <div class="btn-group">
-                                        <a href="{{ route('admin.sellers.index', array_merge(request()->all(), ['sort' => 'name', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc'])) }}"
-                                           class="btn btn-outline-secondary btn-sm">
-                                            Sort by Name
-                                            @if(request('sort') === 'name')
-                                                <i class="ri-arrow-{{ request('direction') === 'asc' ? 'up' : 'down' }}-line"></i>
-                                            @endif
-                                        </a>
-                                        <a href="{{ route('admin.sellers.index', array_merge(request()->all(), ['sort' => 'created_at', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc'])) }}"
-                                           class="btn btn-outline-secondary btn-sm">
-                                            Sort by Date
-                                            @if(request('sort') === 'created_at')
-                                                <i class="ri-arrow-{{ request('direction') === 'asc' ? 'up' : 'down' }}-line"></i>
-                                            @endif
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Sellers Table -->
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>Seller</th>
-                                            <th>Shop</th>
-                                            <th>Status</th>
-                                            <th>Products</th>
-                                            <th>Orders</th>
-                                            <th>Joined</th>
-                                            <th class="text-center">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @forelse($sellers as $seller)
-                                            @if(!$seller->shop)
-                                                @php continue; @endphp
-                                            @endif
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <div class="avatar-sm me-3">
-                                                        <div class="avatar-title bg-primary-subtle text-primary rounded-circle">
-                                                            {{ substr($seller->name, 0, 2) }}
-                                                        </div>
-                                                    </div>
-                                                    <div>
-                                                        <h6 class="mb-0">{{ $seller->name }}</h6>
-                                                        <small class="text-muted">{{ $seller->email }}</small>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                @if($seller->shop)
-                                                    <div>
-                                                        <strong>{{ $seller->shop->name }}</strong>
-                                                        @if($seller->shop->is_suspended)
-                                                            <span class="badge bg-danger ms-1">Suspended</span>
-                                                        @endif
-                                                    </div>
-                                                    <small class="text-muted">{{ $seller->shop->slug }}</small>
-                                                @else
-                                                    <span class="text-muted">No shop yet</span>
-                                                @endif
-                                            </td>
-                                            <td>
-                                                @if($seller->is_active)
-                                                    @if($seller->shop && $seller->shop->is_suspended)
-                                                        <span class="badge bg-warning">Shop Suspended</span>
-                                                    @else
-                                                        <span class="badge bg-success">Active</span>
-                                                    @endif
-                                                @else
-                                                    <span class="badge bg-danger">Inactive</span>
-                                                @endif
-                                            </td>
-                                            <td>
-                                                <span class="badge bg-primary">{{ $seller->products_count }}</span>
-                                            </td>
-                                            <td>
-                                                <span class="badge bg-info">{{ $seller->orders_count }}</span>
-                                            </td>
-                                            <td>
-                                                <small>{{ $seller->created_at->format('M d, Y') }}</small>
-                                            </td>
-                                            <td class="text-center">
-                                                <div class="btn-group">
-                                                    <a href="{{ route('admin.sellers.show', $seller) }}"
-                                                       class="btn btn-sm btn-outline-primary" title="View Details">
-                                                        <i class="ri-eye-line"></i>
-                                                    </a>
-
-                                                    @if($seller->shop)
-                                                        <a href="{{ route('admin.sellers.shop', $seller) }}"
-                                                           class="btn btn-sm btn-outline-info" title="View Shop">
-                                                            <i class="ri-store-line"></i>
-                                                        </a>
-
-                                                        @if($seller->shop->is_suspended)
-                                                            <button type="button"
-                                                                    class="btn btn-sm btn-outline-success unsuspend-btn"
-                                                                    data-seller-id="{{ $seller->id }}"
-                                                                    data-seller-name="{{ $seller->name }}"
-                                                                    data-shop-name="{{ $seller->shop->name }}"
-                                                                    title="Unsuspend Shop">
-                                                                <i class="ri-user-check-line"></i>
-                                                            </button>
-                                                        @else
-                                                            <button type="button"
-                                                                    class="btn btn-sm btn-outline-warning suspend-btn"
-                                                                    data-seller-id="{{ $seller->id }}"
-                                                                    data-seller-name="{{ $seller->name }}"
-                                                                    data-shop-name="{{ $seller->shop->name }}"
-                                                                    title="Suspend Shop">
-                                                                <i class="ri-user-forbid-line"></i>
-                                                            </button>
-                                                        @endif
-                                                    @endif
-
-                                                    <button type="button"
-                                                            class="btn btn-sm btn-outline-{{ $seller->is_active ? 'danger' : 'success' }} toggle-status-btn"
-                                                            data-seller-id="{{ $seller->id }}"
-                                                            data-current-status="{{ $seller->is_active ? 'active' : 'inactive' }}"
-                                                            title="{{ $seller->is_active ? 'Deactivate' : 'Activate' }} Seller">
-                                                        <i class="ri-{{ $seller->is_active ? 'close' : 'check' }}-line"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        @empty
-                                        <tr>
-                                            <td colspan="7" class="text-center py-4">
-                                                <div class="text-muted">
-                                                    <i class="ri-user-line fs-1"></i>
-                                                    <p class="mt-2">No sellers found</p>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        @endforelse
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <!-- Pagination -->
-                            @if($sellers->hasPages())
-                            <div class="d-flex justify-content-center mt-4">
-                                {{ $sellers->links() }}
-                            </div>
-                            @endif
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <span class="d-block mb-1 text-muted">Total Sellers</span>
+                        <h4 class="fs-20 mb-0">{{ number_format($statistics['total']) }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
+        <div class="card status-card border-0 rounded-3 mb-3">
+            <div class="card-body p-20">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="icon rounded-3">
+                            <i data-feather="user-check" class="text-success"></i>
                         </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <span class="d-block mb-1 text-muted">Active Sellers</span>
+                        <h4 class="fs-20 mb-0">{{ number_format($statistics['active']) }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
+        <div class="card status-card border-0 rounded-3 mb-3">
+            <div class="card-body p-20">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="icon rounded-3">
+                            <i data-feather="user-x" class="text-warning"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <span class="d-block mb-1 text-muted">Suspended</span>
+                        <h4 class="fs-20 mb-0">{{ number_format($statistics['suspended']) }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
+        <div class="card status-card border-0 rounded-3 mb-3">
+            <div class="card-body p-20">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="icon rounded-3">
+                            <i data-feather="shopping-bag" class="text-info"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <span class="d-block mb-1 text-muted">With Shops</span>
+                        <h4 class="fs-20 mb-0">{{ number_format($statistics['with_shops']) }}</h4>
                     </div>
                 </div>
             </div>
@@ -258,33 +82,254 @@
     </div>
 </div>
 
+<!-- Filters -->
+<div class="card border-0 rounded-3 mb-4">
+    <div class="card-body">
+        <form method="GET" action="{{ route('admin.sellers.index') }}" class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">Status Filter</label>
+                <select name="status" class="form-select">
+                    <option value="">All Status</option>
+                    <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
+                    <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactive</option>
+                    <option value="suspended" {{ request('status') === 'suspended' ? 'selected' : '' }}>Suspended</option>
+                    <option value="no_shop" {{ request('status') === 'no_shop' ? 'selected' : '' }}>No Shop</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Sort By</label>
+                <select name="sort" class="form-select">
+                    <option value="">Default</option>
+                    <option value="name" {{ request('sort') === 'name' ? 'selected' : '' }}>Name</option>
+                    <option value="created_at" {{ request('sort') === 'created_at' ? 'selected' : '' }}>Join Date</option>
+                    <option value="products_count" {{ request('sort') === 'products_count' ? 'selected' : '' }}>Products</option>
+                    <option value="orders_count" {{ request('sort') === 'orders_count' ? 'selected' : '' }}>Orders</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Search</label>
+                <input type="text" name="search" class="form-control" placeholder="Search by name, email, shop name..." value="{{ request('search') }}">
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary me-2">
+                    <i data-feather="search"></i> Filter
+                </button>
+                <a href="{{ route('admin.sellers.index') }}" class="btn btn-outline-secondary">
+                    <i data-feather="refresh-cw"></i> Reset
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Sellers Table -->
+<div class="card border-0 rounded-3">
+    <div class="card-body">
+        @if($sellers->count() > 0)
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th width="50">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="selectAll">
+                                </div>
+                            </th>
+                            <th>Seller</th>
+                            <th>Shop</th>
+                            <th>Status</th>
+                            <th>Products</th>
+                            <th>Orders</th>
+                            <th>Joined Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($sellers as $seller)
+                        <tr>
+                            <td>
+                                <div class="form-check">
+                                    <input class="form-check-input seller-checkbox" type="checkbox" value="{{ $seller->id }}">
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0">
+                                        <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                            @if($seller->avatar)
+                                                <img src="{{ $seller->avatar }}" alt="{{ $seller->name }}" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                                            @else
+                                                <i data-feather="user" class="text-primary" style="width: 18px; height: 18px;"></i>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6 class="mb-0">{{ $seller->name }}</h6>
+                                        <small class="text-muted">{{ $seller->email }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                @if($seller->shop)
+                                    <div>
+                                        <h6 class="mb-0">{{ $seller->shop->name }}</h6>
+                                        <small class="text-muted">{{ $seller->shop->slug }}</small>
+                                        @if($seller->shop->is_suspended)
+                                            <div>
+                                                <span class="badge bg-danger mt-1">Suspended</span>
+                                            </div>
+                                        @endif
+                                    </div>
+                                @else
+                                    <span class="text-muted">No shop yet</span>
+                                @endif
+                            </td>
+                            <td>
+                                @if($seller->is_active)
+                                    @if($seller->shop && $seller->shop->is_suspended)
+                                        <span class="badge bg-warning">Shop Suspended</span>
+                                    @else
+                                        <span class="badge bg-success">Active</span>
+                                    @endif
+                                @else
+                                    <span class="badge bg-secondary">Inactive</span>
+                                @endif
+                            </td>
+                            <td>
+                                <span class="badge bg-primary">{{ $seller->products_count ?? 0 }}</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-info">{{ $seller->orders_count ?? 0 }}</span>
+                            </td>
+                            <td>{{ $seller->created_at->format('M d, Y H:i') }}</td>
+                            <td>
+                                <div class="dropdown">
+                                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                        Actions
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('admin.sellers.show', $seller) }}">
+                                                <i data-feather="eye" class="me-2" style="width: 14px; height: 14px;"></i>
+                                                View Details
+                                            </a>
+                                        </li>
+                                        @if($seller->shop)
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('admin.sellers.shop', $seller) }}">
+                                                <i data-feather="shopping-bag" class="me-2" style="width: 14px; height: 14px;"></i>
+                                                View Shop
+                                            </a>
+                                        </li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        @if($seller->shop->is_suspended)
+                                        <li>
+                                            <button class="dropdown-item text-success" onclick="unsuspendShop('{{ $seller->id }}', '{{ $seller->name }}', '{{ $seller->shop->name }}')">
+                                                <i data-feather="user-check" class="me-2" style="width: 14px; height: 14px;"></i>
+                                                Unsuspend Shop
+                                            </button>
+                                        </li>
+                                        @else
+                                        <li>
+                                            <button class="dropdown-item text-warning" onclick="suspendShop('{{ $seller->id }}', '{{ $seller->name }}', '{{ $seller->shop->name }}')">
+                                                <i data-feather="user-x" class="me-2" style="width: 14px; height: 14px;"></i>
+                                                Suspend Shop
+                                            </button>
+                                        </li>
+                                        @endif
+                                        @endif
+                                        <li>
+                                            <button class="dropdown-item text-{{ $seller->is_active ? 'danger' : 'success' }}" onclick="toggleSellerStatus('{{ $seller->id }}', {{ $seller->is_active ? 'false' : 'true' }}, '{{ $seller->name }}')">
+                                                <i data-feather="{{ $seller->is_active ? 'user-x' : 'user-check' }}" class="me-2" style="width: 14px; height: 14px;"></i>
+                                                {{ $seller->is_active ? 'Deactivate' : 'Activate' }} Seller
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="8" class="text-center py-5">
+                                <i data-feather="users" class="mb-3" style="width: 48px; height: 48px;" stroke="1.5"></i>
+                                <h5>No Sellers Found</h5>
+                                <p class="text-muted">
+                                    @if(request()->hasAny(['status', 'search', 'sort']))
+                                        No sellers match your current filters.
+                                    @else
+                                        No sellers have registered yet.
+                                    @endif
+                                </p>
+                                @if(request()->hasAny(['status', 'search', 'sort']))
+                                    <a href="{{ route('admin.sellers.index') }}" class="btn btn-outline-primary">Clear Filters</a>
+                                @endif
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            @if($sellers->hasPages())
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <div>
+                        <p class="text-muted mb-0">
+                            Showing {{ $sellers->firstItem() }} to {{ $sellers->lastItem() }} of {{ $sellers->total() }} results
+                        </p>
+                    </div>
+                    <div>
+                        {{ $sellers->appends(request()->query())->links() }}
+                    </div>
+                </div>
+            @endif
+        @else
+            <div class="text-center py-5">
+                <i data-feather="users" class="mb-3" style="width: 48px; height: 48px;" stroke="1.5"></i>
+                <h5>No Sellers Found</h5>
+                <p class="text-muted">
+                    @if(request()->hasAny(['status', 'search', 'sort']))
+                        No sellers match your current filters.
+                    @else
+                        No sellers have registered yet.
+                    @endif
+                </p>
+                @if(request()->hasAny(['status', 'search', 'sort']))
+                    <a href="{{ route('admin.sellers.index') }}" class="btn btn-outline-primary">Clear Filters</a>
+                @endif
+            </div>
+        @endif
+    </div>
+</div>
+
 <!-- Suspend Shop Modal -->
-<div class="modal fade" id="suspendModal" tabindex="-1" aria-labelledby="suspendModalLabel" aria-hidden="true">
+<div class="modal fade" id="suspendModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="suspendModalLabel">Suspend Shop</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title">Suspend Shop</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form id="suspendForm">
+            <form id="suspendForm" method="POST">
                 @csrf
                 <div class="modal-body">
                     <div class="alert alert-warning">
-                        <i class="ri-alert-line"></i>
+                        <i data-feather="alert-triangle" class="me-2"></i>
                         You are about to suspend the shop <strong id="suspendShopName"></strong> owned by <strong id="suspendSellerName"></strong>.
                     </div>
-
                     <div class="mb-3">
-                        <label for="suspendReason" class="form-label">Suspension Reason <span class="text-danger">*</span></label>
-                        <textarea class="form-control" id="suspendReason" name="suspended_reason" rows="4"
-                                  placeholder="Please provide a detailed reason for the suspension..." required></textarea>
-                        <div class="invalid-feedback"></div>
+                        <label class="form-label">Suspension Reason <span class="text-danger">*</span></label>
+                        <textarea name="suspended_reason" class="form-control" rows="3" placeholder="Please provide a detailed reason for the suspension..." required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Admin Notes (Optional)</label>
+                        <textarea name="admin_notes" class="form-control" rows="2" placeholder="Any additional notes..."></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-warning">
-                        <i class="ri-user-forbid-line"></i> Suspend Shop
+                        <i data-feather="user-x"></i> Suspend Shop
                     </button>
                 </div>
             </form>
@@ -293,190 +338,142 @@
 </div>
 
 <!-- Unsuspend Shop Modal -->
-<div class="modal fade" id="unsuspendModal" tabindex="-1" aria-labelledby="unsuspendModalLabel" aria-hidden="true">
+<div class="modal fade" id="unsuspendModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="unsuspendModalLabel">Unsuspend Shop</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title">Unsuspend Shop</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
-                <div class="alert alert-info">
-                    <i class="ri-information-line"></i>
-                    Are you sure you want to unsuspend the shop <strong id="unsuspendShopName"></strong> owned by <strong id="unsuspendSellerName"></strong>?
+            <form id="unsuspendForm" method="POST">
+                @csrf
+                <div class="modal-body">
+                    <div class="alert alert-success">
+                        <i data-feather="check-circle" class="me-2"></i>
+                        You are about to unsuspend the shop <strong id="unsuspendShopName"></strong> owned by <strong id="unsuspendSellerName"></strong>.
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Admin Notes (Optional)</label>
+                        <textarea name="admin_notes" class="form-control" rows="3" placeholder="Any notes about this unsuspension..."></textarea>
+                    </div>
                 </div>
-                <p class="text-muted">The shop will be able to resume normal operations after unsuspension.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-success" id="confirmUnsuspend">
-                    <i class="ri-user-check-line"></i> Unsuspend Shop
-                </button>
-            </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">
+                        <i data-feather="user-check"></i> Unsuspend Shop
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
+<!-- Toggle Seller Status Modal -->
+<div class="modal fade" id="toggleStatusModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="toggleStatusTitle">Toggle Seller Status</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="toggleStatusForm" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
+                    <div class="alert" id="toggleStatusAlert">
+                        <i data-feather="info" class="me-2"></i>
+                        You are about to change the status of <strong id="toggleStatusSellerName"></strong>.
+                    </div>
+                    <input type="hidden" name="is_active" id="toggleStatusValue">
+                    <div class="mb-3">
+                        <label class="form-label">Admin Notes (Optional)</label>
+                        <textarea name="admin_notes" class="form-control" rows="3" placeholder="Any notes about this status change..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn" id="toggleStatusSubmitBtn">
+                        <i data-feather="check" id="toggleStatusIcon"></i> <span id="toggleStatusText">Update Status</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--=== End Seller Management Area ===-->
 @endsection
-
-@push('head')
-<style>
-.avatar-sm {
-    width: 2.5rem;
-    height: 2.5rem;
-}
-
-.avatar-title {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 500;
-}
-
-.table th {
-    border-top: none;
-    font-weight: 600;
-    color: #495057;
-}
-
-.btn-group .btn {
-    margin-right: 2px;
-}
-
-.btn-group .btn:last-child {
-    margin-right: 0;
-}
-</style>
-@endpush
 
 @push('scripts')
 <script>
 $(document).ready(function() {
-    let currentSellerId = null;
+    // Initialize Feather Icons
+    feather.replace();
 
-    // Suspend shop modal
-    $('.suspend-btn').on('click', function() {
-        currentSellerId = $(this).data('seller-id');
-        $('#suspendSellerName').text($(this).data('seller-name'));
-        $('#suspendShopName').text($(this).data('shop-name'));
-        $('#suspendReason').val('');
-        $('#suspendModal').modal('show');
+    // Select All Functionality
+    $('#selectAll').change(function() {
+        $('.seller-checkbox').prop('checked', this.checked);
+        updateSelectedCount();
     });
 
-    // Unsuspend shop modal
-    $('.unsuspend-btn').on('click', function() {
-        currentSellerId = $(this).data('seller-id');
-        $('#unsuspendSellerName').text($(this).data('seller-name'));
-        $('#unsuspendShopName').text($(this).data('shop-name'));
-        $('#unsuspendModal').modal('show');
+    $('.seller-checkbox').change(function() {
+        updateSelectedCount();
+
+        // Update select all checkbox
+        const totalCheckboxes = $('.seller-checkbox').length;
+        const checkedCheckboxes = $('.seller-checkbox:checked').length;
+        $('#selectAll').prop('indeterminate', checkedCheckboxes > 0 && checkedCheckboxes < totalCheckboxes);
+        $('#selectAll').prop('checked', checkedCheckboxes === totalCheckboxes);
     });
+});
 
-    // Handle suspend form submission
-    $('#suspendForm').on('submit', function(e) {
-        e.preventDefault();
+function updateSelectedCount() {
+    const count = $('.seller-checkbox:checked').length;
+    $('#selectedCount').text(count);
+}
 
-        const reason = $('#suspendReason').val().trim();
-        if (!reason) {
-            $('#suspendReason').addClass('is-invalid');
-            $('.invalid-feedback').text('Suspension reason is required.');
-            return;
-        }
+function getSelectedIds() {
+    return $('.seller-checkbox:checked').map(function() {
+        return $(this).val();
+    }).get();
+}
 
-        $.ajax({
-            url: `/admin/sellers/${currentSellerId}/suspend-shop`,
-            method: 'POST',
-            data: {
-                _token: $('meta[name="csrf-token"]').attr('content'),
-                suspended_reason: reason
-            },
-            beforeSend: function() {
-                $('#suspendForm button[type="submit"]').prop('disabled', true);
-            },
-            success: function(response) {
-                $('#suspendModal').modal('hide');
-                if (response.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success!',
-                        text: response.message,
-                        timer: 2000,
-                        showConfirmButton: false
-                    }).then(() => {
-                        location.reload();
-                    });
-                }
-            },
-            error: function(xhr) {
-                const response = xhr.responseJSON;
-                if (response.message) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error!',
-                        text: response.message
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error!',
-                        text: 'An error occurred while suspending the shop.'
-                    });
-                }
-            },
-            complete: function() {
-                $('#suspendForm button[type="submit"]').prop('disabled', false);
-            }
-        });
-    });
+function suspendShop(sellerId, sellerName, shopName) {
+    $('#suspendSellerName').text(sellerName);
+    $('#suspendShopName').text(shopName);
+    $('#suspendForm').attr('action', `/admin/sellers/${sellerId}/suspend-shop`);
+    feather.replace();
+    $('#suspendModal').modal('show');
+}
 
-    // Handle unsuspend confirmation
-    $('#confirmUnsuspend').on('click', function() {
-        $.ajax({
-            url: `/admin/sellers/${currentSellerId}/unsuspend-shop`,
-            method: 'POST',
-            data: {
-                _token: $('meta[name="csrf-token"]').attr('content')
-            },
-            beforeSend: function() {
-                $(this).prop('disabled', true);
-            },
-            success: function(response) {
-                $('#unsuspendModal').modal('hide');
-                if (response.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success!',
-                        text: response.message,
-                        timer: 2000,
-                        showConfirmButton: false
-                    }).then(() => {
-                        location.reload();
-                    });
-                }
-            },
-            error: function(xhr) {
-                const response = xhr.responseJSON;
-                if (response.message) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error!',
-                        text: response.message
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error!',
-                        text: 'An error occurred while unsuspending the shop.'
-                    });
-                }
-            },
-            complete: function() {
-                $('#confirmUnsuspend').prop('disabled', false);
-            }
-        });
-    });
+function unsuspendShop(sellerId, sellerName, shopName) {
+    $('#unsuspendSellerName').text(sellerName);
+    $('#unsuspendShopName').text(shopName);
+    $('#unsuspendForm').attr('action', `/admin/sellers/${sellerId}/unsuspend-shop`);
+    feather.replace();
+    $('#unsuspendModal').modal('show');
+}
 
+function toggleSellerStatus(sellerId, status, sellerName) {
+    $('#toggleStatusSellerName').text(sellerName);
+    $('#toggleStatusValue').val(status);
+
+    const action = status === 'true' ? 'activate' : 'deactivate';
+    const alertClass = status === 'true' ? 'alert-success' : 'alert-warning';
+    const btnClass = status === 'true' ? 'btn-success' : 'btn-warning';
+    const iconName = status === 'true' ? 'user-check' : 'user-x';
+
+    $('#toggleStatusTitle').text(`${status === 'true' ? 'Activate' : 'Deactivate'} Seller`);
+    $('#toggleStatusAlert').removeClass('alert-success alert-warning').addClass(alertClass);
+    $('#toggleStatusSubmitBtn').removeClass('btn-success btn-warning').addClass(btnClass);
+    $('#toggleStatusIcon').attr('data-feather', iconName);
+    $('#toggleStatusText').text(status === 'true' ? 'Activate Seller' : 'Deactivate Seller');
+    $('#toggleStatusForm').attr('action', `/admin/sellers/${sellerId}/toggle-status`);
+
+    feather.replace();
+    $('#toggleStatusModal').modal('show');
+}
+
+$(document).ready(function() {
     // Handle seller status toggle
     $('.toggle-status-btn').on('click', function() {
         const sellerId = $(this).data('seller-id');

@@ -200,6 +200,14 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'role:admin']], func
             ->middleware('can:admin-dashboard|create ads')
             ->name('admin.ads.store');
 
+        Route::post('/bulk-action', [AdminAdsController::class, 'bulkAction'])
+            ->middleware('can:admin-dashboard|update ads')
+            ->name('admin.ads.bulk-action');
+
+        Route::get('/auto-suggestions/{category}', [AdminAdsController::class, 'autoSuggestions'])
+            ->middleware('can:admin-dashboard|index ads')
+            ->name('admin.ads.auto-suggestions');
+
         Route::get('/{productAd}', [AdminAdsController::class, 'show'])
             ->middleware('can:admin-dashboard|show ads')
             ->name('admin.ads.show');
@@ -215,30 +223,6 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'role:admin']], func
         Route::delete('/{productAd}', [AdminAdsController::class, 'destroy'])
             ->middleware('can:admin-dashboard|delete ads')
             ->name('admin.ads.destroy');
-
-        Route::post('/{productAd}/approve', [AdminAdsController::class, 'approve'])
-            ->middleware('can:admin-dashboard|update ads')
-            ->name('admin.ads.approve');
-
-        Route::post('/{productAd}/reject', [AdminAdsController::class, 'reject'])
-            ->middleware('can:admin-dashboard|update ads')
-            ->name('admin.ads.reject');
-
-        Route::post('/{productAd}/pause', [AdminAdsController::class, 'pause'])
-            ->middleware('can:admin-dashboard|update ads')
-            ->name('admin.ads.pause');
-
-        Route::post('/{productAd}/resume', [AdminAdsController::class, 'resume'])
-            ->middleware('can:admin-dashboard|update ads')
-            ->name('admin.ads.resume');
-
-        Route::get('/analytics/dashboard', [AdminAdsController::class, 'analytics'])
-            ->middleware('can:admin-dashboard|show ads')
-            ->name('admin.ads.analytics');
-
-        Route::get('/revenue/report', [AdminAdsController::class, 'revenueReport'])
-            ->middleware('can:admin-dashboard|show ads')
-            ->name('admin.ads.revenue-report');
     });
 
     // ===================================================================

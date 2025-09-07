@@ -113,4 +113,20 @@ class Product extends Model implements HasMedia
     {
         return $this->morphMany(config('media-library.media_model'), 'model')->where('collection_name', 'image');
     }
+
+    /**
+     * Relationship with ProductAd
+     */
+    public function productAds()
+    {
+        return $this->hasMany(ProductAd::class);
+    }
+
+    /**
+     * Get active product ads
+     */
+    public function activeProductAds()
+    {
+        return $this->hasMany(ProductAd::class)->where('is_active', true);
+    }
 }
