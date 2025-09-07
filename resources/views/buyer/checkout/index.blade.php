@@ -60,6 +60,16 @@
             width: 1rem;
             height: 1rem;
         }
+
+        .cache-indicator {
+            font-size: 0.7rem;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .rate-info {
+            transition: all 0.2s ease;
+        }
     </style>
 @endpush
 
@@ -264,9 +274,14 @@
     </div>
 
     <script>
+        // Cache for shipping rates to avoid redundant API calls
+        let shippingRatesCache = {};
+        let currentAddressId = null;
+
         document.addEventListener("DOMContentLoaded", function() {
             const addressId = document.getElementById('address_id').value;
             if (addressId) {
+                currentAddressId = addressId;
                 loadShippingMethods(addressId);
             }
 
@@ -277,6 +292,13 @@
                     document.getElementById('address_id').value = this.dataset.id;
 
                     bootstrap.Modal.getInstance(document.getElementById('addressModal')).hide();
+
+                    // Clear cache when address changes
+                    const newAddressId = this.dataset.id;
+                    if (currentAddressId !== newAddressId) {
+                        clearShippingRatesCache();
+                        currentAddressId = newAddressId;
+                    }
 
                     loadShippingMethods(this.dataset.id);
                 });
@@ -291,6 +313,46 @@
                 }
             });
         });
+
+        function clearShippingRatesCache() {
+            shippingRatesCache = {};
+            console.log('Shipping rates cache cleared due to address change');
+        }
+
+        function getCacheKey(addressId, methodId, shopId) {
+            return `${addressId}_${methodId}_${shopId}`;
+        }
+
+        function getCachedRate(addressId, methodId, shopId) {
+            const cacheKey = getCacheKey(addressId, methodId, shopId);
+            return shippingRatesCache[cacheKey] || null;
+        }
+
+        function setCachedRate(addressId, methodId, shopId, rateData) {
+            const cacheKey = getCacheKey(addressId, methodId, shopId);
+            shippingRatesCache[cacheKey] = {
+                data: rateData,
+                timestamp: Date.now()
+            };
+            console.log(`Cached rate for ${cacheKey}:`, rateData);
+        }
+
+        // Debug function to view cache status
+        function getCacheStats() {
+            const cacheSize = Object.keys(shippingRatesCache).length;
+            console.log(`Shipping rates cache contains ${cacheSize} entries:`, shippingRatesCache);
+            return {
+                size: cacheSize,
+                entries: Object.keys(shippingRatesCache),
+                data: shippingRatesCache
+            };
+        }
+
+        // Function to manually clear cache (for debugging)
+        function clearCache() {
+            clearShippingRatesCache();
+            console.log('Cache manually cleared');
+        }
 
         function validateForm() {
             const shippingInputs = document.querySelectorAll('input[name*="shipping"][name*="method_id"]');
@@ -461,11 +523,7 @@
                         document.getElementById(`shipping_method_${shopId}`).value = '';
 
                         // Reset shipping cost display
-                        const shippingEl = document.getElementById("shipping_shop_" + shopId);
-                        if (shippingEl) {
-                            shippingEl.innerText = 'Rp0';
-                            updateTotals();
-                        }
+                        resetShippingCost(shopId);
                     }
                 });
             });
@@ -481,39 +539,22 @@
 
                     if (methodId) {
                         const addressId = document.getElementById('address_id').value;
-                        loadRates(addressId, methodId, shopId);
+
+                        // Check cache first
+                        const cachedRate = getCachedRate(addressId, methodId, shopId);
+                        if (cachedRate) {
+                            console.log(`Using cached rate for shop ${shopId}, method ${methodId}`);
+                            applyCachedRate(shopId, cachedRate.data);
+                        } else {
+                            console.log(`Loading fresh rate for shop ${shopId}, method ${methodId}`);
+                            loadRates(addressId, methodId, shopId);
+                        }
                     } else {
                         // Reset shipping cost if no method selected
-                        const shippingEl = document.getElementById("shipping_shop_" + shopId);
-                        if (shippingEl) {
-                            shippingEl.innerText = 'Rp0';
-                            updateTotals();
-                        }
+                        resetShippingCost(shopId);
                     }
                 });
             });
-        }
-
-        function getStandardCourierLogo(courierCode) {
-            const logos = {
-                'jne': 'https://biteship.s3.ap-southeast-1.amazonaws.com/courier_logo/jne.png',
-                'pos': 'https://biteship.s3.ap-southeast-1.amazonaws.com/courier_logo/pos.png',
-                'tiki': 'https://biteship.s3.ap-southeast-1.amazonaws.com/courier_logo/tiki.png',
-                'anteraja': 'https://biteship.s3.ap-southeast-1.amazonaws.com/courier_logo/anteraja.png',
-                'sicepat': 'https://biteship.s3.ap-southeast-1.amazonaws.com/courier_logo/sicepat.png',
-                'jnt': 'https://biteship.s3.ap-southeast-1.amazonaws.com/courier_logo/jnt.png',
-                'ninja': 'https://biteship.s3.ap-southeast-1.amazonaws.com/courier_logo/ninja.png',
-                'lion': 'https://biteship.s3.ap-southeast-1.amazonaws.com/courier_logo/lion.png',
-                'wahana': 'https://biteship.s3.ap-southeast-1.amazonaws.com/courier_logo/wahana.png',
-                'sap': 'https://biteship.s3.ap-southeast-1.amazonaws.com/courier_logo/sap.png',
-                'jet': 'https://biteship.s3.ap-southeast-1.amazonaws.com/courier_logo/jet.png',
-                'rex': 'https://biteship.s3.ap-southeast-1.amazonaws.com/courier_logo/rex.png',
-                'first': 'https://biteship.s3.ap-southeast-1.amazonaws.com/courier_logo/first.png',
-                'ide': 'https://biteship.s3.ap-southeast-1.amazonaws.com/courier_logo/ide.png',
-                'spx': 'https://biteship.s3.ap-southeast-1.amazonaws.com/courier_logo/spx.png'
-            };
-
-            return logos[courierCode.toLowerCase()] || 'https://via.placeholder.com/40x40?text=' + courierCode.toUpperCase();
         }
 
         function updateTotals() {
@@ -532,6 +573,9 @@
         }
 
         function loadRates(addressId, methodId, shopId) {
+            // Show loading indicator
+            showShippingLoadingState(shopId);
+
             fetch("{{ route('checkout.rates') }}", {
                     method: "POST",
                     headers: {
@@ -546,14 +590,100 @@
                 .then(res => res.json())
                 .then(data => {
                     const rate = data[shopId] || null;
-                    if (!rate) return;
-                    const shippingEl = document.getElementById("shipping_shop_" + shopId);
-                    shippingEl.innerText = formatRupiah(rate.price);
-                    updateTotals();
+                    if (rate) {
+                        // Cache the rate for future use
+                        setCachedRate(addressId, methodId, shopId, rate);
+
+                        // Apply the rate with fresh indicator
+                        applyFreshRate(shopId, rate);
+                    } else {
+                        console.warn(`No rate found for shop ${shopId}`);
+                        resetShippingCost(shopId);
+                    }
                 })
                 .catch(err => {
                     console.error("Error loadRates:", err);
+                    resetShippingCost(shopId);
+                    showRateError(shopId);
                 });
+        }
+
+        function applyCachedRate(shopId, rateData) {
+            const shippingEl = document.getElementById("shipping_shop_" + shopId);
+            if (shippingEl && rateData.price) {
+                // Create rate display with cache indicator
+                shippingEl.innerHTML = `
+                    <div class="rate-info">
+                        <div>${formatRupiah(rateData.price)}</div>
+                        <div class="cache-indicator">✓ Tersimpan</div>
+                    </div>
+                `;
+
+                // Add tooltip with service info
+                shippingEl.title = `${rateData.courier_name} - ${rateData.courier_service_name || rateData.service_name}`;
+
+                updateTotals();
+            }
+        }
+
+        function resetShippingCost(shopId) {
+            const shippingEl = document.getElementById("shipping_shop_" + shopId);
+            if (shippingEl) {
+                shippingEl.innerHTML = 'Rp0';
+                shippingEl.title = '';
+                updateTotals();
+            }
+        }
+
+        function showShippingLoadingState(shopId) {
+            const shippingEl = document.getElementById("shipping_shop_" + shopId);
+            if (shippingEl) {
+                shippingEl.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <div class="spinner-border spinner-border-sm me-2" role="status" style="width: 0.8rem; height: 0.8rem;">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <span>Memuat...</span>
+                    </div>
+                `;
+            }
+        }
+
+        function showRateError(shopId) {
+            const shippingEl = document.getElementById("shipping_shop_" + shopId);
+            if (shippingEl) {
+                shippingEl.innerHTML = `
+                    <div class="text-danger">
+                        <div>Error</div>
+                        <div class="cache-indicator">Gagal memuat</div>
+                    </div>
+                `;
+                shippingEl.title = 'Gagal memuat ongkir. Silakan coba lagi.';
+            }
+        }
+
+        // Apply fresh rate from API (not cached)
+        function applyFreshRate(shopId, rateData) {
+            const shippingEl = document.getElementById("shipping_shop_" + shopId);
+            if (shippingEl && rateData.price) {
+                shippingEl.innerHTML = `
+                    <div class="rate-info">
+                        <div>${formatRupiah(rateData.price)}</div>
+                        <div class="cache-indicator">🔄 Terbaru</div>
+                    </div>
+                `;
+
+                shippingEl.title = `${rateData.courier_name} - ${rateData.courier_service_name || rateData.service_name}`;
+
+                updateTotals();
+
+                // Remove "fresh" indicator after 2 seconds
+                setTimeout(() => {
+                    if (shippingEl.querySelector('.cache-indicator')) {
+                        shippingEl.querySelector('.cache-indicator').textContent = '✓ Tersimpan';
+                    }
+                }, 2000);
+            }
         }
 
         function formatRupiah(num) {
