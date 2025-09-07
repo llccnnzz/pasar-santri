@@ -159,7 +159,7 @@
                                             @if($seller->avatar)
                                                 <img src="{{ $seller->avatar }}" alt="{{ $seller->name }}" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
                                             @else
-                                                <i data-feather="user" class="text-primary" style="width: 18px; height: 18px;"></i>
+                                                <i data-feather="user" class="text-white" style="width: 18px; height: 18px;"></i>
                                             @endif
                                         </div>
                                     </div>
