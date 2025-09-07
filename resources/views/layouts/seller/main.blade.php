@@ -167,43 +167,12 @@
 					</a>
 				</li>
 
-				<!-- Test View for Development -->
-				<li class="{{ request()->routeIs('seller.test-view') ? 'mm-active' : '' }}">
-					<a href="{{ route('seller.test-view') }}" class="menu-title">
-						<span class="icon"><i data-feather="code"></i></span>
-						<span class="title">Test View</span>
-						<span class="badge bg-warning ms-2">DEV</span>
-					</a>
-				</li>
-
 				<!-- Shop Settings -->
 				<li class="{{ request()->routeIs('seller.shop.*') ? 'mm-active' : '' }}">
 					<a href="{{ route('seller.shop.settings') }}" class="menu-title">
 						<span class="icon"><i data-feather="settings"></i></span>
 						<span class="title">Shop Settings</span>
 					</a>
-				</li>
-
-				<!-- User Profile -->
-				<li class="{{ request()->routeIs('seller.profile.*') ? 'mm-active' : '' }}">
-					<a href="{{ route('seller.profile.index') }}" class="menu-title">
-						<span class="icon"><i data-feather="user"></i></span>
-						<span class="title">Profile Settings</span>
-					</a>
-				</li>
-
-				<!-- Support & Help -->
-				<li>
-					<a href="#" class="has-arrow menu-title" aria-expanded="false">
-						<span class="icon"><i data-feather="help-circle"></i></span>
-						<span class="title">Support & Help (soon)</span>
-					</a>
-					<ul class="sidemenu-second-level">
-						<li><a href="#">Help Center</a></li>
-						<li><a href="#">Contact Support</a></li>
-						<li><a href="#">Seller Guidelines</a></li>
-						<li><a href="#">Documentation</a></li>
-					</ul>
 				</li>
 			</ul>
 		</div>
