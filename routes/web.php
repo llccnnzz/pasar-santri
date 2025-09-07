@@ -50,6 +50,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout/shipping-methods', [CheckoutController::class, 'getShippingMethods'])->name('checkout.shippingMethods');
     Route::post('/checkout/rates', [CheckoutController::class, 'rates'])->name('checkout.rates');
+    Route::post('/checkout/apply-promo', [CheckoutController::class, 'applyPromoCode'])->name('checkout.applyPromo');
+    Route::post('/checkout/remove-promo', [CheckoutController::class, 'removePromoCode'])->name('checkout.removePromo');
+    Route::get('/checkout/current-promo', [CheckoutController::class, 'getCurrentPromo'])->name('checkout.currentPromo');
     Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
     Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
 
