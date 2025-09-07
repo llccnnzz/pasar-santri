@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\OrderPayment;
+use App\Models\Promotion;
 use App\Models\ShippingMethod;
 use App\Models\Shop;
 use App\Models\ShopShippingMethod;
@@ -250,7 +251,43 @@ class CheckoutController extends Controller
                 $paymentFee = ($paymentFeeConfig['type'] === 'fixed')
                     ? $paymentFeeConfig['fixed']
                     : max(($paymentFeeConfig['percent'] / 100) * $subtotal, $paymentFeeConfig['percent_min_value']);
-                $totalAmount  = $subtotal + $shippingCost + $paymentFee;
+
+                // Handle promo code discount
+                $appliedPromo = session('applied_promo');
+                $discountAmount = 0;
+                $promoData = null;
+
+                if ($appliedPromo && count($shopGroups) === 1) {
+                    // Only apply promo if there's only one shop (single order)
+                    $promotion = Promotion::find($appliedPromo['id']);
+                    if ($promotion && $promotion->canBeUsed($subtotal)) {
+                        $discountAmount = $promotion->calculateDiscount($subtotal);
+                        $promoData = [
+                            'code' => $promotion->code,
+                            'name' => $promotion->name,
+                            'discount_amount' => $discountAmount,
+                        ];
+
+                        // Increment usage count
+                        $promotion->incrementUsage();
+                    }
+                }
+
+                $totalAmount = $subtotal + $shippingCost + $paymentFee - $discountAmount;
+
+                // Build payment details
+                $paymentDetails = [
+                    'subtotal'        => (int) $subtotal,
+                    'shipping_cost'   => (int) $shippingCost,
+                    'payment_fee'     => (int) $paymentFee,
+                    'discount_amount' => (int) $discountAmount,
+                    'total_amount'    => (int) $totalAmount,
+                ];
+
+                // Add promo data if applied
+                if ($promoData) {
+                    $paymentDetails['promo'] = $promoData;
+                }
 
                 $order = Order::create([
                     'user_id'        => $user->id,
@@ -269,13 +306,7 @@ class CheckoutController extends Controller
                             'price'        => $shippingCost,
                         ],
                     ],
-                    'payment_detail' => [
-                        'subtotal'        => (float) $subtotal,
-                        'shipping_cost'   => (float) $shippingCost,
-                        'payment_fee'     => (float) $paymentFee,
-                        'discount_amount' => 0,
-                        'total_amount'    => (float) $totalAmount,
-                    ],
+                    'payment_detail' => $paymentDetails,
                 ]);
 
                 OrderPayment::create([
@@ -284,8 +315,8 @@ class CheckoutController extends Controller
                     'channel'           => 'emaal',
                     'reference_id'      => Order::generateReferenceId(),
                     'status'            => 'pending',
-                    'value'             => $totalAmount,
-                    'payment_fee'       => $paymentFee,
+                    'value'             => (int) $totalAmount,
+                    'payment_fee'       => (int) $paymentFee,
                     'expired_at'        => now()->addDay(),
                 ]);
 
@@ -293,6 +324,9 @@ class CheckoutController extends Controller
             }
 
             $cart->update(['items' => json_encode([])]);
+
+            // Clear applied promo after successful order
+            session()->forget('applied_promo');
 
             DB::commit();
 
@@ -321,5 +355,95 @@ class CheckoutController extends Controller
         }
 
         return view('buyer.checkout.success', compact('payments'));
+    }
+
+    /**
+     * Apply promo code
+     */
+    public function applyPromoCode(Request $request)
+    {
+        $request->validate([
+            'promo_code' => 'required|string',
+            'subtotal' => 'required|numeric|min:0',
+        ]);
+
+        $promoCode = strtoupper(trim($request->promo_code));
+        $subtotal = $request->subtotal;
+
+        // Find promotion
+        $promotion = Promotion::where('code', $promoCode)
+            ->available()
+            ->first();
+
+        if (!$promotion) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kode promo tidak valid atau sudah tidak aktif'
+            ]);
+        }
+
+        // Check if can be used with current order amount
+        if (!$promotion->canBeUsed($subtotal)) {
+            $minAmount = number_format($promotion->minimum_order_amount, 0, ',', '.');
+            return response()->json([
+                'success' => false,
+                'message' => "Minimum pembelian untuk kode promo ini adalah Rp{$minAmount}"
+            ]);
+        }
+
+        // Calculate discount
+        $discountAmount = $promotion->calculateDiscount($subtotal);
+
+        // Store promo in session
+        session(['applied_promo' => [
+            'id' => $promotion->id,
+            'code' => $promotion->code,
+            'name' => $promotion->name,
+            'discount_amount' => $discountAmount,
+        ]]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Kode promo berhasil diterapkan!',
+            'promo' => [
+                'code' => $promotion->code,
+                'name' => $promotion->name,
+                'discount_amount' => $discountAmount,
+                'discount_formatted' => number_format($discountAmount, 0, ',', '.'),
+            ]
+        ]);
+    }
+
+    /**
+     * Remove promo code
+     */
+    public function removePromoCode(Request $request)
+    {
+        session()->forget('applied_promo');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Kode promo berhasil dihapus'
+        ]);
+    }
+
+    /**
+     * Get current applied promo
+     */
+    public function getCurrentPromo(Request $request)
+    {
+        $appliedPromo = session('applied_promo');
+
+        if (!$appliedPromo) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tidak ada promo yang diterapkan'
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'promo' => $appliedPromo
+        ]);
     }
 }

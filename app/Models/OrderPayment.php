@@ -81,16 +81,6 @@ class OrderPayment extends Model
         };
     }
 
-    public function getTotalAmountAttribute(): float
-    {
-        return $this->value + $this->payment_fee;
-    }
-
-    public function getNetAmountAttribute(): float
-    {
-        return $this->value - $this->payment_fee;
-    }
-
     // Status Check Methods
     public function isPending(): bool
     {
