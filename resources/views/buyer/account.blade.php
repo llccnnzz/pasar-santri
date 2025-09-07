@@ -820,49 +820,48 @@
                 let addr = res.address;
                 if (addr) {
                     $('#orderModal .order-address').html(`
-                <strong>${addr.name}</strong><br>
-                ${addr.address_line_1 ?? ''}<br>
-                ${addr.city ?? ''}, ${addr.province ?? ''} ${addr.postal_code ?? ''}<br>
-                ${addr.country ?? ''}<br>
-                Phone: ${addr.phone ?? ''}
-            `);
+                        <strong>${addr.name}</strong><br>
+                        ${addr.address_line_1 ?? ''}<br>
+                        ${addr.city ?? ''}, ${addr.province ?? ''} ${addr.postal_code ?? ''}<br>
+                        ${addr.country ?? ''}<br>
+                        Phone: ${addr.phone ?? ''}
+                    `);
                 }
 
                 // Items
                 let itemsHtml = '';
                 res.items.forEach(i => {
                     itemsHtml += `
-                <tr>
-                    <td><img src="${i.image}" alt="" width="40"></td>
-                    <td>${i.name}</td>
-                    <td>${i.quantity}</td>
-                    <td>Rp ${parseInt(i.price).toLocaleString('id-ID')}</td>
-                    <td>Rp ${parseInt(i.item_total).toLocaleString('id-ID')}</td>
-                </tr>`;
-                });
+                    <tr>
+                        <td><img src="${i.image}" alt="" width="40"></td>
+                        <td>${i.name}</td>
+                        <td>${i.quantity}</td>
+                        <td>Rp ${parseInt(i.price).toLocaleString('id-ID')}</td>
+                        <td>Rp ${parseInt(i.item_total).toLocaleString('id-ID')}</td>
+                    </tr>`;
+                    });
                 $('#orderModal .order-items tbody').html(itemsHtml);
 
                 // Payment summary
                 let pay = res.payment;
                 if (pay) {
                     $('#orderModal .order-summary').html(`
-                Subtotal: Rp ${parseInt(pay.subtotal).toLocaleString('id-ID')}<br>
-                Shipping: Rp ${parseInt(pay.shipping_cost).toLocaleString('id-ID')}<br>
-                Discount: Rp ${parseInt(pay.discount_amount).toLocaleString('id-ID')}<br>
-                Total: <strong>Rp ${parseInt(pay.total_amount).toLocaleString('id-ID')}</strong>
-            `);
+                        Subtotal: Rp ${parseInt(pay.subtotal).toLocaleString('id-ID')}<br>
+                        Shipping: Rp ${parseInt(pay.shipping_cost).toLocaleString('id-ID')}<br>
+                        Discount: Rp ${parseInt(pay.discount_amount).toLocaleString('id-ID')}<br>
+                        Total: <strong>Rp ${parseInt(pay.total_amount).toLocaleString('id-ID')}</strong>
+                    `);
                 }
 
                 // Latest payment
                 let lp = res.latest_payment;
                 if (lp) {
                     $('#orderModal .order-latest-payment').html(`
-                Method: ${lp.channel}<br>
-                Status: ${lp.status}<br>
-                Value: Rp ${parseInt(lp.value).toLocaleString('id-ID')}<br>
-                Fee: Rp ${parseInt(lp.payment_fee).toLocaleString('id-ID')}<br>
-                Total Paid: Rp ${parseInt(lp.total_amount).toLocaleString('id-ID')}
-            `);
+                        Method: ${lp.channel}<br>
+                        Status: ${lp.status}<br>
+                        Total Amount: Rp ${parseInt(lp.total_amount).toLocaleString('id-ID')}<br>
+                        ${lp.status === 'PAID' ? `Paid At: ${lp.paid_at}<br>` : '<a href="/checkout/success?order_id=' + res.id + '" target="_blank" class="btn btn-sm btn-primary">Bayar Sekarang</a>'}
+                    `);
                 } else {
                     $('#orderModal .order-latest-payment').html('<em>No payment recorded</em>');
                 }

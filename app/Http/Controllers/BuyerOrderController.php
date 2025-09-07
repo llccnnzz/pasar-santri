@@ -49,9 +49,7 @@ class BuyerOrderController extends Controller
             'latest_payment' => $latestPayment ? [
                 'channel'      => $latestPayment['channel_label'],
                 'status'       => $latestPayment['status_label'],
-                'value'        => (float) $latestPayment['value'],
-                'payment_fee'  => (float) $latestPayment['payment_fee'],
-                'total_amount' => (float) $latestPayment['total_amount'],
+                'total_amount' => (float) $latestPayment['value'],
             ] : null,
         ]);
     }

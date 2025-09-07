@@ -311,10 +311,14 @@ class CheckoutController extends Controller
         $orders = $orderIds ? explode(',', $orderIds) : [];
 
         $payments = OrderPayment::whereIn('order_id', $orders)
-            ->where('status','pending')
+            ->where('status', 'pending')
             ->where('expired_at', '>', now())
             ->orderBy('created_at', 'DESC')
             ->get()->take(1);
+
+        if ($payments->isEmpty()) {
+            return redirect('/me')->withMessage('Tidak ada pembayaran yang ditemukan atau sudah kadaluarsa.');
+        }
 
         return view('buyer.checkout.success', compact('payments'));
     }
