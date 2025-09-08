@@ -49,6 +49,10 @@ class SellerController extends Controller
                 'ordersByStatus' => $this->getOrdersByStatus($shop, $startDate),
                 'monthlySales' => $this->getOptimizedMonthlySalesData($shop),
                 'weeklyRevenue' => $this->getOptimizedWeeklyRevenueData($shop),
+                'revenueBreakdown' => $this->getRevenueBreakdown($shop, $startDate, $endDate),
+                'topCustomers' => $this->getTopCustomers($shop, $startDate, $endDate),
+                'productsByLocation' => $this->getProductsByLocation($shop, $startDate, $endDate),
+                'recentActivity' => $this->getRecentActivity($shop),
             ];
         });
 
@@ -220,19 +224,39 @@ class SellerController extends Controller
 
     private function getOptimizedTopSellingProducts($shop, $startDate, $endDate, $limit = 5)
     {
-        // Optimized query with specific fields and eager loading
-        return DB::table('products')
-            ->select(['id', 'name', 'slug', 'price', 'stock', 'status', 'created_at'])
-            ->where('shop_id', $shop->id)
-            ->where('status', 'active')
-            ->whereNull('deleted_at')
-            ->orderBy('created_at', 'desc')
+        // Get products with actual sales data using raw SQL for performance
+        $topProducts = DB::table('products')
+            ->leftJoin('order_details', 'products.id', '=', 'order_details.product_id')
+            ->leftJoin('orders', function($join) use ($startDate, $endDate) {
+                $join->on('order_details.order_id', '=', 'orders.id')
+                     ->whereBetween('orders.created_at', [$startDate, $endDate])
+                     ->whereIn('orders.status', ['completed', 'shipped', 'delivered']);
+            })
+            ->select([
+                'products.id',
+                'products.name',
+                'products.slug',
+                'products.price',
+                'products.stock',
+                'products.status',
+                DB::raw('COALESCE(SUM(order_details.quantity), 0) as total_sold')
+            ])
+            ->where('products.shop_id', $shop->id)
+            ->whereNull('products.deleted_at')
+            ->groupBy('products.id', 'products.name', 'products.slug', 'products.price', 'products.stock', 'products.status')
+            ->orderBy('total_sold', 'desc')
             ->limit($limit)
-            ->get()
-            ->map(function($product) {
-                // Convert stdClass to array for consistency
-                return (array) $product;
-            });
+            ->get();
+
+        // Convert to Product models to get media relationships
+        return $topProducts->map(function($productData) {
+            $product = \App\Models\Product::find($productData->id);
+            if ($product) {
+                $product->total_sold = $productData->total_sold;
+                return $product;
+            }
+            return null;
+        })->filter();
     }
 
     private function getOptimizedWeeklyRevenueData($shop)
@@ -630,5 +654,163 @@ class SellerController extends Controller
     {
         // Implementation for order status update
         return redirect()->route('seller.orders.show', $order)->with('success', 'Order status updated successfully');
+    }
+
+    private function getRevenueBreakdown($shop, $startDate, $endDate)
+    {
+        // Get revenue breakdown for different periods
+        $result = DB::table('orders')
+            ->selectRaw("
+                COALESCE(SUM(CASE 
+                    WHEN status IN ('completed', 'shipped', 'delivered')
+                    THEN CAST(payment_detail->>'total_amount' AS DECIMAL(15,2))
+                    ELSE 0 
+                END), 0) as income,
+                COALESCE(SUM(CASE 
+                    WHEN status IN ('completed', 'shipped', 'delivered')
+                    THEN CAST(payment_detail->>'total_amount' AS DECIMAL(15,2)) * 0.85
+                    ELSE 0 
+                END), 0) as profit,
+                COALESCE(SUM(CASE 
+                    WHEN status IN ('completed', 'shipped', 'delivered')
+                    THEN CAST(payment_detail->>'total_amount' AS DECIMAL(15,2)) * 0.15
+                    ELSE 0 
+                END), 0) as expenses
+            ")
+            ->where('shop_id', $shop->id)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->whereNull('deleted_at')
+            ->first();
+
+        $income = $result->income ?? 0;
+        $maxValue = $income ?: 1; // Prevent division by zero
+
+        return [
+            'income' => $income,
+            'profit' => $result->profit ?? 0,
+            'expenses' => $result->expenses ?? 0,
+            'income_percentage' => $income > 0 ? round(($income / $maxValue) * 100, 1) : 0,
+            'profit_percentage' => $income > 0 ? round((($result->profit ?? 0) / $maxValue) * 100, 1) : 0,
+            'expenses_percentage' => $income > 0 ? round((($result->expenses ?? 0) / $maxValue) * 100, 1) : 0,
+        ];
+    }
+
+    private function getTopCustomers($shop, $startDate, $endDate, $limit = 5)
+    {
+        return DB::table('orders')
+            ->join('users', 'orders.user_id', '=', 'users.id')
+            ->selectRaw("
+                users.id,
+                users.name,
+                users.email,
+                COUNT(orders.id) as order_count,
+                COALESCE(SUM(CASE 
+                    WHEN orders.status IN ('completed', 'shipped', 'delivered')
+                    THEN CAST(orders.payment_detail->>'total_amount' AS DECIMAL(15,2))
+                    ELSE 0 
+                END), 0) as total_spent
+            ")
+            ->where('orders.shop_id', $shop->id)
+            ->whereBetween('orders.created_at', [$startDate, $endDate])
+            ->whereNull('orders.deleted_at')
+            ->groupBy('users.id', 'users.name', 'users.email')
+            ->orderByDesc('total_spent')
+            ->limit($limit)
+            ->get();
+    }
+
+    private function getProductsByLocation($shop, $startDate, $endDate)
+    {
+        // Get top selling locations based on shipping addresses
+        $locations = DB::table('orders')
+            ->join('order_details', 'orders.id', '=', 'order_details.order_id')
+            ->selectRaw("
+                COALESCE(orders.payment_detail->>'shipping_address'->>'city', 'Unknown') as city,
+                COUNT(order_details.id) as product_count,
+                COALESCE(SUM(CASE 
+                    WHEN orders.status IN ('completed', 'shipped', 'delivered')
+                    THEN order_details.quantity
+                    ELSE 0 
+                END), 0) as total_quantity
+            ")
+            ->where('orders.shop_id', $shop->id)
+            ->whereBetween('orders.created_at', [$startDate, $endDate])
+            ->whereNull('orders.deleted_at')
+            ->groupBy('city')
+            ->orderByDesc('total_quantity')
+            ->limit(5)
+            ->get();
+
+        $totalQuantity = $locations->sum('total_quantity') ?: 1;
+
+        return $locations->map(function ($location) use ($totalQuantity) {
+            return [
+                'city' => $location->city,
+                'count' => $location->total_quantity,
+                'percentage' => round(($location->total_quantity / $totalQuantity) * 100, 1),
+            ];
+        });
+    }
+
+    private function getRecentActivity($shop, $limit = 10)
+    {
+        // Get recent activities from orders and product updates
+        $activities = DB::table('orders')
+            ->join('users', 'orders.user_id', '=', 'users.id')
+            ->select([
+                'orders.id',
+                'orders.status',
+                'orders.created_at',
+                'orders.updated_at',
+                'orders.invoice',
+                'users.name as customer_name',
+                DB::raw("'order' as activity_type")
+            ])
+            ->where('orders.shop_id', $shop->id)
+            ->whereNull('orders.deleted_at')
+            ->union(
+                DB::table('products')
+                    ->leftJoin('users', function($join) use ($shop) {
+                        $join->on('users.id', '=', DB::raw($shop->user_id));
+                    })
+                    ->select([
+                        'products.id',
+                        'products.status',
+                        'products.created_at',
+                        'products.updated_at',
+                        'products.name as invoice',
+                        'users.name as customer_name',
+                        DB::raw("'product' as activity_type")
+                    ])
+                    ->where('products.shop_id', $shop->id)
+                    ->whereNull('products.deleted_at')
+                    ->orderBy('products.updated_at', 'desc')
+                    ->limit(5)
+            )
+            ->orderBy('updated_at', 'desc')
+            ->limit($limit)
+            ->get();
+
+        return $activities->map(function ($activity) {
+            $timeAgo = Carbon::parse($activity->updated_at)->diffForHumans();
+            
+            if ($activity->activity_type === 'order') {
+                return [
+                    'type' => 'order',
+                    'icon' => 'shopping-cart',
+                    'title' => $activity->customer_name,
+                    'description' => "Updated order #{$activity->invoice} status to " . ucfirst($activity->status),
+                    'time' => $timeAgo,
+                ];
+            } else {
+                return [
+                    'type' => 'product',
+                    'icon' => 'package',
+                    'title' => 'Product Update',
+                    'description' => "Updated product '{$activity->invoice}' status to " . ucfirst($activity->status),
+                    'time' => $timeAgo,
+                ];
+            }
+        });
     }
 }
