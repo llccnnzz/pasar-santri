@@ -727,10 +727,10 @@ class SellerController extends Controller
     private function getProductsByLocation($shop, $startDate, $endDate)
     {
         // Get top selling locations based on shipping addresses from order_details JSON
-        // Need to cast text column to jsonb for PostgreSQL JSON operations
+        // Need to cast text column to jsonb for PostgreSQL JSON operations with correct operator syntax
         $locations = DB::table('orders')
             ->selectRaw("
-                COALESCE((order_details::jsonb)->>'address'->>'city', 'Unknown') as city,
+                COALESCE((order_details::jsonb)->'address'->>'city', 'Unknown') as city,
                 COUNT(orders.id) as order_count,
                 COALESCE(SUM(CASE 
                     WHEN orders.status IN ('completed', 'shipped', 'delivered')
