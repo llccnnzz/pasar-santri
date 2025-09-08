@@ -48,6 +48,12 @@
                                                 role="tab" aria-controls="account-detail" aria-selected="false">
                                                 <i class="fi-rs-user mr-10"></i>Account details</a>
                                         </li>
+                                        @if(auth()->user()->shop)
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="/seller/dashboard">
+                                                    <i class="fi-rs-home mr-10"></i> Seller Dashboard</a>
+                                            </li>
+                                        @endif
                                     </ul>
                                 </div>
                             </div>

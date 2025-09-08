@@ -7,11 +7,16 @@ use App\Http\Requests\ShippingToggleRequest;
 use App\Http\Requests\ShopSettingsUpdateRequest;
 use App\Http\Requests\ShopSetupStoreRequest;
 use App\Models\KycApplication;
+use App\Models\Order;
+use App\Models\Product;
 use App\Models\ShippingMethod;
 use App\Models\Shop;
 use App\Models\ShopShippingMethod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class SellerController extends Controller
 {
@@ -24,15 +29,340 @@ class SellerController extends Controller
         $seller = auth()->user();
         $shop = $seller->shop;
 
-        // Dashboard statistics
-        $stats = [
-            'total_products' => $shop ? $shop->products()->count() : 0,
-            'total_orders' => 0,
-            'pending_orders' => 0,
-            'total_earnings' => 0,
+        if (!$shop) {
+            return redirect()->route('seller.setup')->with('error', 'Please complete your shop setup first.');
+        }
+
+        // Get date range for filtering
+        $dateRange = $request->get('range', 'month'); // today, week, month, year
+        $startDate = $this->getStartDate($dateRange);
+        $endDate = now();
+
+        // Cache key for dashboard data
+        $cacheKey = "seller_dashboard_{$shop->id}_{$dateRange}_" . $startDate->format('Y-m-d') . "_" . $endDate->format('Y-m-d');
+        $cacheDuration = now()->addMinutes($dateRange === 'today' ? 5 : 30); // 5 min for today, 30 min for others
+
+        // Try to get cached data first
+        $dashboardData = Cache::remember($cacheKey, $cacheDuration, function() use ($shop, $startDate, $endDate, $dateRange) {
+            return [
+                'stats' => $this->getOptimizedStats($shop, $startDate, $endDate, $dateRange),
+                'ordersByStatus' => $this->getOrdersByStatus($shop, $startDate),
+                'monthlySales' => $this->getOptimizedMonthlySalesData($shop),
+                'weeklyRevenue' => $this->getOptimizedWeeklyRevenueData($shop),
+                'revenueBreakdown' => $this->getRevenueBreakdown($shop, $startDate, $endDate),
+                'topCustomers' => $this->getTopCustomers($shop, $startDate, $endDate),
+                'productsByLocation' => $this->getProductsByLocation($shop, $startDate, $endDate),
+                'recentActivity' => $this->getRecentActivity($shop),
+            ];
+        });
+
+        // Always get fresh recent orders (not cached as they change frequently)
+        $recentOrders = $shop->orders()
+            ->with(['user:id,name,email'])
+            ->select(['id', 'user_id', 'invoice', 'status', 'payment_detail', 'order_details', 'created_at'])
+            ->orderBy('created_at', 'desc')
+            ->limit(10)
+            ->get();
+
+        // Always get fresh top products (not heavily cached)
+        $topProducts = $this->getOptimizedTopSellingProducts($shop, $startDate, $endDate);
+
+        return view('seller.dashboard', array_merge($dashboardData, [
+            'recentOrders' => $recentOrders,
+            'topProducts' => $topProducts,
+            'dateRange' => $dateRange
+        ]));
+    }
+
+    private function getStartDate($range)
+    {
+        switch ($range) {
+            case 'today':
+                return now()->startOfDay();
+            case 'week':
+                return now()->startOfWeek();
+            case 'year':
+                return now()->startOfYear();
+            default: // month
+                return now()->startOfMonth();
+        }
+    }
+
+    private function getOptimizedStats($shop, $startDate, $endDate, $range)
+    {
+        // Use DB facade for more control over the query - PostgreSQL compatible
+        $orderStats = DB::table('orders')
+            ->selectRaw("
+                COUNT(*) as total_orders,
+                COUNT(CASE WHEN status IN ('completed', 'shipped', 'delivered') THEN 1 END) as total_sales,
+                COUNT(CASE WHEN status IN ('pending', 'confirmed', 'processing') THEN 1 END) as pending_orders,
+                COALESCE(SUM(CASE 
+                    WHEN status IN ('completed', 'shipped', 'delivered') 
+                        AND created_at BETWEEN ? AND ?
+                    THEN CAST((payment_detail::jsonb)->>'total_amount' AS DECIMAL(15,2))
+                    ELSE 0 
+                END), 0) as total_revenue
+            ", [$startDate, $endDate])
+            ->where('shop_id', $shop->id)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->whereNull('deleted_at')
+            ->first();
+
+        // Separate optimized query for product statistics
+        $productStats = DB::table('products')
+            ->selectRaw("
+                COUNT(*) as total_products,
+                COUNT(CASE WHEN status = 'active' THEN 1 END) as active_products,
+                COUNT(CASE WHEN stock <= 0 THEN 1 END) as out_of_stock
+            ")
+            ->where('shop_id', $shop->id)
+            ->whereNull('deleted_at')
+            ->first();
+
+        // Get growth percentage with optimized query
+        $growthPercentage = $this->getOptimizedGrowthPercentage($shop, $range, $startDate, $endDate);
+
+        return [
+            'total_sales' => $orderStats->total_sales ?? 0,
+            'total_orders' => $orderStats->total_orders ?? 0,
+            'pending_orders' => $orderStats->pending_orders ?? 0,
+            'total_products' => $productStats->total_products ?? 0,
+            'active_products' => $productStats->active_products ?? 0,
+            'out_of_stock' => $productStats->out_of_stock ?? 0,
+            'total_revenue' => $orderStats->total_revenue ?? 0,
+            'growth_percentage' => $growthPercentage,
+        ];
+    }
+
+    private function getOrdersByStatus($shop, $startDate)
+    {
+        return DB::table('orders')
+            ->selectRaw('status, COUNT(*) as count')
+            ->where('shop_id', $shop->id)
+            ->where('created_at', '>=', $startDate)
+            ->whereNull('deleted_at')
+            ->groupBy('status')
+            ->pluck('count', 'status')
+            ->toArray();
+    }
+
+    private function getOptimizedGrowthPercentage($shop, $range, $currentStart, $currentEnd)
+    {
+        // Calculate previous period
+        $periodLength = $currentEnd->diffInDays($currentStart);
+        $previousStart = $currentStart->copy()->subDays($periodLength);
+        $previousEnd = $currentStart->copy();
+
+        $revenues = DB::table('orders')
+            ->selectRaw("
+                COALESCE(SUM(CASE 
+                    WHEN status IN ('completed', 'shipped', 'delivered') 
+                        AND created_at BETWEEN ? AND ?
+                    THEN CAST((payment_detail::jsonb)->>'total_amount' AS DECIMAL(15,2))
+                    ELSE 0 
+                END), 0) as current_revenue,
+                COALESCE(SUM(CASE 
+                    WHEN status IN ('completed', 'shipped', 'delivered') 
+                        AND created_at BETWEEN ? AND ?
+                    THEN CAST((payment_detail::jsonb)->>'total_amount' AS DECIMAL(15,2))
+                    ELSE 0 
+                END), 0) as previous_revenue
+            ", [$currentStart, $currentEnd, $previousStart, $previousEnd])
+            ->where('shop_id', $shop->id)
+            ->whereNull('deleted_at')
+            ->first();
+
+        $currentRevenue = $revenues->current_revenue ?? 0;
+        $previousRevenue = $revenues->previous_revenue ?? 0;
+
+        if ($previousRevenue == 0) {
+            return $currentRevenue > 0 ? 100 : 0;
+        }
+
+        return round((($currentRevenue - $previousRevenue) / $previousRevenue) * 100, 1);
+    }
+
+    private function getOptimizedMonthlySalesData($shop)
+    {
+        // Single query to get 12 months of data using DB facade for better performance - PostgreSQL compatible
+        $startDate = now()->subMonths(11)->startOfMonth();
+        $endDate = now()->endOfMonth();
+
+        $monthlyData = DB::table('orders')
+            ->selectRaw("
+                TO_CHAR(created_at, 'YYYY-MM') as month,
+                COALESCE(SUM(CASE 
+                    WHEN status IN ('completed', 'shipped', 'delivered')
+                    THEN CAST((payment_detail::jsonb)->>'total_amount' AS DECIMAL(15,2))
+                    ELSE 0 
+                END), 0) as revenue
+            ")
+            ->where('shop_id', $shop->id)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->whereNull('deleted_at')
+            ->groupBy('month')
+            ->orderBy('month')
+            ->pluck('revenue', 'month')
+            ->toArray();
+
+        $months = [];
+        $sales = [];
+        
+        for ($i = 11; $i >= 0; $i--) {
+            $date = now()->subMonths($i);
+            $monthKey = $date->format('Y-m');
+            
+            $months[] = $date->format('M Y');
+            $sales[] = (float) ($monthlyData[$monthKey] ?? 0);
+        }
+
+        return [
+            'months' => $months,
+            'sales' => $sales
+        ];
+    }
+
+    private function getOptimizedTopSellingProducts($shop, $startDate, $endDate, $limit = 5)
+    {
+        // Get products that exist in completed orders from the JSON order_details column
+        // This is a complex query for PostgreSQL JSON operations with proper casting
+        $productSales = DB::select("
+            SELECT 
+                p.id,
+                p.name,
+                p.slug,
+                p.price,
+                p.stock,
+                p.status,
+                COALESCE(SUM(
+                    CASE 
+                        WHEN o.status IN ('completed', 'shipped', 'delivered') 
+                        THEN (item->>'quantity')::integer
+                        ELSE 0 
+                    END
+                ), 0) as total_sold
+            FROM products p
+            LEFT JOIN orders o ON o.shop_id = p.shop_id
+            LEFT JOIN LATERAL jsonb_array_elements((o.order_details::jsonb)->'items') AS item ON (item->>'id') = p.id::text
+            WHERE p.shop_id = ?
+                AND p.deleted_at IS NULL
+                AND (o.created_at BETWEEN ? AND ? OR o.created_at IS NULL)
+                AND (o.deleted_at IS NULL OR o.deleted_at IS NULL)
+            GROUP BY p.id, p.name, p.slug, p.price, p.stock, p.status
+            ORDER BY total_sold DESC, p.stock DESC
+            LIMIT ?
+        ", [$shop->id, $startDate, $endDate, $limit]);
+
+        // Convert to Product models to get media relationships
+        return collect($productSales)->map(function($productData) {
+            $product = \App\Models\Product::find($productData->id);
+            if ($product) {
+                $product->total_sold = $productData->total_sold;
+                return $product;
+            }
+            return null;
+        })->filter();
+    }
+
+    private function getOptimizedWeeklyRevenueData($shop)
+    {
+        $startOfMonth = now()->startOfMonth();
+        $endOfMonth = now()->endOfMonth();
+
+        // Single optimized query to get weekly data for current month - PostgreSQL compatible
+        $weeklyData = DB::table('orders')
+            ->selectRaw("
+                EXTRACT(WEEK FROM created_at) as week_number,
+                COALESCE(SUM(CASE 
+                    WHEN status IN ('completed', 'shipped', 'delivered')
+                    THEN CAST((payment_detail::jsonb)->>'total_amount' AS DECIMAL(15,2))
+                    ELSE 0 
+                END), 0) as revenue
+            ")
+            ->where('shop_id', $shop->id)
+            ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
+            ->whereNull('deleted_at')
+            ->groupBy('week_number')
+            ->pluck('revenue', 'week_number')
+            ->toArray();
+
+        $weeks = [];
+        $revenue = [];
+        
+        $currentWeek = $startOfMonth->copy();
+        $weekCounter = 1;
+        
+        while ($currentWeek->month == now()->month && $weekCounter <= 5) { // Limit to max 5 weeks
+            $weekEnd = $currentWeek->copy()->endOfWeek();
+            if ($weekEnd->month != now()->month) {
+                $weekEnd = now()->endOfMonth();
+            }
+            
+            $weekNumber = $currentWeek->week();
+            $weeks[] = 'Week ' . $weekCounter;
+            $revenue[] = (float) ($weeklyData[$weekNumber] ?? 0);
+            
+            $currentWeek = $weekEnd->copy()->addDay();
+            if ($currentWeek->month != now()->month) break;
+            $currentWeek = $currentWeek->startOfWeek();
+            $weekCounter++;
+        }
+
+        return [
+            'weeks' => $weeks,
+            'revenue' => $revenue
+        ];
+    }
+
+    /**
+     * Clear dashboard cache for the shop
+     */
+    private function clearDashboardCache($shop)
+    {
+        $cachePatterns = [
+            "seller_dashboard_{$shop->id}_today_*",
+            "seller_dashboard_{$shop->id}_week_*",
+            "seller_dashboard_{$shop->id}_month_*",
+            "seller_dashboard_{$shop->id}_year_*",
         ];
 
-        return view('seller.dashboard', compact('stats'));
+        foreach ($cachePatterns as $pattern) {
+            // In a production environment, you might want to use Redis SCAN
+            // For now, we'll clear specific keys we know might exist
+            $ranges = ['today', 'week', 'month', 'year'];
+            foreach ($ranges as $range) {
+                $startDate = $this->getStartDate($range);
+                $endDate = now();
+                $cacheKey = "seller_dashboard_{$shop->id}_{$range}_" . $startDate->format('Y-m-d') . "_" . $endDate->format('Y-m-d');
+            }
+        }
+    }
+
+    /**
+     * AJAX endpoint for dashboard data refresh
+     */
+    public function dashboardData(Request $request)
+    {
+        $seller = auth()->user();
+        $shop = $seller->shop;
+
+        if (!$shop) {
+            return response()->json(['error' => 'Shop not found'], 404);
+        }
+
+        $dateRange = $request->get('range', 'month');
+        $startDate = $this->getStartDate($dateRange);
+        $endDate = now();
+
+        // Get fresh data (bypass cache for AJAX requests to ensure real-time data)
+        $stats = $this->getOptimizedStats($shop, $startDate, $endDate, $dateRange);
+        $ordersByStatus = $this->getOrdersByStatus($shop, $startDate);
+
+        return response()->json([
+            'stats' => $stats,
+            'ordersByStatus' => $ordersByStatus,
+            'dateRange' => $dateRange
+        ]);
     }
 
     // Shipping Method Setup
@@ -329,5 +659,134 @@ class SellerController extends Controller
     {
         // Implementation for order status update
         return redirect()->route('seller.orders.show', $order)->with('success', 'Order status updated successfully');
+    }
+
+    private function getRevenueBreakdown($shop, $startDate, $endDate)
+    {
+        // Get revenue breakdown for different periods with proper JSON casting
+        $result = DB::table('orders')
+            ->selectRaw("
+                COALESCE(SUM(CASE 
+                    WHEN status IN ('completed', 'shipped', 'delivered')
+                    THEN CAST((payment_detail::jsonb)->>'total_amount' AS DECIMAL(15,2))
+                    ELSE 0 
+                END), 0) as income,
+                COALESCE(SUM(CASE 
+                    WHEN status IN ('completed', 'shipped', 'delivered')
+                    THEN CAST((payment_detail::jsonb)->>'total_amount' AS DECIMAL(15,2)) * 0.85
+                    ELSE 0 
+                END), 0) as profit,
+                COALESCE(SUM(CASE 
+                    WHEN status IN ('completed', 'shipped', 'delivered')
+                    THEN CAST((payment_detail::jsonb)->>'total_amount' AS DECIMAL(15,2)) * 0.15
+                    ELSE 0 
+                END), 0) as expenses
+            ")
+            ->where('shop_id', $shop->id)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->whereNull('deleted_at')
+            ->first();
+
+        $income = $result->income ?? 0;
+        $maxValue = $income ?: 1; // Prevent division by zero
+
+        return [
+            'income' => $income,
+            'profit' => $result->profit ?? 0,
+            'expenses' => $result->expenses ?? 0,
+            'income_percentage' => $income > 0 ? round(($income / $maxValue) * 100, 1) : 0,
+            'profit_percentage' => $income > 0 ? round((($result->profit ?? 0) / $maxValue) * 100, 1) : 0,
+            'expenses_percentage' => $income > 0 ? round((($result->expenses ?? 0) / $maxValue) * 100, 1) : 0,
+        ];
+    }
+
+    private function getTopCustomers($shop, $startDate, $endDate, $limit = 5)
+    {
+        return DB::table('orders')
+            ->join('users', 'orders.user_id', '=', 'users.id')
+            ->selectRaw("
+                users.id,
+                users.name,
+                users.email,
+                COUNT(orders.id) as order_count,
+                COALESCE(SUM(CASE 
+                    WHEN orders.status IN ('completed', 'shipped', 'delivered')
+                    THEN CAST((orders.payment_detail::jsonb)->>'total_amount' AS DECIMAL(15,2))
+                    ELSE 0 
+                END), 0) as total_spent
+            ")
+            ->where('orders.shop_id', $shop->id)
+            ->whereBetween('orders.created_at', [$startDate, $endDate])
+            ->whereNull('orders.deleted_at')
+            ->groupBy('users.id', 'users.name', 'users.email')
+            ->orderByDesc('total_spent')
+            ->limit($limit)
+            ->get();
+    }
+
+    private function getProductsByLocation($shop, $startDate, $endDate)
+    {
+        // Get top selling locations based on shipping addresses from order_details JSON
+        // Need to cast text column to jsonb for PostgreSQL JSON operations with correct operator syntax
+        $locations = DB::table('orders')
+            ->selectRaw("
+                COALESCE((order_details::jsonb)->'address'->>'city', 'Unknown') as city,
+                COUNT(orders.id) as order_count,
+                COALESCE(SUM(CASE 
+                    WHEN orders.status IN ('completed', 'shipped', 'delivered')
+                    THEN 1
+                    ELSE 0 
+                END), 0) as completed_orders
+            ")
+            ->where('orders.shop_id', $shop->id)
+            ->whereBetween('orders.created_at', [$startDate, $endDate])
+            ->whereNull('orders.deleted_at')
+            ->groupBy('city')
+            ->orderByDesc('completed_orders')
+            ->limit(5)
+            ->get();
+
+        $totalOrders = $locations->sum('completed_orders') ?: 1;
+
+        return $locations->map(function ($location) use ($totalOrders) {
+            return [
+                'city' => $location->city ?: 'Unknown',
+                'count' => $location->completed_orders,
+                'percentage' => round(($location->completed_orders / $totalOrders) * 100, 1),
+            ];
+        });
+    }
+
+    private function getRecentActivity($shop, $limit = 10)
+    {
+        // Get recent activities from orders and product updates
+        $orderActivities = DB::table('orders')
+            ->join('users', 'orders.user_id', '=', 'users.id')
+            ->select([
+                'orders.id',
+                'orders.status',
+                'orders.created_at',
+                'orders.updated_at',
+                'orders.invoice',
+                'users.name as customer_name',
+                DB::raw("'order' as activity_type")
+            ])
+            ->where('orders.shop_id', $shop->id)
+            ->whereNull('orders.deleted_at')
+            ->orderBy('orders.updated_at', 'desc')
+            ->limit($limit)
+            ->get();
+
+        return $orderActivities->map(function ($activity) {
+            $timeAgo = Carbon::parse($activity->updated_at)->diffForHumans();
+            
+            return [
+                'type' => 'order',
+                'icon' => 'shopping-cart',
+                'title' => $activity->customer_name,
+                'description' => "Updated order #{$activity->invoice} status to " . ucfirst($activity->status),
+                'time' => $timeAgo,
+            ];
+        });
     }
 }

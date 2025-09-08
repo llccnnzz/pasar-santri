@@ -41,6 +41,7 @@ Route::group(['prefix' => 'seller', 'middleware' => ['auth']], function () {
     Route::group(['middleware' => ['has.shop']], function () {
         // Dashboard (always accessible, even for suspended shops)
         Route::get('/dashboard', [SellerController::class, 'dashboard'])->name('seller.dashboard');
+        Route::get('/dashboard/data', [SellerController::class, 'dashboardData'])->name('seller.dashboard.data');
 
         // Product & SKU Management (requires non-suspended shop)
         Route::group(['prefix' => 'products', 'middleware' => ['check.shop.suspension']], function () {
