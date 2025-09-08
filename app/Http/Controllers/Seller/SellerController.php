@@ -99,7 +99,7 @@ class SellerController extends Controller
                 COALESCE(SUM(CASE 
                     WHEN status IN ('completed', 'shipped', 'delivered') 
                         AND created_at BETWEEN ? AND ?
-                    THEN CAST(payment_detail->>'total_amount' AS DECIMAL(15,2))
+                    THEN CAST((payment_detail::jsonb)->>'total_amount' AS DECIMAL(15,2))
                     ELSE 0 
                 END), 0) as total_revenue
             ", [$startDate, $endDate])
@@ -158,13 +158,13 @@ class SellerController extends Controller
                 COALESCE(SUM(CASE 
                     WHEN status IN ('completed', 'shipped', 'delivered') 
                         AND created_at BETWEEN ? AND ?
-                    THEN CAST(payment_detail->>'total_amount' AS DECIMAL(15,2))
+                    THEN CAST((payment_detail::jsonb)->>'total_amount' AS DECIMAL(15,2))
                     ELSE 0 
                 END), 0) as current_revenue,
                 COALESCE(SUM(CASE 
                     WHEN status IN ('completed', 'shipped', 'delivered') 
                         AND created_at BETWEEN ? AND ?
-                    THEN CAST(payment_detail->>'total_amount' AS DECIMAL(15,2))
+                    THEN CAST((payment_detail::jsonb)->>'total_amount' AS DECIMAL(15,2))
                     ELSE 0 
                 END), 0) as previous_revenue
             ", [$currentStart, $currentEnd, $previousStart, $previousEnd])
@@ -193,7 +193,7 @@ class SellerController extends Controller
                 TO_CHAR(created_at, 'YYYY-MM') as month,
                 COALESCE(SUM(CASE 
                     WHEN status IN ('completed', 'shipped', 'delivered')
-                    THEN CAST(payment_detail->>'total_amount' AS DECIMAL(15,2))
+                    THEN CAST((payment_detail::jsonb)->>'total_amount' AS DECIMAL(15,2))
                     ELSE 0 
                 END), 0) as revenue
             ")
@@ -225,7 +225,7 @@ class SellerController extends Controller
     private function getOptimizedTopSellingProducts($shop, $startDate, $endDate, $limit = 5)
     {
         // Get products that exist in completed orders from the JSON order_details column
-        // This is a complex query for PostgreSQL JSON operations
+        // This is a complex query for PostgreSQL JSON operations with proper casting
         $productSales = DB::select("
             SELECT 
                 p.id,
@@ -243,7 +243,7 @@ class SellerController extends Controller
                 ), 0) as total_sold
             FROM products p
             LEFT JOIN orders o ON o.shop_id = p.shop_id
-            LEFT JOIN LATERAL jsonb_array_elements(o.order_details->'items') AS item ON (item->>'id') = p.id::text
+            LEFT JOIN LATERAL jsonb_array_elements((o.order_details::jsonb)->'items') AS item ON (item->>'id') = p.id::text
             WHERE p.shop_id = ?
                 AND p.deleted_at IS NULL
                 AND (o.created_at BETWEEN ? AND ? OR o.created_at IS NULL)
@@ -275,7 +275,7 @@ class SellerController extends Controller
                 EXTRACT(WEEK FROM created_at) as week_number,
                 COALESCE(SUM(CASE 
                     WHEN status IN ('completed', 'shipped', 'delivered')
-                    THEN CAST(payment_detail->>'total_amount' AS DECIMAL(15,2))
+                    THEN CAST((payment_detail::jsonb)->>'total_amount' AS DECIMAL(15,2))
                     ELSE 0 
                 END), 0) as revenue
             ")
@@ -663,22 +663,22 @@ class SellerController extends Controller
 
     private function getRevenueBreakdown($shop, $startDate, $endDate)
     {
-        // Get revenue breakdown for different periods
+        // Get revenue breakdown for different periods with proper JSON casting
         $result = DB::table('orders')
             ->selectRaw("
                 COALESCE(SUM(CASE 
                     WHEN status IN ('completed', 'shipped', 'delivered')
-                    THEN CAST(payment_detail->>'total_amount' AS DECIMAL(15,2))
+                    THEN CAST((payment_detail::jsonb)->>'total_amount' AS DECIMAL(15,2))
                     ELSE 0 
                 END), 0) as income,
                 COALESCE(SUM(CASE 
                     WHEN status IN ('completed', 'shipped', 'delivered')
-                    THEN CAST(payment_detail->>'total_amount' AS DECIMAL(15,2)) * 0.85
+                    THEN CAST((payment_detail::jsonb)->>'total_amount' AS DECIMAL(15,2)) * 0.85
                     ELSE 0 
                 END), 0) as profit,
                 COALESCE(SUM(CASE 
                     WHEN status IN ('completed', 'shipped', 'delivered')
-                    THEN CAST(payment_detail->>'total_amount' AS DECIMAL(15,2)) * 0.15
+                    THEN CAST((payment_detail::jsonb)->>'total_amount' AS DECIMAL(15,2)) * 0.15
                     ELSE 0 
                 END), 0) as expenses
             ")
@@ -711,7 +711,7 @@ class SellerController extends Controller
                 COUNT(orders.id) as order_count,
                 COALESCE(SUM(CASE 
                     WHEN orders.status IN ('completed', 'shipped', 'delivered')
-                    THEN CAST(orders.payment_detail->>'total_amount' AS DECIMAL(15,2))
+                    THEN CAST((orders.payment_detail::jsonb)->>'total_amount' AS DECIMAL(15,2))
                     ELSE 0 
                 END), 0) as total_spent
             ")
@@ -727,10 +727,10 @@ class SellerController extends Controller
     private function getProductsByLocation($shop, $startDate, $endDate)
     {
         // Get top selling locations based on shipping addresses from order_details JSON
-        // Based on the sample data structure: order_details->address->city
+        // Need to cast text column to jsonb for PostgreSQL JSON operations
         $locations = DB::table('orders')
             ->selectRaw("
-                COALESCE(order_details->>'address'->>'city', 'Unknown') as city,
+                COALESCE((order_details::jsonb)->>'address'->>'city', 'Unknown') as city,
                 COUNT(orders.id) as order_count,
                 COALESCE(SUM(CASE 
                     WHEN orders.status IN ('completed', 'shipped', 'delivered')
