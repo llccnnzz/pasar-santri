@@ -15,8 +15,18 @@
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <span class="d-block mb-1">Total Sales</span>
-                            <h3 class="fs-25">15,821</h3>
-                            <p class="fw-medium fs-13">Increase by <span class="badge bg-success-transparent text-success mx-1"><i data-feather="trending-up" class="me-1"></i> 4.2%</span> this month</p>
+                            <h3 class="fs-25">{{ number_format($stats['total_sales']) }}</h3>
+                            <p class="fw-medium fs-13">
+                                @if($stats['growth_percentage'] >= 0)
+                                    Increase by <span class="badge bg-success-transparent text-success mx-1">
+                                        <i data-feather="trending-up" class="me-1"></i> {{ $stats['growth_percentage'] }}%
+                                    </span> this {{ $dateRange }}
+                                @else
+                                    Decrease by <span class="badge bg-danger-transparent text-danger mx-1">
+                                        <i data-feather="trending-down" class="me-1"></i> {{ abs($stats['growth_percentage']) }}%
+                                    </span> this {{ $dateRange }}
+                                @endif
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -32,9 +42,9 @@
                             </div>
                         </div>
                         <div class="flex-grow-1 ms-3">
-                            <span class="d-block mb-1">Total Expenses</span>
-                            <h3 class="fs-25"> $30,125.00 </h3>
-                            <p class="fw-medium fs-13">Increase by <span class="badge bg-success-transparent text-success mx-1"><i data-feather="trending-up" class="me-1"></i> 12.0%</span> this month</p>
+                            <span class="d-block mb-1">Total Revenue</span>
+                            <h3 class="fs-25">Rp{{ number_format($stats['total_revenue'], 0, ',', '.') }}</h3>
+                            <p class="fw-medium fs-13">From {{ number_format($stats['total_orders']) }} orders this {{ $dateRange }}</p>
                         </div>
                     </div>
                 </div>
@@ -46,13 +56,18 @@
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0">
                             <div class="icon rounded-3">
-                                <i data-feather="users"></i>
+                                <i data-feather="package"></i>
                             </div>
                         </div>
                         <div class="flex-grow-1 ms-3">
-                            <span class="d-block mb-1">Total Visitors</span>
-                            <h3 class="fs-25"> 2,11,125 </h3>
-                            <p class="fw-medium fs-13">Increase by <span class="badge bg-danger-transparent text-danger mx-1"> <i data-feather="trending-down" class="me-1"></i> 7.6%</span> this month</p>
+                            <span class="d-block mb-1">Total Products</span>
+                            <h3 class="fs-25">{{ number_format($stats['total_products']) }}</h3>
+                            <p class="fw-medium fs-13">
+                                <span class="badge bg-success-transparent text-success mx-1">{{ $stats['active_products'] }} Active</span>
+                                @if($stats['out_of_stock'] > 0)
+                                    <span class="badge bg-warning-transparent text-warning mx-1">{{ $stats['out_of_stock'] }} Out of Stock</span>
+                                @endif
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -68,9 +83,19 @@
                             </div>
                         </div>
                         <div class="flex-grow-1 ms-3">
-                            <span class="d-block mb-1">Total Orders</span>
-                            <h3 class="fs-25">40,952</h3>
-                            <p class="fw-medium fs-13">Increase by <span class="badge bg-success-transparent text-success mx-1"> <i data-feather="trending-up" class="me-1"></i> 2.5%</span> this month</p>
+                            <span class="d-block mb-1">Pending Orders</span>
+                            <h3 class="fs-25">{{ number_format($stats['pending_orders']) }}</h3>
+                            <p class="fw-medium fs-13">
+                                @if($stats['pending_orders'] > 0)
+                                    <span class="badge bg-warning-transparent text-warning mx-1">
+                                        <i data-feather="clock" class="me-1"></i> Needs attention
+                                    </span>
+                                @else
+                                    <span class="badge bg-success-transparent text-success mx-1">
+                                        <i data-feather="check" class="me-1"></i> All caught up
+                                    </span>
+                                @endif
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -89,11 +114,11 @@
                     <div class="card-title d-flex align-items-center justify-content-between mb-20 pb-20 border-bottom border-color cursor-move">
                         <h4 class="mb-0">Sales Overview</h4>
 
-                        <select class="form-select form-control" aria-label="Default select example">
-                            <option selected>Today</option>
-                            <option value="1">This Week</option>
-                            <option value="2">This Month</option>
-                            <option value="3">This Year</option>
+                        <select class="form-select form-control" aria-label="Date range filter" onchange="changeRange(this.value)">
+                            <option value="today" {{ $dateRange == 'today' ? 'selected' : '' }}>Today</option>
+                            <option value="week" {{ $dateRange == 'week' ? 'selected' : '' }}>This Week</option>
+                            <option value="month" {{ $dateRange == 'month' ? 'selected' : '' }}>This Month</option>
+                            <option value="year" {{ $dateRange == 'year' ? 'selected' : '' }}>This Year</option>
                         </select>
                     </div>
 
@@ -460,275 +485,61 @@
                             <thead class="text-dark">
                                 <tr>
                                     <th scope="col">Date</th>
-                                    <th scope="col">Product Name</th>
-                                    <th scope="col">Product ID</th>
-                                    <th scope="col">Transaction ID</th>
-                                    <th scope="col">Price</th>
-                                    <th scope="col">Payment Method</th>
+                                    <th scope="col">Invoice</th>
+                                    <th scope="col">Customer</th>
+                                    <th scope="col">Items</th>
+                                    <th scope="col">Total</th>
+                                    <th scope="col">Payment</th>
                                     <th scope="col">Status</th>
-                                    <th scope="col">Sales</th>
-                                    <th scope="col">Revenue</th>
                                     <th scope="col">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody class="text-body o-sortable">
+                            <tbody class="text-body">
+                                @forelse($recentOrders as $order)
                                 <tr>
-                                    <td class="edit">01-07-23</td>
+                                    <td>{{ $order->created_at->format('d M Y') }}</td>
+                                    <td class="fw-medium">#{{ $order->invoice }}</td>
+                                    <td>{{ $order->user->name ?? 'N/A' }}</td>
+                                    <td>{{ count($order->order_details['items'] ?? []) }} item(s)</td>
+                                    <td>Rp{{ number_format($order->payment_detail['total_amount'] ?? 0, 0, ',', '.') }}</td>
                                     <td>
-                                        <a href="#" class="d-flex align-items-center text-decoration-none">
-                                            <img class="rounded-3 wh-50" src="/admin-assets/assets/images/products/product-1.jpg" alt="product-1">
-                                            <span class="fw-medium fs-15 ms-3 edit">Dark Green Jug</span>
+                                        @if($order->payments->isNotEmpty())
+                                            {{ ucfirst($order->payments->first()->channel) }}
+                                        @else
+                                            Pending
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @php
+                                            $statusClasses = [
+                                                'pending' => 'bg-warning-transparent text-warning',
+                                                'confirmed' => 'bg-info-transparent text-info',
+                                                'processing' => 'bg-primary-transparent text-primary',
+                                                'shipped' => 'bg-info-transparent text-info',
+                                                'delivered' => 'bg-success-transparent text-success',
+                                                'completed' => 'bg-success-transparent text-success',
+                                                'cancelled' => 'bg-danger-transparent text-danger',
+                                                'refunded' => 'bg-secondary-transparent text-secondary'
+                                            ];
+                                        @endphp
+                                        <span class="badge {{ $statusClasses[$order->status] ?? 'bg-secondary-transparent text-secondary' }} fw-normal py-1 px-2 fs-12 rounded-1">
+                                            {{ ucfirst($order->status) }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="{{ route('seller.orders.show', $order->id) }}" class="icon border-0 rounded-circle text-center bg-primary-transparent">
+                                            <i data-feather="eye"></i>
                                         </a>
                                     </td>
-                                    <td class="edit">#1734-9743</td>
-                                    <td class="edit">#14008268610</td>
-                                    <td class="edit">$199.99</td>
-                                    <td class="edit">Online</td>
-                                    <td>
-                                        <span class="badge bg-success-transparent text-success fw-normal py-1 px-2 fs-12 rounded-1 edit">Available</span>
-                                    </td>
-                                    <td class="edit">3,903</td>
-                                    <td class="edit">$57,899.24</td>
-                                    <td>
-                                        <button class="icon border-0 rounded-circle text-center bg-primary-transparent">
-                                            <i data-feather="eye"></i>
-                                        </button>
-                                        <button name="edit" class="icon border-0 rounded-circle text-center edit bg-success-transparent edit-item">
-                                            <i data-feather="edit"></i>
-                                        </button>
-                                        <button name="save" class="icon border-0 rounded-circle text-center edit bg-success-transparent save-item">
-                                            <i data-feather="check"></i>
-                                        </button>
-                                        <button name="delete" class="icon border-0 rounded-circle text-center trash bg-danger-transparent delete-item">
-                                            <i data-feather="trash-2"></i>
-                                        </button>
-                                    </td>
                                 </tr>
+                                @empty
                                 <tr>
-                                    <td class="edit">02-07-23</td>
-                                    <td>
-                                        <a href="#" class="d-flex align-items-center text-decoration-none">
-                                            <img class="rounded-3 wh-50" src="/admin-assets/assets/images/products/product-2.jpg" alt="product-2">
-                                            <span class="fw-medium fs-15 ms-3 edit">Drinking Glasses</span>
-                                        </a>
-                                    </td>
-                                    <td class="edit">#1234-4567</td>
-                                    <td class="edit">#31408224782</td>
-                                    <td class="edit">$1,299.99</td>
-                                    <td class="edit">Cash On Delivery</td>
-                                    <td>
-                                        <span class="badge bg-success-transparent text-success fw-normal py-1 px-2 fs-12 rounded-1 edit">Available</span>
-                                    </td>
-                                    <td class="edit">12,435</td>
-                                    <td class="edit">$3,24,781.92</td>
-                                    <td>
-                                        <button class="icon border-0 rounded-circle text-center bg-primary-transparent">
-                                            <i data-feather="eye"></i>
-                                        </button>
-                                        <button name="edit" class="icon border-0 rounded-circle text-center edit bg-success-transparent edit-item">
-                                            <i data-feather="edit"></i>
-                                        </button>
-                                        <button name="save" class="icon border-0 rounded-circle text-center edit bg-success-transparent save-item">
-                                            <i data-feather="check"></i>
-                                        </button>
-                                        <button name="delete" class="icon border-0 rounded-circle text-center trash bg-danger-transparent delete-item">
-                                            <i data-feather="trash-2"></i>
-                                        </button>
+                                    <td colspan="8" class="text-center py-4 text-muted">
+                                        <i data-feather="inbox" class="mb-2"></i>
+                                        <p>No orders found</p>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td class="edit">03-05-23</td>
-                                    <td>
-                                        <a href="#" class="d-flex align-items-center text-decoration-none">
-                                            <img class="rounded-3 wh-50" src="/admin-assets/assets/images/products/product-3.jpg" alt="product-3">
-                                            <span class="fw-medium fs-15 ms-3 edit">Living Room Lights</span>
-                                        </a>
-                                    </td>
-                                    <td class="edit">#1902-9883</td>
-                                    <td class="edit">#92065567861</td>
-                                    <td class="edit">$99.99</td>
-                                    <td class="edit">Cash On Delivery</td>
-                                    <td>
-                                        <span class="badge bg-danger-transparent text-danger fw-normal py-1 px-2 fs-12 rounded-1 edit">Not Available</span>
-                                    </td>
-                                    <td class="edit">3,903</td>
-                                    <td class="edit">$57,899.24</td>
-                                    <td>
-                                        <button class="icon border-0 rounded-circle text-center bg-primary-transparent">
-                                            <i data-feather="eye"></i>
-                                        </button>
-                                        <button name="edit" class="icon border-0 rounded-circle text-center edit bg-success-transparent edit-item">
-                                            <i data-feather="edit"></i>
-                                        </button>
-                                        <button name="save" class="icon border-0 rounded-circle text-center edit bg-success-transparent save-item">
-                                            <i data-feather="check"></i>
-                                        </button>
-                                        <button name="delete" class="icon border-0 rounded-circle text-center trash bg-danger-transparent delete-item">
-                                            <i data-feather="trash-2"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="edit">04-07-23</td>
-                                    <td>
-                                        <a href="#" class="d-flex align-items-center text-decoration-none">
-                                            <img class="rounded-3 wh-50" src="/admin-assets/assets/images/products/product-4.jpg" alt="product-4">
-                                            <span class="fw-medium fs-15 ms-3 edit">Simple Chair</span>
-                                        </a>
-                                    </td>
-                                    <td class="edit">#8745-1232</td>
-                                    <td class="edit">#31652851650</td>
-                                    <td class="edit">$80.99</td>
-                                    <td class="edit">Online</td>
-                                    <td>
-                                        <span class="badge bg-warning-transparent text-warning fw-normal py-1 px-2 fs-12 rounded-1 edit">Pending</span>
-                                    </td>
-                                    <td class="edit">5,903</td>
-                                    <td class="edit">$68,899.24</td>
-                                    <td>
-                                        <button class="icon border-0 rounded-circle text-center bg-primary-transparent">
-                                            <i data-feather="eye"></i>
-                                        </button>
-                                        <button name="edit" class="icon border-0 rounded-circle text-center edit bg-success-transparent edit-item">
-                                            <i data-feather="edit"></i>
-                                        </button>
-                                        <button name="save" class="icon border-0 rounded-circle text-center edit bg-success-transparent save-item">
-                                            <i data-feather="check"></i>
-                                        </button>
-                                        <button name="delete" class="icon border-0 rounded-circle text-center trash bg-danger-transparent delete-item">
-                                            <i data-feather="trash-2"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="edit">05-07-23</td>
-                                    <td>
-                                        <a href="#" class="d-flex align-items-center text-decoration-none">
-                                            <img class="rounded-3 wh-50" src="/admin-assets/assets/images/products/product-5.jpg" alt="product-5">
-                                            <span class="fw-medium fs-15 ms-3 edit">Teapot with black tea</span>
-                                        </a>
-                                    </td>
-                                    <td class="edit">#1962-9033</td>
-                                    <td class="edit">#23518898764</td>
-                                    <td class="edit">$299.99</td>
-                                    <td class="edit">Bank Transfer</td>
-                                    <td>
-                                        <span class="badge bg-info-transparent text-info fw-normal py-1 px-2 fs-12 rounded-1 edit">Shipping</span>
-                                    </td>
-                                    <td class="edit">8,903</td>
-                                    <td class="edit">$70,899.24</td>
-                                    <td>
-                                        <button class="icon border-0 rounded-circle text-center bg-primary-transparent">
-                                            <i data-feather="eye"></i>
-                                        </button>
-                                        <button name="edit" class="icon border-0 rounded-circle text-center edit bg-success-transparent edit-item">
-                                            <i data-feather="edit"></i>
-                                        </button>
-                                        <button name="save" class="icon border-0 rounded-circle text-center edit bg-success-transparent save-item">
-                                            <i data-feather="check"></i>
-                                        </button>
-                                        <button name="delete" class="icon border-0 rounded-circle text-center trash bg-danger-transparent delete-item">
-                                            <i data-feather="trash-2"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="edit">06-07-23</td>
-                                    <td>
-                                        <a href="#" class="d-flex align-items-center text-decoration-none">
-                                            <img class="rounded-3 wh-50" src="/admin-assets/assets/images/products/product-6.jpg" alt="product-6">
-                                            <span class="fw-medium fs-15 ms-3 edit">Wooden Box</span>
-                                        </a>
-                                    </td>
-                                    <td class="edit">#1731-9742</td>
-                                    <td class="edit">#14008268640</td>
-                                    <td class="edit">$399.99</td>
-                                    <td class="edit">Online</td>
-                                    <td>
-                                        <span class="badge bg-success-transparent text-success fw-normal py-1 px-2 fs-12 rounded-1 edit">Available</span>
-                                    </td>
-                                    <td class="edit">7,903</td>
-                                    <td class="edit">$80,899.24</td>
-                                    <td>
-                                        <button class="icon border-0 rounded-circle text-center bg-primary-transparent">
-                                            <i data-feather="eye"></i>
-                                        </button>
-                                        <button name="edit" class="icon border-0 rounded-circle text-center edit bg-success-transparent edit-item">
-                                            <i data-feather="edit"></i>
-                                        </button>
-                                        <button name="save" class="icon border-0 rounded-circle text-center edit bg-success-transparent save-item">
-                                            <i data-feather="check"></i>
-                                        </button>
-                                        <button name="delete" class="icon border-0 rounded-circle text-center trash bg-danger-transparent delete-item">
-                                            <i data-feather="trash-2"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="edit">07-07-23</td>
-                                    <td>
-                                        <a href="#" class="d-flex align-items-center text-decoration-none">
-                                            <img class="rounded-3 wh-50" src="/admin-assets/assets/images/products/product-7.jpg" alt="product-7">
-                                            <span class="fw-medium fs-15 ms-3 edit">Wooden Cups</span>
-                                            
-                                        </a>
-                                    </td>
-                                    <td class="edit">#1714-9753</td>
-                                    <td class="edit">#14000268610</td>
-                                    <td class="edit">$299.99</td>
-                                    <td class="edit">Cash On Delivery</td>
-                                    <td>
-                                        <span class="badge bg-success-transparent text-success fw-normal py-1 px-2 fs-12 rounded-1 edit">Available</span>
-                                    </td>
-                                    <td class="edit">4,903</td>
-                                    <td class="edit">$17,899.24</td>
-                                    <td>
-                                        <button class="icon border-0 rounded-circle text-center bg-primary-transparent">
-                                            <i data-feather="eye"></i>
-                                        </button>
-                                        <button name="edit" class="icon border-0 rounded-circle text-center edit bg-success-transparent edit-item">
-                                            <i data-feather="edit"></i>
-                                        </button>
-                                        <button name="save" class="icon border-0 rounded-circle text-center edit bg-success-transparent save-item">
-                                            <i data-feather="check"></i>
-                                        </button>
-                                        <button name="delete" class="icon border-0 rounded-circle text-center trash bg-danger-transparent delete-item">
-                                            <i data-feather="trash-2"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="edit">08-07-23</td>
-                                    <td>
-                                        <a href="#" class="d-flex align-items-center text-decoration-none">
-                                            <img class="rounded-3 wh-50" src="/admin-assets/assets/images/products/product-8.jpg" alt="product-8">
-                                            <span class="fw-medium fs-15 ms-3 edit">Vase Of Flowers</span>
-                                        </a>
-                                    </td>
-                                    <td class="edit">#1734-9743</td>
-                                    <td class="edit">#10008268610</td>
-                                    <td class="edit">$599.99</td>
-                                    <td class="edit">Online</td>
-                                    <td>
-                                        <span class="badge bg-warning-transparent text-warning fw-normal py-1 px-2 fs-12 rounded-1 edit">Pending</span>
-                                    </td>
-                                    <td class="edit">2,903</td>
-                                    <td class="edit">$37,899.24</td>
-                                    <td>
-                                        <button class="icon border-0 rounded-circle text-center bg-primary-transparent">
-                                            <i data-feather="eye"></i>
-                                        </button>
-                                        <button name="edit" class="icon border-0 rounded-circle text-center edit bg-success-transparent edit-item">
-                                            <i data-feather="edit"></i>
-                                        </button>
-                                        <button name="save" class="icon border-0 rounded-circle text-center edit bg-success-transparent save-item">
-                                            <i data-feather="check"></i>
-                                        </button>
-                                        <button name="delete" class="icon border-0 rounded-circle text-center trash bg-danger-transparent delete-item">
-                                            <i data-feather="trash-2"></i>
-                                        </button>
-                                    </td>
-                                </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>

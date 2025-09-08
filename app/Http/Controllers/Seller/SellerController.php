@@ -7,11 +7,14 @@ use App\Http\Requests\ShippingToggleRequest;
 use App\Http\Requests\ShopSettingsUpdateRequest;
 use App\Http\Requests\ShopSetupStoreRequest;
 use App\Models\KycApplication;
+use App\Models\Order;
+use App\Models\Product;
 use App\Models\ShippingMethod;
 use App\Models\Shop;
 use App\Models\ShopShippingMethod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class SellerController extends Controller
 {
@@ -24,15 +27,197 @@ class SellerController extends Controller
         $seller = auth()->user();
         $shop = $seller->shop;
 
+        if (!$shop) {
+            return redirect()->route('seller.setup')->with('error', 'Please complete your shop setup first.');
+        }
+
+        // Get date range for filtering
+        $dateRange = $request->get('range', 'month'); // today, week, month, year
+        $startDate = $this->getStartDate($dateRange);
+        $endDate = now();
+
         // Dashboard statistics
         $stats = [
-            'total_products' => $shop ? $shop->products()->count() : 0,
-            'total_orders' => 0,
-            'pending_orders' => 0,
-            'total_earnings' => 0,
+            'total_sales' => $this->getTotalSales($shop, $startDate, $endDate),
+            'total_orders' => $this->getTotalOrders($shop, $startDate, $endDate),
+            'pending_orders' => $this->getPendingOrders($shop),
+            'total_products' => $shop->products()->count(),
+            'active_products' => $shop->products()->where('status', 'active')->count(),
+            'out_of_stock' => $shop->products()->where('stock', '<=', 0)->count(),
+            'total_revenue' => $this->getTotalRevenue($shop, $startDate, $endDate),
+            'growth_percentage' => $this->getGrowthPercentage($shop, $dateRange),
         ];
 
-        return view('seller.dashboard', compact('stats'));
+        // Recent orders for the table
+        $recentOrders = $shop->orders()
+            ->with(['user', 'payments'])
+            ->orderBy('created_at', 'desc')
+            ->limit(10)
+            ->get();
+
+        // Orders by status for charts
+        $ordersByStatus = $shop->orders()
+            ->selectRaw('status, COUNT(*) as count')
+            ->where('created_at', '>=', $startDate)
+            ->groupBy('status')
+            ->pluck('count', 'status')
+            ->toArray();
+
+        // Monthly sales data for charts
+        $monthlySales = $this->getMonthlySalesData($shop);
+
+        // Top selling products
+        $topProducts = $this->getTopSellingProducts($shop, $startDate, $endDate);
+
+        // Revenue by week for current month
+        $weeklyRevenue = $this->getWeeklyRevenueData($shop);
+
+        return view('seller.dashboard', compact(
+            'stats', 
+            'recentOrders', 
+            'ordersByStatus', 
+            'monthlySales',
+            'topProducts',
+            'weeklyRevenue',
+            'dateRange'
+        ));
+    }
+
+    private function getStartDate($range)
+    {
+        switch ($range) {
+            case 'today':
+                return now()->startOfDay();
+            case 'week':
+                return now()->startOfWeek();
+            case 'year':
+                return now()->startOfYear();
+            default: // month
+                return now()->startOfMonth();
+        }
+    }
+
+    private function getTotalSales($shop, $startDate, $endDate)
+    {
+        return $shop->orders()
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->whereIn('status', ['completed', 'shipped', 'delivered'])
+            ->count();
+    }
+
+    private function getTotalOrders($shop, $startDate, $endDate)
+    {
+        return $shop->orders()
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->count();
+    }
+
+    private function getPendingOrders($shop)
+    {
+        return $shop->orders()
+            ->whereIn('status', ['pending', 'confirmed', 'processing'])
+            ->count();
+    }
+
+    private function getTotalRevenue($shop, $startDate, $endDate)
+    {
+        return $shop->orders()
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->whereIn('status', ['completed', 'shipped', 'delivered'])
+            ->get()
+            ->sum(function ($order) {
+                return $order->payment_detail['total_amount'] ?? 0;
+            });
+    }
+
+    private function getGrowthPercentage($shop, $range)
+    {
+        $currentStart = $this->getStartDate($range);
+        $currentEnd = now();
+        
+        // Calculate previous period
+        $periodLength = $currentEnd->diffInDays($currentStart);
+        $previousStart = $currentStart->copy()->subDays($periodLength);
+        $previousEnd = $currentStart->copy();
+
+        $currentRevenue = $this->getTotalRevenue($shop, $currentStart, $currentEnd);
+        $previousRevenue = $this->getTotalRevenue($shop, $previousStart, $previousEnd);
+
+        if ($previousRevenue == 0) {
+            return $currentRevenue > 0 ? 100 : 0;
+        }
+
+        return round((($currentRevenue - $previousRevenue) / $previousRevenue) * 100, 1);
+    }
+
+    private function getMonthlySalesData($shop)
+    {
+        $months = [];
+        $sales = [];
+        
+        for ($i = 11; $i >= 0; $i--) {
+            $date = now()->subMonths($i);
+            $monthStart = $date->copy()->startOfMonth();
+            $monthEnd = $date->copy()->endOfMonth();
+            
+            $months[] = $date->format('M Y');
+            $sales[] = $shop->orders()
+                ->whereBetween('created_at', [$monthStart, $monthEnd])
+                ->whereIn('status', ['completed', 'shipped', 'delivered'])
+                ->get()
+                ->sum(function ($order) {
+                    return $order->payment_detail['total_amount'] ?? 0;
+                });
+        }
+
+        return [
+            'months' => $months,
+            'sales' => $sales
+        ];
+    }
+
+    private function getTopSellingProducts($shop, $startDate, $endDate, $limit = 5)
+    {
+        // This would require analyzing order details to get product sales
+        // For now, return the most recent products
+        return $shop->products()
+            ->with(['defaultImage'])
+            ->where('status', 'active')
+            ->orderBy('created_at', 'desc')
+            ->limit($limit)
+            ->get();
+    }
+
+    private function getWeeklyRevenueData($shop)
+    {
+        $weeks = [];
+        $revenue = [];
+        
+        $startOfMonth = now()->startOfMonth();
+        $currentWeek = $startOfMonth->copy();
+        
+        while ($currentWeek->month == now()->month) {
+            $weekEnd = $currentWeek->copy()->endOfWeek();
+            if ($weekEnd->month != now()->month) {
+                $weekEnd = now()->endOfMonth();
+            }
+            
+            $weeks[] = 'Week ' . (count($weeks) + 1);
+            $revenue[] = $shop->orders()
+                ->whereBetween('created_at', [$currentWeek, $weekEnd])
+                ->whereIn('status', ['completed', 'shipped', 'delivered'])
+                ->get()
+                ->sum(function ($order) {
+                    return $order->payment_detail['total_amount'] ?? 0;
+                });
+                
+            $currentWeek = $weekEnd->copy()->addDay()->startOfWeek();
+        }
+
+        return [
+            'weeks' => $weeks,
+            'revenue' => $revenue
+        ];
     }
 
     // Shipping Method Setup

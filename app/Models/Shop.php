@@ -99,6 +99,11 @@ class Shop extends Model implements HasMedia
         return "{$this->address}, {$this->subdistrict}, {$this->city}, {$this->province}, {$this->village}, {$this->postal_code}, {$this->country}";
     }
 
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
     // Scopes for suspension status
     public function scopeNotSuspended($query)
     {
