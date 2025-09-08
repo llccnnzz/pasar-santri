@@ -1,6 +1,89 @@
 @extends('layouts.admin.main')
 
 @section('content')
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
+            <div class="card status-card border-0 rounded-3 mb-3">
+                <div class="card-body p-20">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="icon rounded-3">
+                                <i data-feather="image" class="text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            @php
+                                $primaryBanner = $bannerPromotions['banner_promotion_headline_primary']['value'] ?? null;
+                                $count = 0;
+                                if (is_array($primaryBanner)) {
+                                    $count = count($primaryBanner);
+                                } elseif (is_string($primaryBanner) && !empty($primaryBanner)) {
+                                    $decoded = json_decode($primaryBanner, true);
+                                    $count = is_array($decoded) ? count($decoded) : 1;
+                                }
+                            @endphp
+
+                            <span class="d-block mb-1 text-muted">Primary Banner</span>
+                            <h4 class="fs-20 mb-0">{{ $count }}</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
+            <div class="card status-card border-0 rounded-3 mb-3">
+                <div class="card-body p-20">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="icon rounded-3">
+                                <i data-feather="image" class="text-success"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <span class="d-block mb-1 text-muted">Child Banners</span>
+                            <h4 class="fs-20 mb-0">3</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
+            <div class="card status-card border-0 rounded-3 mb-3">
+                <div class="card-body p-20">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="icon rounded-3">
+                                <i data-feather="image" class="text-warning"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <span class="d-block mb-1 text-muted">Section Banners</span>
+                            <h4 class="fs-20 mb-0">3</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
+            <div class="card status-card border-0 rounded-3 mb-3">
+                <div class="card-body p-20">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="icon rounded-3">
+                                <i data-feather="image" class="text-info"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <span class="d-block mb-1 text-muted">Total Banners</span>
+                            <h4 class="fs-20 mb-0">{{ count($bannerPromotions) }}</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 <div class="main-content">
     <div class="page-content">
         <div class="container-fluid">
@@ -14,60 +97,12 @@
                                 Manage promotional banners throughout the website
                             </div>
                         </div>
-                        
+
                         <div class="card-body">
-                            <!-- Banner Overview Cards -->
-                            <div class="row mb-4">
-                                <div class="col-md-3">
-                                    <div class="card bg-primary text-white">
-                                        <div class="card-body text-center">
-                                            <h6 class="text-white">Primary Banners</h6>
-                                            <h4 class="text-white mb-0">
-                                                @php
-                                                    $primaryBanner = $bannerPromotions['banner_promotion_headline_primary']['value'] ?? null;
-                                                    $count = 0;
-                                                    if (is_array($primaryBanner)) {
-                                                        $count = count($primaryBanner);
-                                                    } elseif (is_string($primaryBanner) && !empty($primaryBanner)) {
-                                                        $decoded = json_decode($primaryBanner, true);
-                                                        $count = is_array($decoded) ? count($decoded) : 1;
-                                                    }
-                                                @endphp
-                                                {{ $count }}
-                                            </h4>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="card bg-success text-white">
-                                        <div class="card-body text-center">
-                                            <h6 class="text-white">Child Banners</h6>
-                                            <h4 class="text-white mb-0">3</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="card bg-info text-white">
-                                        <div class="card-body text-center">
-                                            <h6 class="text-white">Section Banners</h6>
-                                            <h4 class="text-white mb-0">3</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="card bg-warning text-white">
-                                        <div class="card-body text-center">
-                                            <h6 class="text-white">Total Banners</h6>
-                                            <h4 class="text-white mb-0">{{ count($bannerPromotions) }}</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
 
                             <!-- Banner Configuration -->
                             <div class="row">
                                 <div class="col-12">
-                                    <h5 class="mb-3">Banner Configuration</h5>
                                     <div class="row">
                                         @foreach($bannerPromotions as $key => $banner)
                                         <div class="col-lg-6 col-xl-4 mb-4">
@@ -82,7 +117,7 @@
                                                 </div>
                                                 <div class="card-body">
                                                     <p class="text-muted small">{{ $banner['description'] }}</p>
-                                                    
+
                                     <!-- Current Images Display -->
                                     <div class="current-images mb-3">
                                         @if($banner['is_multiple'])
@@ -100,8 +135,8 @@
                                                     @foreach($images as $imagePath)
                                                     <div class="col-6 mb-2">
                                                         <div class="position-relative">
-                                                            <img src="{{ $imagePath }}" 
-                                                                 alt="Banner Image" 
+                                                            <img src="{{ $imagePath }}"
+                                                                 alt="Banner Image"
                                                                  class="img-fluid rounded border"
                                                                  style="width: 100%; height: 80px; object-fit: cover;">
                                                         </div>
@@ -117,8 +152,8 @@
                                         @else
                                             @if(!empty($banner['value']))
                                                 <div class="text-center">
-                                                    <img src="{{ $banner['value'] }}" 
-                                                         alt="Banner Image" 
+                                                    <img src="{{ $banner['value'] }}"
+                                                         alt="Banner Image"
                                                          class="img-fluid rounded border"
                                                          style="max-height: 120px; object-fit: cover;">
                                                 </div>
@@ -130,14 +165,14 @@
                                             @endif
                                         @endif
                                     </div>                                                    <!-- Upload Button -->
-                                                    <button type="button" 
-                                                            class="btn btn-outline-primary btn-sm w-100 upload-banner-btn" 
+                                                    <button type="button"
+                                                            class="btn btn-outline-primary btn-sm w-100 upload-banner-btn"
                                                             data-key="{{ $key }}"
                                                             data-label="{{ $banner['label'] }}"
                                                             data-description="{{ $banner['description'] }}"
                                                             data-is-multiple="{{ $banner['is_multiple'] ? 'true' : 'false' }}"
                                                             title="Upload {{ $banner['label'] }}">
-                                                        <i class="ri-upload-line"></i> 
+                                                        <i class="ri-upload-line"></i>
                                                         {{ $banner['is_multiple'] ? 'Upload Images' : 'Upload Image' }}
                                                     </button>
                                                 </div>
@@ -171,7 +206,7 @@
                         <h6 id="bannerLabel">Banner Name</h6>
                         <p class="text-muted" id="bannerDescription">Banner description</p>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label class="form-label">
                             <span id="uploadLabel">Upload Image</span>
@@ -194,7 +229,7 @@
 
                     <div class="alert alert-info">
                         <i class="ri-information-line"></i>
-                        <strong>Note:</strong> 
+                        <strong>Note:</strong>
                         <span id="uploadNote">Uploading new images will replace existing ones.</span>
                     </div>
                 </div>
@@ -280,17 +315,17 @@ $(document).ready(function() {
     let currentBannerKey = null;
     let isMultiple = false;
     let selectedFiles = [];
-    
+
     // Upload banner button click
     $('.upload-banner-btn').on('click', function() {
         const data = $(this).data();
         currentBannerKey = data.key;
-        isMultiple = data.isMultiple === 'true';
+        isMultiple = data.isMultiple;
         selectedFiles = [];
-        
+
         $('#bannerLabel').text(data.label);
         $('#bannerDescription').text(data.description);
-        
+
         // Update labels and note
         if (isMultiple) {
             $('#uploadLabel').text('Upload Images');
@@ -301,21 +336,21 @@ $(document).ready(function() {
             $('#submitText').text('Upload Image');
             $('#uploadNote').text('Uploading a new image will replace the existing one.');
         }
-        
+
         // Build upload input
         buildUploadInput();
-        
+
         // Clear preview
         $('#previewContainer').hide();
         $('#previewImages').empty();
-        
+
         $('#uploadBannerModal').modal('show');
     });
-    
+
     // Build upload input based on type
     function buildUploadInput() {
         let inputHtml = '';
-        
+
         if (isMultiple) {
             inputHtml = `
                 <div class="file-drop-area" id="fileDropArea">
@@ -339,61 +374,61 @@ $(document).ready(function() {
                 </div>
             `;
         }
-        
+
         $('#uploadContainer').html(inputHtml);
-        
+
         // Setup drag and drop
         setupDragAndDrop();
-        
+
         // Setup file input change
         $('#fileInput').on('change', function() {
             handleFileSelection(this.files);
         });
     }
-    
+
     // Setup drag and drop functionality
     function setupDragAndDrop() {
         const dropArea = $('#fileDropArea')[0];
-        
+
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
             dropArea.addEventListener(eventName, preventDefaults, false);
         });
-        
+
         ['dragenter', 'dragover'].forEach(eventName => {
             dropArea.addEventListener(eventName, highlight, false);
         });
-        
+
         ['dragleave', 'drop'].forEach(eventName => {
             dropArea.addEventListener(eventName, unhighlight, false);
         });
-        
+
         dropArea.addEventListener('drop', handleDrop, false);
-        
+
         function preventDefaults(e) {
             e.preventDefault();
             e.stopPropagation();
         }
-        
+
         function highlight() {
             dropArea.classList.add('dragover');
         }
-        
+
         function unhighlight() {
             dropArea.classList.remove('dragover');
         }
-        
+
         function handleDrop(e) {
             const dt = e.dataTransfer;
             const files = dt.files;
             handleFileSelection(files);
         }
     }
-    
+
     // Handle file selection
     function handleFileSelection(files) {
         selectedFiles = [];
         const fileArray = Array.from(files);
-        
+
         // Validate file count
         if (!isMultiple && fileArray.length > 1) {
             Swal.fire({
@@ -403,7 +438,7 @@ $(document).ready(function() {
             });
             return;
         }
-        
+
         if (isMultiple && fileArray.length > 10) {
             Swal.fire({
                 icon: 'warning',
@@ -412,7 +447,7 @@ $(document).ready(function() {
             });
             return;
         }
-        
+
         // Validate each file
         for (let file of fileArray) {
             if (!file.type.startsWith('image/')) {
@@ -423,7 +458,7 @@ $(document).ready(function() {
                 });
                 return;
             }
-            
+
             if (file.size > 2 * 1024 * 1024) { // 2MB
                 Swal.fire({
                     icon: 'error',
@@ -433,20 +468,20 @@ $(document).ready(function() {
                 return;
             }
         }
-        
+
         selectedFiles = fileArray;
         showPreview();
     }
-    
+
     // Show preview of selected images
     function showPreview() {
         if (selectedFiles.length === 0) {
             $('#previewContainer').hide();
             return;
         }
-        
+
         $('#previewImages').empty();
-        
+
         selectedFiles.forEach((file, index) => {
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -466,25 +501,25 @@ $(document).ready(function() {
             };
             reader.readAsDataURL(file);
         });
-        
+
         $('#previewContainer').show();
     }
-    
+
     // Remove preview (global function)
     window.removePreview = function(index) {
         selectedFiles.splice(index, 1);
         showPreview();
-        
+
         // Update file input
         const dt = new DataTransfer();
         selectedFiles.forEach(file => dt.items.add(file));
         $('#fileInput')[0].files = dt.files;
     };
-    
+
     // Handle form submission
     $('#uploadBannerForm').on('submit', function(e) {
         e.preventDefault();
-        
+
         if (!currentBannerKey || selectedFiles.length === 0) {
             Swal.fire({
                 icon: 'warning',
@@ -493,11 +528,11 @@ $(document).ready(function() {
             });
             return;
         }
-        
+
         const formData = new FormData();
         formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
         formData.append('_method', 'PUT');
-        
+
         if (isMultiple) {
             selectedFiles.forEach(file => {
                 formData.append('images[]', file);
@@ -505,7 +540,7 @@ $(document).ready(function() {
         } else {
             formData.append('image', selectedFiles[0]);
         }
-        
+
         $.ajax({
             url: `/admin/banners/${currentBannerKey}`,
             method: 'POST',
@@ -537,7 +572,7 @@ $(document).ready(function() {
                     for (const [field, messages] of Object.entries(response.errors)) {
                         errorMessage += messages.join('\n') + '\n';
                     }
-                    
+
                     Swal.fire({
                         icon: 'error',
                         title: 'Validation Error',
@@ -562,7 +597,7 @@ $(document).ready(function() {
             }
         });
     });
-    
+
     // Clear validation errors and preview when modal closes
     $('#uploadBannerModal').on('hidden.bs.modal', function() {
         selectedFiles = [];

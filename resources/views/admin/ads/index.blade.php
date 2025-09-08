@@ -136,9 +136,9 @@
                                     <div class="flex-shrink-0">
                                         @if($ad->product->media->isNotEmpty())
                                             <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                                <img src="{{ $ad->product->media->first()->getUrl() }}" 
-                                                     alt="{{ $ad->product->name }}" 
-                                                     class="rounded-circle" 
+                                                <img src="{{ $ad->product->media->first()->getUrl() }}"
+                                                     alt="{{ $ad->product->name }}"
+                                                     class="rounded-circle"
                                                      style="width: 40px; height: 40px; object-fit: cover;">
                                             </div>
                                         @else
@@ -233,14 +233,14 @@
                                         <li><hr class="dropdown-divider"></li>
                                         @if($ad->is_active)
                                         <li>
-                                            <button class="dropdown-item text-warning" onclick="toggleAdStatus('{{ $ad->id }}', false, '{{ $ad->product->name }}')">
+                                            <button class="dropdown-item text-warning" onclick="toggleAdStatus('{{ $ad->id }}', '{{ $ad->product_id }}', false, '{{ $ad->product->name }}')">
                                                 <i data-feather="pause" class="me-2" style="width: 14px; height: 14px;"></i>
                                                 Deactivate
                                             </button>
                                         </li>
                                         @else
                                         <li>
-                                            <button class="dropdown-item text-success" onclick="toggleAdStatus('{{ $ad->id }}', true, '{{ $ad->product->name }}')">
+                                            <button class="dropdown-item text-success" onclick="toggleAdStatus('{{ $ad->id }}', '{{ $ad->product_id }}', true, '{{ $ad->product->name }}')">
                                                 <i data-feather="play" class="me-2" style="width: 14px; height: 14px;"></i>
                                                 Activate
                                             </button>
@@ -315,9 +315,9 @@
                         <div class="d-flex">
                             @if($product->media->isNotEmpty())
                                 <div class="bg-primary bg-opacity-10 rounded d-flex align-items-center justify-content-center me-3" style="width: 60px; height: 60px;">
-                                    <img src="{{ $product->media->first()->getUrl() }}" 
-                                         alt="{{ $product->name }}" 
-                                         class="rounded" 
+                                    <img src="{{ $product->media->first()->getUrl() }}"
+                                         alt="{{ $product->name }}"
+                                         class="rounded"
                                          style="width: 60px; height: 60px; object-fit: cover;">
                                 </div>
                             @else
@@ -536,23 +536,23 @@ function getSelectedIds() {
     }).get();
 }
 
-function toggleAdStatus(id, status, productName) {
+function toggleAdStatus(id, product_id, status, productName) {
     $('#toggleStatusProductName').text(productName);
-    $('#toggleStatusProductId').val(id);
+    $('#toggleStatusProductId').val(product_id);
     $('#toggleStatusValue').val(status ? 1 : 0);
-    
+
     const action = status ? 'activate' : 'deactivate';
     const alertClass = status ? 'alert-success' : 'alert-warning';
     const btnClass = status ? 'btn-success' : 'btn-warning';
     const iconName = status ? 'play' : 'pause';
-    
+
     $('#toggleStatusTitle').text(`${status ? 'Activate' : 'Deactivate'} Product Ad`);
     $('#toggleStatusAlert').removeClass('alert-success alert-warning').addClass(alertClass);
     $('#toggleStatusSubmitBtn').removeClass('btn-success btn-warning').addClass(btnClass);
     $('#toggleStatusIcon').attr('data-feather', iconName);
     $('#toggleStatusText').text(status ? 'Activate Ad' : 'Deactivate Ad');
     $('#toggleStatusForm').attr('action', `/admin/ads/${id}`);
-    
+
     feather.replace();
     $('#toggleStatusModal').modal('show');
 }

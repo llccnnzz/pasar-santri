@@ -55,7 +55,7 @@ class ShopController extends Controller
 
         $bannerPromotion = GlobalVariable::where('key','iLike', 'banner_promotion%')->get()->mapWithKeys(function ($item) {;
             return [
-                str_replace('banner_promotion_', '', $item['key']) => ($item['type'] === 'array' ? json_decode($item['value'], true) : $item['value'])
+                str_replace('banner_promotion_', '', $item['key']) => (in_array($item['type'], ['array', 'json']) ? json_decode($item['value'], true) : $item['value'])
             ];
         })->toArray();
 

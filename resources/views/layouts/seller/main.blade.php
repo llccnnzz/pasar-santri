@@ -23,6 +23,7 @@
 		<!--=== Favicon ===-->
 		<link rel="icon" type="image/png" href="/admin-assets/assets/images/favicon.png">
 		<!--=== Title ===-->
+        <link rel="stylesheet" href="/assets/toastr/toastr.min.css"/>
         @stack('head')
 		<title>{{ auth()->user()->shop?->name }} - at Pasar Santri</title>
     </head>
@@ -638,6 +639,20 @@
         <script src="/admin-assets/assets/js/amcharts/Animated.js"></script>
 		<script src="/admin-assets/assets/js/apex/ecommerce-chart.js"></script>
 		<script src="/admin-assets/assets/js/custom.js"></script>
+        <script src="/assets/toastr/toastr.min.js"></script>
+        <script>
+            toastr.options = {
+                "debug": false,
+                "positionClass": "toast-bottom-right",
+                "onclick": null,
+                "fadeIn": 300,
+                "fadeOut": 1000,
+                "timeOut": 5000,
+                "extendedTimeOut": 1000,
+                "preventDuplicates": true,
+            }
+        </script>
+        @include('layouts.landing.component.toastr')
         @stack('scripts')
     </body>
 </html>

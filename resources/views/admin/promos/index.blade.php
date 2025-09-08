@@ -147,7 +147,7 @@
                                     <div class="d-flex align-items-center">
                                         <div class="flex-shrink-0">
                                             <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                                <i data-feather="tag" class="text-primary" style="width: 18px; height: 18px;"></i>
+                                                <i data-feather="tag" class="text-white" style="width: 18px; height: 18px;"></i>
                                             </div>
                                         </div>
                                         <div class="flex-grow-1 ms-3">

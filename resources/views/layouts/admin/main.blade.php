@@ -644,6 +644,31 @@
         confirmButtonText: 'OK'
     });
 @endif
+
+@if(session('message'))
+    Swal.fire({
+        title: 'Info',
+        text: '{{ session('message') }}',
+        icon: 'info',
+        confirmButtonText: 'OK'
+    });
+@endif
+
+@if (count($errors) > 0)
+    @php
+        $pesan = '';
+        foreach ($errors->all() as $error){
+            $pesan.=$error.', ';
+        }
+    @endphp
+
+    Swal.fire({
+        title: 'Error!',
+        text: '{{ $pesan }}',
+        icon: 'error',
+        confirmButtonText: 'OK'
+    });
+@endif
 </script>
 
 @stack('scripts')
