@@ -320,7 +320,7 @@ $(document).ready(function() {
     $('.upload-banner-btn').on('click', function() {
         const data = $(this).data();
         currentBannerKey = data.key;
-        isMultiple = data.isMultiple === 'true';
+        isMultiple = data.isMultiple;
         selectedFiles = [];
 
         $('#bannerLabel').text(data.label);

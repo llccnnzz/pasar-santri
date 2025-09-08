@@ -29,7 +29,7 @@ return new class extends Migration {
         ]);
 
         DB::table('global_variables')->insert([
-            ['key' => 'banner_promotion_headline_primary', 'type'=> 'json', 'value' => '["/assets/imgs/slider/slider-3.png","/assets/imgs/slider/slider-4.png"]'],
+            ['key' => 'banner_promotion_headline_primary', 'type'=> 'json', 'value' => '["\/assets\/imgs\/slider\/slider-3.png","\/assets\/imgs\/slider\/slider-4.png"]'],
             ['key' => 'banner_promotion_headline_secondary', 'type'=> 'string',  'value' => '/assets/imgs/banner/banner-11.png'],
             ['key' => 'banner_promotion_headline_child_1', 'type'=> 'string',  'value' => '/assets/imgs/banner/banner-1.png'],
             ['key' => 'banner_promotion_headline_child_2', 'type'=> 'string',  'value' => '/assets/imgs/banner/banner-2.png'],
