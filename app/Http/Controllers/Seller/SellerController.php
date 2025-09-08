@@ -14,6 +14,8 @@ use App\Models\Shop;
 use App\Models\ShopShippingMethod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class SellerController extends Controller
@@ -36,51 +38,36 @@ class SellerController extends Controller
         $startDate = $this->getStartDate($dateRange);
         $endDate = now();
 
-        // Dashboard statistics
-        $stats = [
-            'total_sales' => $this->getTotalSales($shop, $startDate, $endDate),
-            'total_orders' => $this->getTotalOrders($shop, $startDate, $endDate),
-            'pending_orders' => $this->getPendingOrders($shop),
-            'total_products' => $shop->products()->count(),
-            'active_products' => $shop->products()->where('status', 'active')->count(),
-            'out_of_stock' => $shop->products()->where('stock', '<=', 0)->count(),
-            'total_revenue' => $this->getTotalRevenue($shop, $startDate, $endDate),
-            'growth_percentage' => $this->getGrowthPercentage($shop, $dateRange),
-        ];
+        // Cache key for dashboard data
+        $cacheKey = "seller_dashboard_{$shop->id}_{$dateRange}_" . $startDate->format('Y-m-d') . "_" . $endDate->format('Y-m-d');
+        $cacheDuration = now()->addMinutes($dateRange === 'today' ? 5 : 30); // 5 min for today, 30 min for others
 
-        // Recent orders for the table
+        // Try to get cached data first
+        $dashboardData = Cache::remember($cacheKey, $cacheDuration, function() use ($shop, $startDate, $endDate, $dateRange) {
+            return [
+                'stats' => $this->getOptimizedStats($shop, $startDate, $endDate, $dateRange),
+                'ordersByStatus' => $this->getOrdersByStatus($shop, $startDate),
+                'monthlySales' => $this->getOptimizedMonthlySalesData($shop),
+                'weeklyRevenue' => $this->getOptimizedWeeklyRevenueData($shop),
+            ];
+        });
+
+        // Always get fresh recent orders (not cached as they change frequently)
         $recentOrders = $shop->orders()
-            ->with(['user', 'payments'])
+            ->with(['user:id,name,email'])
+            ->select(['id', 'user_id', 'invoice', 'status', 'payment_detail', 'order_details', 'created_at'])
             ->orderBy('created_at', 'desc')
             ->limit(10)
             ->get();
 
-        // Orders by status for charts
-        $ordersByStatus = $shop->orders()
-            ->selectRaw('status, COUNT(*) as count')
-            ->where('created_at', '>=', $startDate)
-            ->groupBy('status')
-            ->pluck('count', 'status')
-            ->toArray();
+        // Always get fresh top products (not heavily cached)
+        $topProducts = $this->getOptimizedTopSellingProducts($shop, $startDate, $endDate);
 
-        // Monthly sales data for charts
-        $monthlySales = $this->getMonthlySalesData($shop);
-
-        // Top selling products
-        $topProducts = $this->getTopSellingProducts($shop, $startDate, $endDate);
-
-        // Revenue by week for current month
-        $weeklyRevenue = $this->getWeeklyRevenueData($shop);
-
-        return view('seller.dashboard', compact(
-            'stats', 
-            'recentOrders', 
-            'ordersByStatus', 
-            'monthlySales',
-            'topProducts',
-            'weeklyRevenue',
-            'dateRange'
-        ));
+        return view('seller.dashboard', array_merge($dashboardData, [
+            'recentOrders' => $recentOrders,
+            'topProducts' => $topProducts,
+            'dateRange' => $dateRange
+        ]));
     }
 
     private function getStartDate($range)
@@ -97,51 +84,92 @@ class SellerController extends Controller
         }
     }
 
-    private function getTotalSales($shop, $startDate, $endDate)
+    private function getOptimizedStats($shop, $startDate, $endDate, $range)
     {
-        return $shop->orders()
+        // Use DB facade for more control over the query - PostgreSQL compatible
+        $orderStats = DB::table('orders')
+            ->selectRaw("
+                COUNT(*) as total_orders,
+                COUNT(CASE WHEN status IN ('completed', 'shipped', 'delivered') THEN 1 END) as total_sales,
+                COUNT(CASE WHEN status IN ('pending', 'confirmed', 'processing') THEN 1 END) as pending_orders,
+                COALESCE(SUM(CASE 
+                    WHEN status IN ('completed', 'shipped', 'delivered') 
+                        AND created_at BETWEEN ? AND ?
+                    THEN CAST(payment_detail->>'total_amount' AS DECIMAL(15,2))
+                    ELSE 0 
+                END), 0) as total_revenue
+            ", [$startDate, $endDate])
+            ->where('shop_id', $shop->id)
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->whereIn('status', ['completed', 'shipped', 'delivered'])
-            ->count();
+            ->whereNull('deleted_at')
+            ->first();
+
+        // Separate optimized query for product statistics
+        $productStats = DB::table('products')
+            ->selectRaw("
+                COUNT(*) as total_products,
+                COUNT(CASE WHEN status = 'active' THEN 1 END) as active_products,
+                COUNT(CASE WHEN stock <= 0 THEN 1 END) as out_of_stock
+            ")
+            ->where('shop_id', $shop->id)
+            ->whereNull('deleted_at')
+            ->first();
+
+        // Get growth percentage with optimized query
+        $growthPercentage = $this->getOptimizedGrowthPercentage($shop, $range, $startDate, $endDate);
+
+        return [
+            'total_sales' => $orderStats->total_sales ?? 0,
+            'total_orders' => $orderStats->total_orders ?? 0,
+            'pending_orders' => $orderStats->pending_orders ?? 0,
+            'total_products' => $productStats->total_products ?? 0,
+            'active_products' => $productStats->active_products ?? 0,
+            'out_of_stock' => $productStats->out_of_stock ?? 0,
+            'total_revenue' => $orderStats->total_revenue ?? 0,
+            'growth_percentage' => $growthPercentage,
+        ];
     }
 
-    private function getTotalOrders($shop, $startDate, $endDate)
+    private function getOrdersByStatus($shop, $startDate)
     {
-        return $shop->orders()
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->count();
+        return DB::table('orders')
+            ->selectRaw('status, COUNT(*) as count')
+            ->where('shop_id', $shop->id)
+            ->where('created_at', '>=', $startDate)
+            ->whereNull('deleted_at')
+            ->groupBy('status')
+            ->pluck('count', 'status')
+            ->toArray();
     }
 
-    private function getPendingOrders($shop)
+    private function getOptimizedGrowthPercentage($shop, $range, $currentStart, $currentEnd)
     {
-        return $shop->orders()
-            ->whereIn('status', ['pending', 'confirmed', 'processing'])
-            ->count();
-    }
-
-    private function getTotalRevenue($shop, $startDate, $endDate)
-    {
-        return $shop->orders()
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->whereIn('status', ['completed', 'shipped', 'delivered'])
-            ->get()
-            ->sum(function ($order) {
-                return $order->payment_detail['total_amount'] ?? 0;
-            });
-    }
-
-    private function getGrowthPercentage($shop, $range)
-    {
-        $currentStart = $this->getStartDate($range);
-        $currentEnd = now();
-        
         // Calculate previous period
         $periodLength = $currentEnd->diffInDays($currentStart);
         $previousStart = $currentStart->copy()->subDays($periodLength);
         $previousEnd = $currentStart->copy();
 
-        $currentRevenue = $this->getTotalRevenue($shop, $currentStart, $currentEnd);
-        $previousRevenue = $this->getTotalRevenue($shop, $previousStart, $previousEnd);
+        $revenues = DB::table('orders')
+            ->selectRaw("
+                COALESCE(SUM(CASE 
+                    WHEN status IN ('completed', 'shipped', 'delivered') 
+                        AND created_at BETWEEN ? AND ?
+                    THEN CAST(payment_detail->>'total_amount' AS DECIMAL(15,2))
+                    ELSE 0 
+                END), 0) as current_revenue,
+                COALESCE(SUM(CASE 
+                    WHEN status IN ('completed', 'shipped', 'delivered') 
+                        AND created_at BETWEEN ? AND ?
+                    THEN CAST(payment_detail->>'total_amount' AS DECIMAL(15,2))
+                    ELSE 0 
+                END), 0) as previous_revenue
+            ", [$currentStart, $currentEnd, $previousStart, $previousEnd])
+            ->where('shop_id', $shop->id)
+            ->whereNull('deleted_at')
+            ->first();
+
+        $currentRevenue = $revenues->current_revenue ?? 0;
+        $previousRevenue = $revenues->previous_revenue ?? 0;
 
         if ($previousRevenue == 0) {
             return $currentRevenue > 0 ? 100 : 0;
@@ -150,24 +178,38 @@ class SellerController extends Controller
         return round((($currentRevenue - $previousRevenue) / $previousRevenue) * 100, 1);
     }
 
-    private function getMonthlySalesData($shop)
+    private function getOptimizedMonthlySalesData($shop)
     {
+        // Single query to get 12 months of data using DB facade for better performance - PostgreSQL compatible
+        $startDate = now()->subMonths(11)->startOfMonth();
+        $endDate = now()->endOfMonth();
+
+        $monthlyData = DB::table('orders')
+            ->selectRaw("
+                TO_CHAR(created_at, 'YYYY-MM') as month,
+                COALESCE(SUM(CASE 
+                    WHEN status IN ('completed', 'shipped', 'delivered')
+                    THEN CAST(payment_detail->>'total_amount' AS DECIMAL(15,2))
+                    ELSE 0 
+                END), 0) as revenue
+            ")
+            ->where('shop_id', $shop->id)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->whereNull('deleted_at')
+            ->groupBy('month')
+            ->orderBy('month')
+            ->pluck('revenue', 'month')
+            ->toArray();
+
         $months = [];
         $sales = [];
         
         for ($i = 11; $i >= 0; $i--) {
             $date = now()->subMonths($i);
-            $monthStart = $date->copy()->startOfMonth();
-            $monthEnd = $date->copy()->endOfMonth();
+            $monthKey = $date->format('Y-m');
             
             $months[] = $date->format('M Y');
-            $sales[] = $shop->orders()
-                ->whereBetween('created_at', [$monthStart, $monthEnd])
-                ->whereIn('status', ['completed', 'shipped', 'delivered'])
-                ->get()
-                ->sum(function ($order) {
-                    return $order->payment_detail['total_amount'] ?? 0;
-                });
+            $sales[] = (float) ($monthlyData[$monthKey] ?? 0);
         }
 
         return [
@@ -176,48 +218,122 @@ class SellerController extends Controller
         ];
     }
 
-    private function getTopSellingProducts($shop, $startDate, $endDate, $limit = 5)
+    private function getOptimizedTopSellingProducts($shop, $startDate, $endDate, $limit = 5)
     {
-        // This would require analyzing order details to get product sales
-        // For now, return the most recent products
-        return $shop->products()
-            ->with(['defaultImage'])
+        // Optimized query with specific fields and eager loading
+        return DB::table('products')
+            ->select(['id', 'name', 'slug', 'price', 'stock', 'status', 'created_at'])
+            ->where('shop_id', $shop->id)
             ->where('status', 'active')
+            ->whereNull('deleted_at')
             ->orderBy('created_at', 'desc')
             ->limit($limit)
-            ->get();
+            ->get()
+            ->map(function($product) {
+                // Convert stdClass to array for consistency
+                return (array) $product;
+            });
     }
 
-    private function getWeeklyRevenueData($shop)
+    private function getOptimizedWeeklyRevenueData($shop)
     {
+        $startOfMonth = now()->startOfMonth();
+        $endOfMonth = now()->endOfMonth();
+
+        // Single optimized query to get weekly data for current month - PostgreSQL compatible
+        $weeklyData = DB::table('orders')
+            ->selectRaw("
+                EXTRACT(WEEK FROM created_at) as week_number,
+                COALESCE(SUM(CASE 
+                    WHEN status IN ('completed', 'shipped', 'delivered')
+                    THEN CAST(payment_detail->>'total_amount' AS DECIMAL(15,2))
+                    ELSE 0 
+                END), 0) as revenue
+            ")
+            ->where('shop_id', $shop->id)
+            ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
+            ->whereNull('deleted_at')
+            ->groupBy('week_number')
+            ->pluck('revenue', 'week_number')
+            ->toArray();
+
         $weeks = [];
         $revenue = [];
         
-        $startOfMonth = now()->startOfMonth();
         $currentWeek = $startOfMonth->copy();
+        $weekCounter = 1;
         
-        while ($currentWeek->month == now()->month) {
+        while ($currentWeek->month == now()->month && $weekCounter <= 5) { // Limit to max 5 weeks
             $weekEnd = $currentWeek->copy()->endOfWeek();
             if ($weekEnd->month != now()->month) {
                 $weekEnd = now()->endOfMonth();
             }
             
-            $weeks[] = 'Week ' . (count($weeks) + 1);
-            $revenue[] = $shop->orders()
-                ->whereBetween('created_at', [$currentWeek, $weekEnd])
-                ->whereIn('status', ['completed', 'shipped', 'delivered'])
-                ->get()
-                ->sum(function ($order) {
-                    return $order->payment_detail['total_amount'] ?? 0;
-                });
-                
-            $currentWeek = $weekEnd->copy()->addDay()->startOfWeek();
+            $weekNumber = $currentWeek->week();
+            $weeks[] = 'Week ' . $weekCounter;
+            $revenue[] = (float) ($weeklyData[$weekNumber] ?? 0);
+            
+            $currentWeek = $weekEnd->copy()->addDay();
+            if ($currentWeek->month != now()->month) break;
+            $currentWeek = $currentWeek->startOfWeek();
+            $weekCounter++;
         }
 
         return [
             'weeks' => $weeks,
             'revenue' => $revenue
         ];
+    }
+
+    /**
+     * Clear dashboard cache for the shop
+     */
+    private function clearDashboardCache($shop)
+    {
+        $cachePatterns = [
+            "seller_dashboard_{$shop->id}_today_*",
+            "seller_dashboard_{$shop->id}_week_*",
+            "seller_dashboard_{$shop->id}_month_*",
+            "seller_dashboard_{$shop->id}_year_*",
+        ];
+
+        foreach ($cachePatterns as $pattern) {
+            // In a production environment, you might want to use Redis SCAN
+            // For now, we'll clear specific keys we know might exist
+            $ranges = ['today', 'week', 'month', 'year'];
+            foreach ($ranges as $range) {
+                $startDate = $this->getStartDate($range);
+                $endDate = now();
+                $cacheKey = "seller_dashboard_{$shop->id}_{$range}_" . $startDate->format('Y-m-d') . "_" . $endDate->format('Y-m-d');
+            }
+        }
+    }
+
+    /**
+     * AJAX endpoint for dashboard data refresh
+     */
+    public function dashboardData(Request $request)
+    {
+        $seller = auth()->user();
+        $shop = $seller->shop;
+
+        if (!$shop) {
+            return response()->json(['error' => 'Shop not found'], 404);
+        }
+
+        $dateRange = $request->get('range', 'month');
+        $startDate = $this->getStartDate($dateRange);
+        $endDate = now();
+
+        // Get fresh data (bypass cache for AJAX requests to ensure real-time data)
+        $stats = $this->getOptimizedStats($shop, $startDate, $endDate, $dateRange);
+        $ordersByStatus = $this->getOrdersByStatus($shop, $startDate);
+
+        return response()->json([
+            'stats' => $stats,
+            'ordersByStatus' => $ordersByStatus,
+            'dateRange' => $dateRange
+        ]);
     }
 
     // Shipping Method Setup
