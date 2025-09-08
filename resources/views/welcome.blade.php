@@ -17,7 +17,8 @@
                     <div class="col-xl-8 col-lg-12">
                         <div class="home-slide-cover">
                             <div class="hero-slider-1 style-4 dot-style-1 dot-style-1-position-1">
-                                <div class="single-hero-slider single-animation-wrap" style="background-image: url({{ $bannerPromotion['headline_primary'][0] }})">
+                                @foreach($bannerPromotion['headline_primary'] as $headlinePrimary)
+                                <div class="single-hero-slider single-animation-wrap" style="background-image: url({{ $headlinePrimary }})">
                                     <div class="slider-content">
                                         <h1 class="display-2 mb-40">
                                             Pure Coffe<br />
@@ -30,19 +31,7 @@
                                         </form>
                                     </div>
                                 </div>
-                                <div class="single-hero-slider single-animation-wrap" style="background-image: url({{ $bannerPromotion['headline_primary'][1] }})">
-                                    <div class="slider-content">
-                                        <h1 class="display-2 mb-40">
-                                            Snacks box<br />
-                                            daily save
-                                        </h1>
-                                        <p class="mb-65">Sign up for the daily newsletter</p>
-                                        <form class="form-subcriber d-flex">
-                                            <input type="email" placeholder="Your emaill address" />
-                                            <button class="btn" type="submit">Subscribe</button>
-                                        </form>
-                                    </div>
-                                </div>
+                                @endforeach
                             </div>
                             <div class="slider-arrow hero-slider-1-arrow"></div>
                         </div>
