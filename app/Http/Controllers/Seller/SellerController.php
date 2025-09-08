@@ -224,32 +224,37 @@ class SellerController extends Controller
 
     private function getOptimizedTopSellingProducts($shop, $startDate, $endDate, $limit = 5)
     {
-        // Get products with actual sales data using raw SQL for performance
-        $topProducts = DB::table('products')
-            ->leftJoin('order_details', 'products.id', '=', 'order_details.product_id')
-            ->leftJoin('orders', function($join) use ($startDate, $endDate) {
-                $join->on('order_details.order_id', '=', 'orders.id')
-                     ->whereBetween('orders.created_at', [$startDate, $endDate])
-                     ->whereIn('orders.status', ['completed', 'shipped', 'delivered']);
-            })
-            ->select([
-                'products.id',
-                'products.name',
-                'products.slug',
-                'products.price',
-                'products.stock',
-                'products.status',
-                DB::raw('COALESCE(SUM(order_details.quantity), 0) as total_sold')
-            ])
-            ->where('products.shop_id', $shop->id)
-            ->whereNull('products.deleted_at')
-            ->groupBy('products.id', 'products.name', 'products.slug', 'products.price', 'products.stock', 'products.status')
-            ->orderBy('total_sold', 'desc')
-            ->limit($limit)
-            ->get();
+        // Get products that exist in completed orders from the JSON order_details column
+        // This is a complex query for PostgreSQL JSON operations
+        $productSales = DB::select("
+            SELECT 
+                p.id,
+                p.name,
+                p.slug,
+                p.price,
+                p.stock,
+                p.status,
+                COALESCE(SUM(
+                    CASE 
+                        WHEN o.status IN ('completed', 'shipped', 'delivered') 
+                        THEN (item->>'quantity')::integer
+                        ELSE 0 
+                    END
+                ), 0) as total_sold
+            FROM products p
+            LEFT JOIN orders o ON o.shop_id = p.shop_id
+            LEFT JOIN LATERAL jsonb_array_elements(o.order_details->'items') AS item ON (item->>'id') = p.id::text
+            WHERE p.shop_id = ?
+                AND p.deleted_at IS NULL
+                AND (o.created_at BETWEEN ? AND ? OR o.created_at IS NULL)
+                AND (o.deleted_at IS NULL OR o.deleted_at IS NULL)
+            GROUP BY p.id, p.name, p.slug, p.price, p.stock, p.status
+            ORDER BY total_sold DESC, p.stock DESC
+            LIMIT ?
+        ", [$shop->id, $startDate, $endDate, $limit]);
 
         // Convert to Product models to get media relationships
-        return $topProducts->map(function($productData) {
+        return collect($productSales)->map(function($productData) {
             $product = \App\Models\Product::find($productData->id);
             if ($product) {
                 $product->total_sold = $productData->total_sold;
@@ -721,33 +726,33 @@ class SellerController extends Controller
 
     private function getProductsByLocation($shop, $startDate, $endDate)
     {
-        // Get top selling locations based on shipping addresses
+        // Get top selling locations based on shipping addresses from order_details JSON
+        // Based on the sample data structure: order_details->address->city
         $locations = DB::table('orders')
-            ->join('order_details', 'orders.id', '=', 'order_details.order_id')
             ->selectRaw("
-                COALESCE(orders.payment_detail->>'shipping_address'->>'city', 'Unknown') as city,
-                COUNT(order_details.id) as product_count,
+                COALESCE(order_details->>'address'->>'city', 'Unknown') as city,
+                COUNT(orders.id) as order_count,
                 COALESCE(SUM(CASE 
                     WHEN orders.status IN ('completed', 'shipped', 'delivered')
-                    THEN order_details.quantity
+                    THEN 1
                     ELSE 0 
-                END), 0) as total_quantity
+                END), 0) as completed_orders
             ")
             ->where('orders.shop_id', $shop->id)
             ->whereBetween('orders.created_at', [$startDate, $endDate])
             ->whereNull('orders.deleted_at')
             ->groupBy('city')
-            ->orderByDesc('total_quantity')
+            ->orderByDesc('completed_orders')
             ->limit(5)
             ->get();
 
-        $totalQuantity = $locations->sum('total_quantity') ?: 1;
+        $totalOrders = $locations->sum('completed_orders') ?: 1;
 
-        return $locations->map(function ($location) use ($totalQuantity) {
+        return $locations->map(function ($location) use ($totalOrders) {
             return [
-                'city' => $location->city,
-                'count' => $location->total_quantity,
-                'percentage' => round(($location->total_quantity / $totalQuantity) * 100, 1),
+                'city' => $location->city ?: 'Unknown',
+                'count' => $location->completed_orders,
+                'percentage' => round(($location->completed_orders / $totalOrders) * 100, 1),
             ];
         });
     }
@@ -755,7 +760,7 @@ class SellerController extends Controller
     private function getRecentActivity($shop, $limit = 10)
     {
         // Get recent activities from orders and product updates
-        $activities = DB::table('orders')
+        $orderActivities = DB::table('orders')
             ->join('users', 'orders.user_id', '=', 'users.id')
             ->select([
                 'orders.id',
@@ -768,49 +773,20 @@ class SellerController extends Controller
             ])
             ->where('orders.shop_id', $shop->id)
             ->whereNull('orders.deleted_at')
-            ->union(
-                DB::table('products')
-                    ->leftJoin('users', function($join) use ($shop) {
-                        $join->on('users.id', '=', DB::raw($shop->user_id));
-                    })
-                    ->select([
-                        'products.id',
-                        'products.status',
-                        'products.created_at',
-                        'products.updated_at',
-                        'products.name as invoice',
-                        'users.name as customer_name',
-                        DB::raw("'product' as activity_type")
-                    ])
-                    ->where('products.shop_id', $shop->id)
-                    ->whereNull('products.deleted_at')
-                    ->orderBy('products.updated_at', 'desc')
-                    ->limit(5)
-            )
-            ->orderBy('updated_at', 'desc')
+            ->orderBy('orders.updated_at', 'desc')
             ->limit($limit)
             ->get();
 
-        return $activities->map(function ($activity) {
+        return $orderActivities->map(function ($activity) {
             $timeAgo = Carbon::parse($activity->updated_at)->diffForHumans();
             
-            if ($activity->activity_type === 'order') {
-                return [
-                    'type' => 'order',
-                    'icon' => 'shopping-cart',
-                    'title' => $activity->customer_name,
-                    'description' => "Updated order #{$activity->invoice} status to " . ucfirst($activity->status),
-                    'time' => $timeAgo,
-                ];
-            } else {
-                return [
-                    'type' => 'product',
-                    'icon' => 'package',
-                    'title' => 'Product Update',
-                    'description' => "Updated product '{$activity->invoice}' status to " . ucfirst($activity->status),
-                    'time' => $timeAgo,
-                ];
-            }
+            return [
+                'type' => 'order',
+                'icon' => 'shopping-cart',
+                'title' => $activity->customer_name,
+                'description' => "Updated order #{$activity->invoice} status to " . ucfirst($activity->status),
+                'time' => $timeAgo,
+            ];
         });
     }
 }
