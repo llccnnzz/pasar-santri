@@ -24,6 +24,7 @@ class OrderUpdateStatusRequest extends FormRequest
             'tracking_details.courier'         => 'nullable|string|max:255',
             'tracking_details.tracking_number' => 'nullable|string|max:255',
             'tracking_details.notes'           => 'nullable|string|max:1000',
+            'collection_method'                => 'nullable|string|max:255',
         ];
     }
 

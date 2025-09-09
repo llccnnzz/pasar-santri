@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -88,21 +89,19 @@ class BiteshipService
 
     public function createOrder(array $payload): ?array
     {
-        $response = Http::withToken($this->apiKey)
-            ->timeout(20)
-            ->retry(2, 200) // retry 2x kalau gagal
-            ->post($this->baseUrl . '/orders', $payload);
+        try {
+            $response = Http::withToken($this->apiKey)
+                ->timeout(20)
+                ->retry(2, 200) // retry 2x kalau gagal
+                ->post($this->baseUrl . '/orders', $payload)
+                ->throw(); // only throw on 4xx/5xx
 
-        if (! $response->successful()) {
-            Log::error('Biteship create order error', [
-                'status'  => $response->status(),
-                'body'    => $response->json(),
-                'payload' => $payload,
-            ]);
-            return null;
+            return $response->json();
+        } catch (RequestException $e) {
+            $response = $e->response;
+
+            return $response->json();
         }
-
-        return $response->json();
     }
 
     public function trackOrder(string $waybillId, string $trackingId): ?array

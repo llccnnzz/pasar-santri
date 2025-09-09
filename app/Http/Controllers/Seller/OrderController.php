@@ -1,13 +1,14 @@
 <?php
+
 namespace App\Http\Controllers\Seller;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\OrderUpdateStatusRequest;
-use App\Jobs\CreateBiteshipOrderJob;
 use App\Models\Order;
+use App\Services\BiteshipService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Log;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -39,13 +40,13 @@ class OrderController extends Controller
         $orders = $query->latest()->paginate(15)->withQueryString();
 
         $views = [
-            'paid'       => 'seller.orders.paid.index',
-            'confirmed'  => 'seller.orders.confirmed.index',
+            'paid' => 'seller.orders.paid.index',
+            'confirmed' => 'seller.orders.confirmed.index',
             'processing' => 'seller.orders.processing.index',
-            'shipped'    => 'seller.orders.shipped.index',
-            'delivered'  => 'seller.orders.delivered.index',
-            'finished'   => 'seller.orders.finished.index',
-            'cancelled'  => 'seller.orders.cancelled.index',
+            'shipped' => 'seller.orders.shipped.index',
+            'delivered' => 'seller.orders.delivered.index',
+            'finished' => 'seller.orders.finished.index',
+            'cancelled' => 'seller.orders.cancelled.index',
         ];
 
         $view = $views[$currentStatus] ?? 'seller.orders.index';
@@ -62,13 +63,13 @@ class OrderController extends Controller
         $currentStatus = $order->status;
 
         $views = [
-            'paid'       => 'seller.orders.paid.show',
-            'confirmed'  => 'seller.orders.confirmed.show',
+            'paid' => 'seller.orders.paid.show',
+            'confirmed' => 'seller.orders.confirmed.show',
             'processing' => 'seller.orders.processing.show',
-            'shipped'    => 'seller.orders.shipped.show',
-            'delivered'  => 'seller.orders.delivered.show',
-            'finished'   => 'seller.orders.finished.show',
-            'cancelled'  => 'seller.orders.cancelled.show',
+            'shipped' => 'seller.orders.shipped.show',
+            'delivered' => 'seller.orders.delivered.show',
+            'finished' => 'seller.orders.finished.show',
+            'cancelled' => 'seller.orders.cancelled.show',
         ];
 
         $view = $views[$currentStatus] ?? 'seller.orders.show';
@@ -76,25 +77,98 @@ class OrderController extends Controller
         return view($view, compact('order', 'currentStatus'));
     }
 
-    public function createOrderBiteship(OrderUpdateStatusRequest $request, Order $order)
+    public function createOrderBiteship(OrderUpdateStatusRequest $request, Order $order, BiteshipService $biteship)
     {
         $this->authorize('update', $order);
+
+        $order->load(['shop', 'user']);
         $oldStatus = $order['status'];
         $newStatus = $request['status'];
 
-        if (! $this->isValidStatusTransition($oldStatus, $newStatus)) {
+        if (!$this->isValidStatusTransition($oldStatus, $newStatus)) {
             return back()->withErrors(['status' => 'Invalid status transition from ' . $oldStatus . ' to ' . $newStatus]);
         }
 
-        $order['status'] = $newStatus;
+        if ($order['status'] === 'confirmed' && $newStatus === 'processing') {
+            if (($request['collection_method'] !== null && !in_array($request['collection_method'], ['drop_off', 'pickup']))) {
+                $byteshipOrder = $this->handleCreateByteship($order, $biteship, $request['collection_method'] ?? null);
 
-        $order->save();
-
-        CreateBiteshipOrderJob::dispatch($order);
+                if ($byteshipOrder['success'] === true) {
+                    $order['status'] = $newStatus;
+                    $order->save();
+                } else {
+                    return redirect()->back()->withErrors($byteshipOrder['error']);
+                }
+            } else {
+                $order['shipment_ref_id'] = $request['collection_method'];
+                $order['status'] = $newStatus;
+                $order->save();
+            }
+        }
 
         $this->logStatusChange($order, $oldStatus, $newStatus);
 
         return back()->with('success', 'Order status updated successfully to ' . ucfirst($newStatus));
+    }
+
+    private function handleCreateByteship($order, BiteshipService $biteship, $collectionMethod): ?array
+    {
+        $payload = $this->generateByteshipPayload($order, $collectionMethod);
+        $result = $biteship->createOrder($payload);
+
+        if ($result['success'] === true) {
+            $order->update([
+                'shipment_ref_id' => $result['id'] ?? null,
+                'tracking_details' => $result['courier'] ?? [],
+                'biteship_order' => $result,
+            ]);
+
+        }
+        return $result;
+    }
+
+    private function generateByteshipPayload($order, $collectionMethod = null): array
+    {
+        $shop = $order->shop;
+        $address = $order->order_details['address'];
+        $shipping = $order->order_details['shipping'];
+
+        $payload = [
+            "shipper_contact_name" => $shop->name,
+            "shipper_contact_phone" => $shop->phone,
+            "shipper_contact_email" => $shop->user->email ?? null,
+            "origin_contact_name" => $shop->user->name,
+            "origin_contact_phone" => $shop->user->phone,
+            "origin_contact_email" => $shop->user->email,
+            "origin_postal_code" => $shop->postal_code,
+            "origin_address" => $shop->address,
+
+
+            "destination_contact_name" => $address['name'],
+            "destination_contact_phone" => $address['phone'],
+            "destination_contact_email" => $order->user->email ?? null,
+            "destination_postal_code" => $address['postal_code'],
+            "destination_address" => $address['address_line_1'],
+
+            "courier" => $shipping['courier_code'],
+            "courier_company" => $shipping['courier_name'],
+            "courier_service_code" => $shipping['service_code'],
+            "courier_type" => $shipping['service_code'],
+            "origin_collection_method" => $collectionMethod === null ? $shipping['collection_method'] : $collectionMethod,
+
+            "delivery_type" => "now",
+
+            "items" => collect($order->order_details['items'])->map(function ($it) {
+                return [
+                    "name" => $it['name'],
+                    "value" => (int)$it['price'],
+                    "quantity" => (int)$it['quantity'],
+                    "weight" => (int)$it['weight'],
+                ];
+            })->toArray(),
+        ];
+
+        return $payload;
     }
 
     public function updateStatus(OrderUpdateStatusRequest $request, Order $order)
@@ -103,7 +177,7 @@ class OrderController extends Controller
         $oldStatus = $order['status'];
         $newStatus = $request['status'];
 
-        if (! $this->isValidStatusTransition($oldStatus, $newStatus)) {
+        if (!$this->isValidStatusTransition($oldStatus, $newStatus)) {
             return back()->withErrors(['status' => 'Invalid status transition from ' . $oldStatus . ' to ' . $newStatus]);
         }
 
@@ -129,15 +203,15 @@ class OrderController extends Controller
         $this->authorize('update', $order);
 
         $request->validate([
-            'shipment_ref_id'                  => 'nullable|string|max:255',
-            'tracking_details'                 => 'required|array',
-            'tracking_details.courier'         => 'required|string|max:255',
+            'shipment_ref_id' => 'nullable|string|max:255',
+            'tracking_details' => 'required|array',
+            'tracking_details.courier' => 'required|string|max:255',
             'tracking_details.tracking_number' => 'required|string|max:255',
-            'tracking_details.notes'           => 'nullable|string|max:1000',
+            'tracking_details.notes' => 'nullable|string|max:1000',
         ]);
 
         $order->update([
-            'shipment_ref_id'  => $request->shipment_ref_id,
+            'shipment_ref_id' => $request->shipment_ref_id,
             'tracking_details' => $request->tracking_details,
         ]);
 
@@ -164,14 +238,14 @@ class OrderController extends Controller
     private function isValidStatusTransition(string $oldStatus, string $newStatus): bool
     {
         $allowedTransitions = [
-            'paid'       => ['confirmed', 'cancelled'],
-            'confirmed'  => ['processing', 'cancelled'],
+            'paid' => ['confirmed', 'cancelled'],
+            'confirmed' => ['processing', 'cancelled'],
             'processing' => ['shipped', 'cancelled'],
-            'shipped'    => ['delivered', 'cancelled'],
-            'delivered'  => ['finished', 'refunded'],
-            'finished'   => ['refunded'],
-            'cancelled'  => [],
-            'refunded'   => [],
+            'shipped' => ['delivered', 'cancelled'],
+            'delivered' => ['finished', 'refunded'],
+            'finished' => ['refunded'],
+            'cancelled' => [],
+            'refunded' => [],
         ];
 
         return in_array($newStatus, $allowedTransitions[$oldStatus] ?? []);
@@ -180,13 +254,13 @@ class OrderController extends Controller
     private function logStatusChange(Order $order, string $oldStatus, string $newStatus): void
     {
         Log::info('Order status changed', [
-            'order_id'   => $order['id'],
-            'invoice'    => $order['invoice'],
-            'shop_id'    => $order['shop_id'],
+            'order_id' => $order['id'],
+            'invoice' => $order['invoice'],
+            'shop_id' => $order['shop_id'],
             'old_status' => $oldStatus,
             'new_status' => $newStatus,
             'changed_by' => Auth::id(),
-            'timestamp'  => now(),
+            'timestamp' => now(),
         ]);
     }
 }

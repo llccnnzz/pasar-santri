@@ -42,7 +42,7 @@
                             <thead class="text-dark">
                                 <tr>
                                     <th scope="col">Invoice</th>
-                                    <th scope="col">Date</th>
+                                    <th scope="col">Courier</th>
                                     <th scope="col">Customer</th>
                                     <th scope="col">Items</th>
                                     <th scope="col">Total</th>
@@ -56,13 +56,18 @@
                                     <tr>
                                         <td>
                                             <a href="{{ route('seller.orders.show', $order) }}"
-                                                class="text-decoration-none fw-medium">#{{ $order->invoice }}</a>
+                                               class="text-decoration-none fw-medium">
+                                                #{{ $order->invoice }}<br>
+                                                {{ $order->created_at ? $order->created_at->format('d M Y H:i') : '-' }}
+                                            </a>
                                         </td>
 
                                         <td class="text-muted">
-                                            {{ $order->created_at ? $order->created_at->format('d M Y H:i') : '-' }}</td>
+                                            {{ $order['order_details']['shipping']['courier_name'] }} ({{ $order['order_details']['shipping']['description'] }})<br>
+                                            Rp. {{ number_format($order['order_details']['shipping']['price'],0,'.',',') }}
+                                        </td>
 
-                                        <td class="text-center">{{ $order->user->name ? $order->user->name : '-' }}
+                                        <td>{{ $order->user->name ?? '-' }}
                                         </td>
 
                                         <td>
