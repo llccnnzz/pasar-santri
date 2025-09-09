@@ -10,6 +10,9 @@ class BiteshipWebhookController extends Controller
 {
     public function handle(Request $request)
     {
+        if (!$request->has('order_id')) {
+            return response()->json(['success' => true], 200);// Acknowledge non-order webhooks gracefully
+        }
         $payload = $request->all();
         Log::info("Biteship Webhook Received", $payload);
 
