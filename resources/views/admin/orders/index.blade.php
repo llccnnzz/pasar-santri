@@ -69,19 +69,29 @@
                                 @forelse ($orders as $order)
                                     <tr>
                                         <td>
-                                            {{ $order['order_details']['address']['name'] ?? '-' }}
+                                            <b>{{ $order['order_details']['address']['name'] ?? '-' }}</b>
                                             <br>
-                                            <small>{{ $order['order_details']['address']['city'] ?? '-' }} -
-                                                {{ $order['order_details']['address']['province'] ?? '-' }}</small>
+                                            <small>
+                                                {{ $order['order_details']['address']['subdistrict'] ?? '-' }} -
+                                                {{ $order['order_details']['address']['city'] ?? '-' }} -
+                                                {{ $order['order_details']['address']['province'] ?? '-' }}
+                                            </small>
                                         </td>
 
                                         <td>
-                                            {{ $order['shop']['name'] ?? '-' }}
+                                            <b>{{ $order['shop']['name'] ?? '-' }}</b>
                                             <br>
-                                            <small>{{ $order['shop']['city'] ?? '-' }} -
-                                                {{ $order['shop']['province'] ?? '-' }}</small>
+                                            <small>
+                                                {{ $order['shop']['subdistrict'] ?? '-' }} -
+                                                {{ $order['shop']['city'] ?? '-' }} -
+                                                {{ $order['shop']['province'] ?? '-' }}
+                                            </small>
                                         </td>
-                                        <td>#{{ $order->invoice }}</td>
+                                        <td>
+                                            #{{ $order->invoice }}
+                                            <br>
+                                            <b>Total: Rp. {{ number_format($order['payment_detail']['total_amount'], 0, ',', '.') }}</b>
+                                        </td>
                                         <td class="text-center">
                                             <span
                                                 class="badge bg-{{ $order->status === 'pending' ? 'warning' : 'success' }}">
