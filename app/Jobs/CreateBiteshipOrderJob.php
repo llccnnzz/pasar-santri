@@ -40,6 +40,8 @@ class CreateBiteshipOrderJob implements ShouldQueue
             "origin_postal_code"        => $shop->postal_code,
             "origin_address"            => $shop->address,
 
+            "origin_collection_method"  => 'drop-off',
+
             "destination_contact_name"  => $address['name'],
             "destination_contact_phone" => $address['phone'],
             "destination_contact_email" => $order->user->email ?? null,
@@ -87,8 +89,8 @@ class CreateBiteshipOrderJob implements ShouldQueue
         return match ($serviceCode) {
             'instant', 'instant_car', 'instant_bike' => 'instant',
             'same_day', 'sds' => 'same_day',
-            'nextday', 'next_day', 'yes' => 'next_day',
-            'reg', 'regular', 'eko', 'ons', 'ez'     => 'regular',
+            'nextday', 'next_day', 'yes'             => 'next_day',
+            'reg', 'regular', 'eko', 'ons', 'ez' => 'regular',
             default => 'regular',
         };
     }
