@@ -40,18 +40,18 @@ class CreateBiteshipOrderJob implements ShouldQueue
             "origin_postal_code"        => $shop->postal_code,
             "origin_address"            => $shop->address,
 
-            "origin_collection_method"  => 'drop-off',
-
+            
             "destination_contact_name"  => $address['name'],
             "destination_contact_phone" => $address['phone'],
             "destination_contact_email" => $order->user->email ?? null,
             "destination_postal_code"   => $address['postal_code'],
             "destination_address"       => $address['address_line_1'],
-
+            
             "courier"                   => $shipping['courier_code'],
             "courier_company"           => $shipping['courier_name'],
             "courier_service_code"      => $shipping['service_code'],
             "courier_type"              => $shipping['service_code'],
+            "origin_collection_method"  => $shipping['collection_method'],
 
             "delivery_type"             => "now",
 
