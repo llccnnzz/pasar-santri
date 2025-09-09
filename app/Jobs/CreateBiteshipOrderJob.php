@@ -51,7 +51,7 @@ class CreateBiteshipOrderJob implements ShouldQueue
             "courier_company"           => $shipping['courier_name'],
             "courier_service_code"      => $shipping['service_code'],
             "courier_type"              => $shipping['service_code'],
-            "origin_collection_method"  => 'drop_off',
+            "origin_collection_method"  => $shipping['collection_method'],
 
             "delivery_type"             => "now",
 
