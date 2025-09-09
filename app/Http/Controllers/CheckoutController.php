@@ -305,6 +305,7 @@ class CheckoutController extends Controller
                             'service_name' => $shippingMethod->service_name,
                             'description'  => $shippingMethod->description,
                             'price'        => $shippingCost,
+                            'collection_method' => is_array($pickedRate['available_collection_method']) && in_array('pickup', $pickedRate['available_collection_method']) ? 'pickup' : 'drop_off',
                         ],
                     ],
                     'payment_detail' => $paymentDetails,
