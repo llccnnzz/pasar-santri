@@ -57,7 +57,6 @@
                         <table class="table align-middle table-bordered">
                             <thead class="text-dark">
                                 <tr>
-                                    <th scope="col">Order ID</th>
                                     <th scope="col">User ID</th>
                                     <th scope="col">Shop ID</th>
                                     <th scope="col">Invoice</th>
@@ -69,9 +68,19 @@
                             <tbody class="text-body o-sortable">
                                 @forelse ($orders as $order)
                                     <tr>
-                                        <td>{{ $order->id }}</td>
-                                        <td class="text-center">{{ $order->user_id }}</td>
-                                        <td>{{ $order->shop_id }}</td>
+                                        <td>
+                                            {{ $order['order_details']['address']['name'] ?? '-' }}
+                                            <br>
+                                            <small>{{ $order['order_details']['address']['city'] ?? '-' }} -
+                                                {{ $order['order_details']['address']['province'] ?? '-' }}</small>
+                                        </td>
+
+                                        <td>
+                                            {{ $order['shop']['name'] ?? '-' }}
+                                            <br>
+                                            <small>{{ $order['shop']['city'] ?? '-' }} -
+                                                {{ $order['shop']['province'] ?? '-' }}</small>
+                                        </td>
                                         <td>#{{ $order->invoice }}</td>
                                         <td class="text-center">
                                             <span
