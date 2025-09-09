@@ -1,7 +1,9 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Http\Requests\BuyerOrderTrackingRequest;
 use App\Models\Order;
+use App\Services\BiteshipService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -52,5 +54,57 @@ class BuyerOrderController extends Controller
                 'total_amount' => (float) $latestPayment['value'],
             ] : null,
         ]);
+    }
+
+    public function track(BuyerOrderTrackingRequest $request, BiteshipService $biteship)
+    {
+        $order = Order::where('user_id', auth()->id())
+            ->where('tracking_details->waybill_id', $request->waybill_id)
+            ->first();
+
+        if (! $order) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order not found for this Waybill ID',
+            ], 404);
+        }
+
+        $trackingId = $order->tracking_details['tracking_id'] ?? null;
+
+        if (! $trackingId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tracking ID not available for this order',
+            ], 400);
+        }
+
+        $tracking = $biteship->trackOrder($request->waybill_id, $trackingId);
+
+        if (! $tracking) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve tracking info',
+            ], 400);
+        }
+
+        return response()->json([
+            'success'  => true,
+            'tracking' => array_merge($tracking, [
+                'order_id' => $order->id,
+            ]),
+        ]);
+    }
+
+    public function finish(Order $order)
+    {
+        if ($order->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
+
+        $order->update([
+            'status' => 'finished',
+        ]);
+
+        return redirect()->back()->with('success', 'Order has been marked as finished.');
     }
 }

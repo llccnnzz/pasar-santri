@@ -1,13 +1,13 @@
 <?php
 namespace App\Http\Controllers\Seller;
 
-use Log;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\OrderUpdateStatusRequest;
+use App\Jobs\CreateBiteshipOrderJob;
 use App\Models\Order;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\OrderUpdateStatusRequest;
+use Log;
 
 class OrderController extends Controller
 {
@@ -23,37 +23,34 @@ class OrderController extends Controller
         $query = Order::with(['user', 'payments'])
             ->where('shop_id', $shop['id']);
 
-        if ($request->filled('status')) {
-            $query->where('status', $request['status']);
-        } else {
-            $query->where('status', 'pending');
-        }
+        $currentStatus = $request->get('status', 'paid');
+        $query->where('status', $currentStatus);
 
         if ($request->filled('search')) {
             $search = $request['search'];
             $query->where(function ($q) use ($search) {
                 $q->where('invoice', 'like', "%{$search}%")
                     ->orWhereHas('user', function ($userQuery) use ($search) {
-                        $userQuery->where('name', 'like', "%{$search}%")
-                            ->orWhere('email', 'like', "%{$search}%");
+                        $userQuery->where('name', 'like', "%{$search}%");
                     });
             });
         }
 
         $orders = $query->latest()->paginate(15)->withQueryString();
 
-        $stats = [
-            'total'      => Order::where('shop_id', $shop['id'])->count(),
-            'pending'    => Order::where('shop_id', $shop['id'])->pending()->count(),
-            'confirmed'  => Order::where('shop_id', $shop['id'])->confirmed()->count(),
-            'processing' => Order::where('shop_id', $shop['id'])->processing()->count(),
-            'shipped'    => Order::where('shop_id', $shop['id'])->shipped()->count(),
-            'delivered'  => Order::where('shop_id', $shop['id'])->delivered()->count(),
-            'cancelled'  => Order::where('shop_id', $shop['id'])->cancelled()->count(),
-            'refunded'   => Order::where('shop_id', $shop['id'])->refunded()->count(),
+        $views = [
+            'paid'       => 'seller.orders.paid.index',
+            'confirmed'  => 'seller.orders.confirmed.index',
+            'processing' => 'seller.orders.processing.index',
+            'shipped'    => 'seller.orders.shipped.index',
+            'delivered'  => 'seller.orders.delivered.index',
+            'finished'   => 'seller.orders.finished.index',
+            'cancelled'  => 'seller.orders.cancelled.index',
         ];
 
-        return view('seller.orders.index', compact('orders', 'stats'));
+        $view = $views[$currentStatus] ?? 'seller.orders.index';
+
+        return view($view, compact('orders', 'currentStatus'));
     }
 
     public function show(Order $order)
@@ -62,7 +59,42 @@ class OrderController extends Controller
 
         $order->load(['user', 'shop', 'payments']);
 
-        return view('seller.orders.show', compact('order'));
+        $currentStatus = $order->status;
+
+        $views = [
+            'paid'       => 'seller.orders.paid.show',
+            'confirmed'  => 'seller.orders.confirmed.show',
+            'processing' => 'seller.orders.processing.show',
+            'shipped'    => 'seller.orders.shipped.show',
+            'delivered'  => 'seller.orders.delivered.show',
+            'finished'   => 'seller.orders.finished.show',
+            'cancelled'  => 'seller.orders.cancelled.show',
+        ];
+
+        $view = $views[$currentStatus] ?? 'seller.orders.show';
+
+        return view($view, compact('order', 'currentStatus'));
+    }
+
+    public function createOrderBiteship(OrderUpdateStatusRequest $request, Order $order)
+    {
+        $this->authorize('update', $order);
+        $oldStatus = $order['status'];
+        $newStatus = $request['status'];
+
+        if (! $this->isValidStatusTransition($oldStatus, $newStatus)) {
+            return back()->withErrors(['status' => 'Invalid status transition from ' . $oldStatus . ' to ' . $newStatus]);
+        }
+
+        $order['status'] = $newStatus;
+
+        $order->save();
+
+        CreateBiteshipOrderJob::dispatch($order);
+
+        $this->logStatusChange($order, $oldStatus, $newStatus);
+
+        return back()->with('success', 'Order status updated successfully to ' . ucfirst($newStatus));
     }
 
     public function updateStatus(OrderUpdateStatusRequest $request, Order $order)
@@ -89,7 +121,7 @@ class OrderController extends Controller
 
         $this->logStatusChange($order, $oldStatus, $newStatus);
 
-        return back()->with('success', 'Order status updated successfully to ' . ucfirst($newStatus));
+        return back()->with('success', "Receipt has been generated and the order has been processed in Biteship. Current status: " . ucfirst($newStatus));
     }
 
     public function updateTracking(Request $request, Order $order)
@@ -129,80 +161,15 @@ class OrderController extends Controller
         return back()->with('success', 'Order marked as settled for payout');
     }
 
-    public function export(Request $request)
-    {
-        $shop = auth()->user()->shop;
-
-        $query = Order::with(['user', 'payments'])
-            ->where('shop_id', $shop->id);
-
-        // Apply same filters as index
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        if ($request->filled('start_date')) {
-            $query->whereDate('created_at', '>=', $request->start_date);
-        }
-
-        if ($request->filled('end_date')) {
-            $query->whereDate('created_at', '<=', $request->end_date);
-        }
-
-        $orders = $query->latest()->get();
-
-        $filename = 'orders_' . $shop->slug . '_' . now()->format('Y-m-d_H-i-s') . '.csv';
-
-        $headers = [
-            'Content-Type'        => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
-        ];
-
-        return response()->stream(function () use ($orders) {
-            $file = fopen('php://output', 'w');
-
-            // CSV header
-            fputcsv($file, [
-                'Invoice',
-                'Customer Name',
-                'Customer Email',
-                'Status',
-                'Order Total',
-                'Payment Status',
-                'Created Date',
-                'Updated Date',
-            ]);
-
-            // CSV data
-            foreach ($orders as $order) {
-                $orderDetails      = $order->order_details;
-                $paymentDetail     = $order->payment_detail;
-                $successfulPayment = $order->payments()->success()->first();
-
-                fputcsv($file, [
-                    $order->invoice,
-                    $order->user->name,
-                    $order->user->email,
-                    ucfirst($order->status),
-                    $paymentDetail['total_amount'] ?? 'N/A',
-                    $successfulPayment ? 'Paid' : 'Unpaid',
-                    $order->created_at->format('Y-m-d H:i:s'),
-                    $order->updated_at->format('Y-m-d H:i:s'),
-                ]);
-            }
-
-            fclose($file);
-        }, 200, $headers);
-    }
-
     private function isValidStatusTransition(string $oldStatus, string $newStatus): bool
     {
         $allowedTransitions = [
-            'pending'    => ['confirmed', 'cancelled'],
+            'paid'       => ['confirmed', 'cancelled'],
             'confirmed'  => ['processing', 'cancelled'],
             'processing' => ['shipped', 'cancelled'],
             'shipped'    => ['delivered', 'cancelled'],
-            'delivered'  => ['refunded'],
+            'delivered'  => ['finished', 'refunded'],
+            'finished'   => ['refunded'],
             'cancelled'  => [],
             'refunded'   => [],
         ];

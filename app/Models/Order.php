@@ -29,6 +29,7 @@ class Order extends Model
         'tracking_details',
         'has_reviewed',
         'has_settlement',
+        'biteship_order',
     ];
 
     protected $casts = [
@@ -39,6 +40,7 @@ class Order extends Model
         'has_reviewed' => 'boolean',
         'has_settlement' => 'boolean',
         'shipment_ref_id' => 'string',
+        'biteship_order' => 'array',
     ];
 
     protected static function boot()

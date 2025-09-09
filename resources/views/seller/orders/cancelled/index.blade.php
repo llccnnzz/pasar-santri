@@ -10,7 +10,7 @@
             <ol class="breadcrumb mb-0 mt-2 mt-sm-0 justify-content-center">
                 <li class="breadcrumb-item fs-14"><a class="text-decoration-none" href="/seller/dashboard">Seller Dashboard</a>
                 </li>
-                <li class="breadcrumb-item fs-14 text-primary" aria-current="page">New Orders</li>
+                <li class="breadcrumb-item fs-14 text-primary" aria-current="page">Cancelled</li>
             </ol>
         </nav>
     </div>
@@ -19,12 +19,12 @@
         <div class="card-body text-body p-25">
             <div
                 class="card-title d-sm-flex align-items-center justify-content-between mb-20 pb-20 border-bottom border-color">
-                <h4 class="mb-2 mb-sm-0">Order List (Status: {{ request('status', 'pending') }})</h4>
+                <h4 class="mb-2 mb-sm-0">Order List (Status: {{ request('status', 'cancelled') }})</h4>
 
                 <div class="d-sm-flex align-items-center">
                     <form action="{{ route('seller.orders.index') }}" method="GET"
                         class="src-form position-relative z-1 me-sm-3 mb-2 mb-sm-0" style="width: 280px;">
-                        <input type="hidden" name="status" value="{{ request('status', 'pending') }}">
+                        <input type="hidden" name="status" value="{{ request('status', 'cancelled') }}">
                         <input type="text" name="search" value="{{ request('search') }}" class="form-control h-40 pe-5"
                             {{-- pe-5 = padding end biar ada ruang untuk icon --}} placeholder="Search invoice or customer">
                         <button type="submit"
@@ -47,7 +47,6 @@
                                     <th scope="col">Items</th>
                                     <th scope="col">Total</th>
                                     <th scope="col">Status</th>
-                                    <th scope="col">Actions</th>
                                 </tr>
                             </thead>
 
@@ -62,7 +61,7 @@
                                         <td class="text-muted">
                                             {{ $order->created_at ? $order->created_at->format('d M Y H:i') : '-' }}</td>
 
-                                        <td>{{ $order->user->name ?? ($order->order_details['address']['name'] ?? '-') }}
+                                        <td class="text-center">{{ $order->user->name ? $order->user->name : '-' }}
                                         </td>
 
                                         <td>
@@ -79,72 +78,9 @@
 
                                         <td>Rp {{ number_format($order->total_amount, 0, ',', '.') }}</td>
 
-                                        <td>
+                                        <td class="text-center">
                                             <span
                                                 class="badge bg-{{ $order->status_badge }}">{{ $order->status_label }}</span>
-                                        </td>
-
-                                        <td>
-                                            {{-- Accept form --}}
-                                            <form action="{{ route('seller.orders.update-status', $order) }}"
-                                                method="POST" class="d-inline accept-form me-1">
-                                                @csrf
-                                                @method('PUT')
-                                                <input type="hidden" name="status" value="confirmed">
-                                                <button type="submit"
-                                                    class="icon border-0 rounded-circle text-center bg-success-transparent"
-                                                    data-bs-toggle="tooltip" title="Accept">
-                                                    <i data-feather="check"></i>
-                                                </button>
-                                            </form>
-
-                                            {{-- Reject button (open modal) --}}
-                                            <button type="button"
-                                                class="icon border-0 rounded-circle text-center bg-danger-transparent"
-                                                data-bs-toggle="modal" data-bs-target="#rejectModal" title="Reject">
-                                                <i data-feather="x"></i>
-                                            </button>
-
-                                            <!-- Reject Modal -->
-                                            <div class="modal fade" id="rejectModal" tabindex="-1"
-                                                aria-labelledby="rejectModalLabel" aria-hidden="true">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <form action="{{ route('seller.orders.update-status', $order) }}"
-                                                            method="POST">
-                                                            @csrf
-                                                            @method('PUT')
-                                                            <input type="hidden" name="status" value="cancelled">
-
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title" id="rejectModalLabel">Reject Order
-                                                                    #{{ $order->invoice }}</h5>
-                                                                <button type="button" class="btn-close"
-                                                                    data-bs-dismiss="modal" aria-label="Close"></button>
-                                                            </div>
-
-                                                            <div class="modal-body">
-                                                                <div class="mb-3">
-                                                                    <label for="cancellation_reason"
-                                                                        class="form-label">Reason for Rejection</label>
-                                                                    <textarea name="cancellation_reason" id="cancellation_reason" class="form-control w-100" rows="4"
-                                                                        placeholder="Enter reason (optional)"></textarea>
-                                                                    <small class="text-muted">If left empty, the default
-                                                                        reason will be "Cancelled by seller".</small>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary"
-                                                                    data-bs-dismiss="modal">Cancel</button>
-                                                                <button type="submit" class="btn btn-danger">
-                                                                    <i data-feather="x"></i> Reject Order
-                                                                </button>
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
                                         </td>
                                     </tr>
                                 @empty

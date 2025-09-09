@@ -13,7 +13,7 @@
                         <a class="text-decoration-none" href="{{ route('seller.dashboard') }}">Seller Dashboard</a>
                     </li>
                     <li class="breadcrumb-item fs-14">
-                        <a class="text-decoration-none" href="{{ route('seller.orders.index') }}">New Orders</a>
+                        <a class="text-decoration-none" href="{{ route('seller.orders.index') }}">Shipped</a>
                     </li>
                     <li class="breadcrumb-item fs-14 text-primary" aria-current="page">#{{ $order->invoice }}</li>
                 </ol>
@@ -59,6 +59,27 @@
                         @else
                             <p class="text-muted">No shipping details available</p>
                         @endif
+                    </div>
+                </div>
+
+                <!-- Tracking Info -->
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <h5 class="mb-3">Tracking Information</h5>
+                        <p><strong>Tracking ID:</strong> {{ $order->tracking_details['tracking_id'] ?? '-' }}</p>
+                        <p><strong>Waybill ID:</strong> {{ $order->tracking_details['waybill_id'] ?? '-' }}</p>
+                        <p><strong>Courier Company:</strong> {{ $order->tracking_details['company'] ?? '-' }}</p>
+                        <p><strong>Courier Type:</strong> {{ $order->tracking_details['type'] ?? '-' }}</p>
+                        <p>
+                            <strong>Tracking Link:</strong>
+                            @if (!empty($order->tracking_details['link']))
+                                <a href="{{ $order->tracking_details['link'] ?? '' }}" target="_blank"
+                                    class="btn icon border-0 rounded-circle text-center bg-success-transparent"
+                                    title="Track">
+                                    <i data-feather="truck"></i>
+                                </a>
+                            @endif
+                        </p>
                     </div>
                 </div>
 
@@ -110,67 +131,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Accept / Reject Buttons -->
-                @if ($order->status === 'pending')
-                    <div class="mt-auto d-flex justify-content-end gap-2 pt-3 border-top">
-                        {{-- Accept form --}}
-                        <form action="{{ route('seller.orders.update-status', $order) }}" method="POST">
-                            @csrf
-                            @method('PUT')
-                            <input type="hidden" name="status" value="confirmed">
-                            <button type="submit" class="btn btn-success">
-                                <i data-feather="check"></i> Accept
-                            </button>
-                        </form>
-
-                        {{-- Reject button (open modal) --}}
-                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal"
-                            title="Reject">
-                            <i data-feather="x"></i> Reject
-                        </button>
-
-                        <!-- Reject Modal -->
-                        <div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel"
-                            aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <form action="{{ route('seller.orders.update-status', $order) }}" method="POST">
-                                        @csrf
-                                        @method('PUT')
-                                        <input type="hidden" name="status" value="cancelled">
-
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="rejectModalLabel">Reject Order
-                                                #{{ $order->invoice }}</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
-                                        </div>
-
-                                        <div class="modal-body">
-                                            <div class="mb-3">
-                                                <label for="cancellation_reason" class="form-label">Reason for
-                                                    Rejection</label>
-                                                <textarea name="cancellation_reason" id="cancellation_reason" class="form-control w-100" rows="4"
-                                                    placeholder="Enter reason (optional)"></textarea>
-                                                <small class="text-muted">If left empty, the default
-                                                    reason will be "Cancelled by seller".</small>
-                                            </div>
-                                        </div>
-
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary"
-                                                data-bs-dismiss="modal">Cancel</button>
-                                            <button type="submit" class="btn btn-danger">
-                                                <i data-feather="x"></i> Reject Order
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                @endif
             </div>
         </div>
         <!--=== End Order Details Card ===-->
