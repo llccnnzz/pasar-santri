@@ -142,7 +142,7 @@
                                     </div>
                                     <div class="flex-grow-1 ms-3">
                                         <span class="fw-medium mb-2 d-block">Total Revenue</span>
-                                        <h5 class="text-dark mb-1">${{ number_format($revenue['total_revenue'], 2) }}</h5>
+                                        <h5 class="text-dark mb-1">Rp {{ number_format($revenue['total_revenue'], 0) }}</h5>
                                         <span class="fs-12 text-body">All time earnings</span>
                                     </div>
                                 </li>
@@ -154,7 +154,7 @@
                                     </div>
                                     <div class="flex-grow-1 ms-3">
                                         <span class="fw-medium mb-2 d-block">Monthly Revenue</span>
-                                        <h5 class="text-dark mb-1">${{ number_format($revenue['monthly_revenue'], 2) }}</h5>
+                                        <h5 class="text-dark mb-1">Rp {{ number_format($revenue['monthly_revenue'], 0) }}</h5>
                                         <span class="fs-12 text-body">This month earnings</span>
                                     </div>
                                 </li>
@@ -166,7 +166,7 @@
                                     </div>
                                     <div class="flex-grow-1 ms-3">
                                         <span class="fw-medium mb-2 d-block">Daily Revenue</span>
-                                        <h5 class="text-dark mb-1">${{ number_format($revenue['daily_revenue'], 2) }}</h5>
+                                        <h5 class="text-dark mb-1">Rp {{ number_format($revenue['daily_revenue'], 0) }}</h5>
                                         <span class="fs-12 text-body">Today's earnings</span>
                                     </div>
                                 </li>

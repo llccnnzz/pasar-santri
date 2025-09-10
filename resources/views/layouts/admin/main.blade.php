@@ -111,6 +111,14 @@
 
         <li><span class="cat">ORDER MANAGEMENT</span></li>
 
+        <!-- Orders -->
+        <li class="{{ request()->routeIs('admin.orders.*') ? 'mm-active' : '' }}">
+            <a href="{{ route('admin.orders.index') }}" class="menu-title">
+                <span class="icon"><i data-feather="shopping-cart"></i></span>
+                <span class="title">Orders</span>
+            </a>
+        </li>
+
         <!-- Shipping -->
         <li class="{{ request()->routeIs('admin.shipping.*') ? 'mm-active' : '' }}">
             <a href="{{ route('admin.shipping.index') }}" class="menu-title">
@@ -118,6 +126,7 @@
                 <span class="title">Shipping Methods</span>
             </a>
         </li>
+
 
         <li><span class="cat">MARKETING</span></li>
 

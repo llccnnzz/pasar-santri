@@ -1,17 +1,18 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Models\Order;
-use App\Models\OrderPayment;
-use App\Models\Promotion;
-use App\Models\ShippingMethod;
 use App\Models\Shop;
-use App\Models\ShopShippingMethod;
-use App\Services\BiteshipService;
+use App\Models\Order;
+use App\Models\Promotion;
 use App\Traits\CartTrait;
+use App\Models\OrderPayment;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Models\ShippingMethod;
+use App\Services\BiteshipService;
+use App\Models\ShopShippingMethod;
 use Illuminate\Support\Facades\DB;
+use App\Jobs\CreateBiteshipOrderJob;
+use Illuminate\Support\Facades\Auth;
 
 class CheckoutController extends Controller
 {
@@ -304,6 +305,7 @@ class CheckoutController extends Controller
                             'service_name' => $shippingMethod->service_name,
                             'description'  => $shippingMethod->description,
                             'price'        => $shippingCost,
+                            'collection_method' => is_array($pickedRate['available_collection_method']) && in_array('pickup', $pickedRate['available_collection_method']) ? 'pickup' : 'drop_off',
                         ],
                     ],
                     'payment_detail' => $paymentDetails,

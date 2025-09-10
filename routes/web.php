@@ -12,6 +12,7 @@ use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\BuyerOrderController;
+use App\Http\Controllers\BiteshipWebhookController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,6 +28,8 @@ use App\Http\Controllers\BuyerOrderController;
 Route::get('/', [ShopController::class, 'index'])->name('homepage');
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/shops', [ShopController::class, 'list']);
+Route::post('/webhook/biteship', [BiteshipWebhookController::class, 'handle']);
+
 
 Auth::routes();
 
@@ -59,6 +62,8 @@ Route::middleware('auth')->group(function () {
     // Orders management routes
     Route::get('/me/orders', [BuyerOrderController::class, 'index'])->name('orders.index');
     Route::get('/me/orders/{order}', [BuyerOrderController::class, 'show'])->name('orders.show');
+    Route::post('/me/orders/track', [BuyerOrderController::class, 'track'])->name('orders.track');
+    Route::post('/me/orders/{order}/finish', [BuyerOrderController::class, 'finish'])->name('orders.finish');
 
     // Address management routes
     Route::get('/me/addresses', [AddressController::class, 'index'])->name('addresses.index');

@@ -232,12 +232,12 @@
                             @endforeach
 
                             <hr>
-                            
+
                             {{-- Promo Code Section --}}
                             <div class="mb-4">
                                 <div id="promo_form_section">
                                     <div class="input-group mb-3">
-                                        <input type="text" class="form-control" id="promo_code_input" 
+                                        <input type="text" class="form-control" id="promo_code_input"
                                                placeholder="Masukkan kode promo">
                                         <button class="btn btn-outline-primary" type="button" id="apply_promo_btn">
                                             <span class="apply-text">Terapkan</span>
@@ -247,7 +247,7 @@
                                         </button>
                                     </div>
                                 </div>
-                                
+
                                 {{-- Applied Promo Display --}}
                                 <div id="applied_promo_section" class="d-none">
                                     <div class="card border-success">
@@ -279,7 +279,7 @@
                                 <span class="text-success">Diskon:</span>
                                 <span id="total_discount" class="text-success">-Rp0</span>
                             </div>
-                            
+
                             {{-- Grand Total --}}
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="fw-bold" style="font-size: 1.5rem;">Grand Total:</span>
@@ -617,12 +617,12 @@
                 const paymentFee = parseInt(paymentFeeEl.innerText.replace(/\D/g, "")) || 0;
                 grandTotal += subtotal + shipping + paymentFee;
             });
-            
+
             // Apply discount if promo is applied
             if (appliedPromo) {
                 grandTotal -= appliedPromo.discount_amount;
             }
-            
+
             document.getElementById("grand_total_all").innerText = formatRupiah(grandTotal);
         }
 
@@ -723,7 +723,7 @@
                 shippingEl.innerHTML = `
                     <div class="rate-info">
                         <div>${formatRupiah(rateData.price)}</div>
-                        <div class="cache-indicator">🔄 Terbaru</div>
+                        <div class="cache-indicator">Terbaru</div>
                     </div>
                 `;
 
@@ -754,9 +754,9 @@
         document.getElementById('apply_promo_btn').addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            
+
             const promoCode = document.getElementById('promo_code_input').value.trim();
-            
+
             if (!promoCode) {
                 alert('Masukkan kode promo');
                 return;
@@ -795,7 +795,7 @@
             const btn = document.getElementById('apply_promo_btn');
             const spinner = btn.querySelector('.spinner-border');
             const text = btn.querySelector('.apply-text');
-            
+
             // Show loading state
             spinner.classList.remove('d-none');
             text.textContent = 'Memproses...';
@@ -819,7 +819,7 @@
                     showAppliedPromo(data.promo);
                     updateTotals();
                     document.getElementById('promo_code_input').value = '';
-                    
+
                     // Show success message
                     alert(data.message);
                 } else {
@@ -882,7 +882,7 @@
             document.getElementById('applied_promo_name').textContent = promo.name;
             document.getElementById('applied_promo_code').textContent = promo.code;
             document.getElementById('applied_promo_amount').textContent = promo.discount_formatted || new Intl.NumberFormat('id-ID').format(promo.discount_amount);
-            
+
             // Show discount row
             const discountRow = document.getElementById('discount_row');
             discountRow.style.display = 'flex';
@@ -892,7 +892,7 @@
         function hideAppliedPromo() {
             document.getElementById('promo_form_section').classList.remove('d-none');
             document.getElementById('applied_promo_section').classList.add('d-none');
-            
+
             // Hide discount row
             const discountRow = document.getElementById('discount_row');
             discountRow.style.display = 'none';

@@ -1,16 +1,16 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AdminAdsController;
+use App\Http\Controllers\Admin\AdminBannerController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AdminKycController;
 use App\Http\Controllers\Admin\AdminOrderController;
-use App\Http\Controllers\Admin\AdminPromoController;
-use App\Http\Controllers\Admin\AdminBannerController;
-use App\Http\Controllers\Admin\AdminSellerController;
 use App\Http\Controllers\Admin\AdminProductController;
-use App\Http\Controllers\Admin\AdminShippingController;
+use App\Http\Controllers\Admin\AdminPromoController;
+use App\Http\Controllers\Admin\AdminSellerController;
 use App\Http\Controllers\Admin\AdminServiceFeeController;
+use App\Http\Controllers\Admin\AdminShippingController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -140,6 +140,14 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'role:admin']], func
         Route::post('/{order}/refund', [AdminOrderController::class, 'processRefund'])
             ->middleware('can:admin-dashboard|update order')
             ->name('admin.orders.refund');
+
+        Route::put('/payment/{order}/{status}', [AdminOrderController::class, 'bypassPayment'])
+            ->middleware('can:admin-dashboard|update order')
+            ->name('admin.orders.bypass-payment');
+
+        Route::put('/payment/bulk-bypass-payment', [AdminOrderController::class, 'bulkBypassPayments'])
+            ->middleware('can:admin-dashboard|update order')
+            ->name('admin.orders.bulk-bypass-payment');
 
         Route::get('/analytics/dashboard', [AdminOrderController::class, 'analytics'])
             ->middleware('can:admin-dashboard|show order')

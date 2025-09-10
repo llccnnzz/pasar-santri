@@ -1,7 +1,9 @@
 <?php
 namespace App\Services;
 
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class BiteshipService
 {
@@ -72,7 +74,7 @@ class BiteshipService
             ->post($this->baseUrl . '/rates/couriers', $payload);
 
         if (! $response->successful()) {
-            \Log::warning('Biteship rates error', [
+            Log::warning('Biteship rates error', [
                 'status'  => $response->status(),
                 'body'    => $response->json(),
                 'payload' => $payload,
@@ -85,4 +87,40 @@ class BiteshipService
         return $response->json('pricing', []);
     }
 
+    public function createOrder(array $payload): ?array
+    {
+        try {
+            $response = Http::withToken($this->apiKey)
+                ->timeout(20)
+                ->retry(2, 200) // retry 2x kalau gagal
+                ->post($this->baseUrl . '/orders', $payload)
+                ->throw(); // only throw on 4xx/5xx
+
+            return $response->json();
+        } catch (RequestException $e) {
+            $response = $e->response;
+
+            return $response->json();
+        }
+    }
+
+    public function trackOrder(string $waybillId, string $trackingId): ?array
+    {
+        $response = Http::withToken($this->apiKey)
+            ->timeout(20)
+            ->retry(2, 200)
+            ->get($this->baseUrl . '/trackings/' . $trackingId
+        );
+
+        if (! $response->successful()) {
+            Log::error('Biteship track order error', [
+                'status'     => $response->status(),
+                'body'       => $response->json(),
+                'waybill_id' => $waybillId,
+            ]);
+            return null;
+        }
+
+        return $response->json();
+    }
 }

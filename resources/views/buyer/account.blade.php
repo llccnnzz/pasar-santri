@@ -48,7 +48,7 @@
                                                 role="tab" aria-controls="account-detail" aria-selected="false">
                                                 <i class="fi-rs-user mr-10"></i>Account details</a>
                                         </li>
-                                        @if(auth()->user()->shop)
+                                        @if (auth()->user()->shop)
                                             <li class="nav-item">
                                                 <a class="nav-link" href="/seller/dashboard">
                                                     <i class="fi-rs-home mr-10"></i> Seller Dashboard</a>
@@ -118,6 +118,11 @@
                                                                         item{{ $order->order_items_count > 1 ? 's' : '' }}
                                                                     </td>
 
+                                                                    {{-- Waybill Code --}}
+                                                                    <td>
+                                                                        {{ $order->tracking_details ? $order->tracking_details['waybill_id'] : '-' }}
+                                                                    </td>
+
                                                                     {{-- Action: tombol View --}}
                                                                     <td>
                                                                         <button type="button"
@@ -152,23 +157,19 @@
                                                     confirmation email you should have received.</p>
                                                 <div class="row">
                                                     <div class="col-lg-8">
-                                                        <form class="contact-form-style mt-30 mb-50" action="#"
-                                                            method="post">
+                                                        <form id="track-form" class="contact-form-style mt-30 mb-50">
+                                                            @csrf
                                                             <div class="input-style mb-20">
-                                                                <label>Order ID</label>
-                                                                <input name="order-id"
-                                                                    placeholder="Found in your order confirmation email"
-                                                                    type="text" />
-                                                            </div>
-                                                            <div class="input-style mb-20">
-                                                                <label>Billing email</label>
-                                                                <input name="billing-email"
-                                                                    placeholder="Email you used during checkout"
-                                                                    type="email" />
+                                                                <label>Waybill ID</label>
+                                                                <input name="waybill_id" placeholder="Enter Waybill ID"
+                                                                    type="text" required />
                                                             </div>
                                                             <button class="submit submit-auto-width"
                                                                 type="submit">Track</button>
                                                         </form>
+
+                                                        <!-- Tracking Result -->
+                                                        <div id="tracking-result" class="mt-4"></div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -845,7 +846,7 @@
                         <td>Rp ${parseInt(i.price).toLocaleString('id-ID')}</td>
                         <td>Rp ${parseInt(i.item_total).toLocaleString('id-ID')}</td>
                     </tr>`;
-                    });
+                });
                 $('#orderModal .order-items tbody').html(itemsHtml);
 
                 // Payment summary
@@ -866,16 +867,85 @@
                         Method: ${lp.channel}<br>
                         Status: ${lp.status}<br>
                         Total Amount: Rp ${parseInt(lp.total_amount).toLocaleString('id-ID')}<br>
-                        ${lp.status === 'PAID' ? `Paid At: ${lp.paid_at}<br>` : '<a href="/checkout/success?order_id=' + res.id + '" target="_blank" class="btn btn-sm btn-primary">Bayar Sekarang</a>'}
+                        ${lp.status === 'Success' ? `Paid At: ${lp.paid_at}<br>` : '<a href="/checkout/success?order_id=' + res.id + '" target="_blank" class="btn btn-sm btn-primary">Bayar Sekarang</a>'}
                     `);
                 } else {
                     $('#orderModal .order-latest-payment').html('<em>No payment recorded</em>');
                 }
 
-                // Tampilkan modal
                 let modal = new bootstrap.Modal(document.getElementById('orderModal'));
                 modal.show();
             });
+        });
+
+        $(document).on('submit', '#track-form', function(e) {
+            e.preventDefault();
+
+            let waybillId = $(this).find('input[name="waybill_id"]').val();
+            let token = "{{ csrf_token() }}";
+
+            fetch("{{ route('orders.track') }}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": token,
+                        "Accept": "application/json",
+                    },
+                    body: JSON.stringify({
+                        waybill_id: waybillId
+                    })
+                })
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error("Failed to fetch tracking");
+                    }
+                    return res.json();
+                })
+                .then(res => {
+                    if (res.success) {
+                        let tracking = res.tracking;
+                        let histories = tracking.histories || [];
+
+                        let html = `<div class="timeline">`;
+
+                        histories.forEach(h => {
+                            html += `
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-primary"></div>
+                            <div class="timeline-content">
+                                <h6>${h.status}</h6>
+                                <p class="text-muted mb-0">${h.updated_at}</p>
+                                <small class="text-muted">${h.note || ''}</small>
+                            </div>
+                        </div>
+                    `;
+                        });
+
+                        html += `</div>`;
+
+                        // If delivered → show Finish button
+                        if (tracking.status === 'Delivered') {
+                            html += `
+                        <div class="mt-3">
+                            <form method="POST" action="{{ url('/me/orders') }}/${tracking.order_id}/finish">
+                                <input type="hidden" name="_token" value="${token}">
+                                <button type="submit" class="btn btn-success">Mark as Finished</button>
+                            </form>
+                        </div>
+                    `;
+                        }
+
+                        $('#tracking-result').html(html);
+                    } else {
+                        $('#tracking-result').html(
+                            '<div class="alert alert-danger">Failed to track order</div>'
+                        );
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    $('#tracking-result').html('<div class="alert alert-danger">Error fetching tracking</div>');
+                });
         });
     </script>
 @endpush

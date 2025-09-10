@@ -14,7 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         then: function () {
             Route::middleware('web')
                 ->group(base_path('routes/seller.php'));
-            
+
             Route::middleware('web')
                 ->group(base_path('routes/admin.php'));
         },
@@ -32,6 +32,9 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->web(append: [
             \App\Http\Middleware\ShareAdminData::class,
+        ]);
+        $middleware->validateCsrfTokens(except: [
+            '/webhook/biteship',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
