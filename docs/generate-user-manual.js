@@ -13,7 +13,7 @@ const __dirname = path.dirname(__filename);
 
 // Base directory for docs
 const DOCS_DIR = __dirname;
-const OUTPUT_PATH = path.join(DOCS_DIR, 'User-Manual.pdf');
+const OUTPUT_PATH = path.join(DOCS_DIR, '../public/docs/User-Manual.pdf');
 
 console.log('Pasar Santri Marketplace - User Manual PDF Generator');
 console.log('=' .repeat(60));
