@@ -1,0 +1,76 @@
+# Document Structure and Order for User Manual PDF Generation
+
+cover: "cover.md"
+
+sections:
+  - name: "Pengantar"
+    file: "README.md"
+    
+  - name: "Dokumentasi Administrator"
+    files:
+      - file: "admin/dashboard.md"
+        title: "Dashboard Analytics"
+      - file: "admin/service_fee.md" 
+        title: "Service Fee Management"
+      - file: "admin/banner.md"
+        title: "Banner Management"
+      - file: "admin/shipping_method.md"
+        title: "Shipping Method Management"
+      - file: "admin/kyc_management.md"
+        title: "KYC Management"
+      - file: "admin/seller_management.md"
+        title: "Seller Management"
+      - file: "admin/product_ads.md"
+        title: "Product Ads Management"
+      - file: "admin/order_management.md"
+        title: "Order Management"
+      - file: "admin/promotion_management.md"
+        title: "Promotion Management"
+        
+  - name: "Dokumentasi Seller/Penjual"
+    files:
+      - file: "seller/dashboard.md"
+        title: "Dashboard Analytics"
+      - file: "seller/kyc_verification.md"
+        title: "KYC Verification"
+      - file: "seller/shop_settings.md"
+        title: "Shop Settings"
+      - file: "seller/shipping_methods.md"
+        title: "Shipping Methods"
+      - file: "seller/category_management.md"
+        title: "Category Management"
+      - file: "seller/product_management.md"
+        title: "Product Management"
+      - file: "seller/order_management.md"
+        title: "Order Management"
+      - file: "seller/marketplace-order-management.md"
+        title: "Marketplace Order Management"
+      - file: "seller/marketplace-checkout-flow.md"
+        title: "Marketplace Checkout Flow"
+      - file: "seller/marketplace-user-profile.md"
+        title: "Marketplace User Profile"
+      - file: "seller/bank-account.md"
+        title: "Bank Account Management"
+      - file: "seller/shop-balance.md"
+        title: "Shop Balance & Wallet"
+        
+  - name: "Dokumentasi Buyer/Pembeli"
+    files:
+      - file: "buyer/marketplace-landing-page.md"
+        title: "Marketplace Landing Page"
+
+# PDF Generation Options
+pdf_options:
+  format: "A4"
+  orientation: "portrait"
+  margin:
+    top: "20mm"
+    right: "20mm"
+    bottom: "20mm"
+    left: "20mm"
+  header:
+    height: "15mm"
+    contents: '<div style="text-align: center; font-size: 10px; color: #666;">Pasar Santri Marketplace - User Manual</div>'
+  footer:
+    height: "15mm"
+    contents: '<div style="text-align: center; font-size: 10px; color: #666;">Halaman {{page}} dari {{pages}} | © 2025 PT. Sidogiri Fintech Utama</div>'

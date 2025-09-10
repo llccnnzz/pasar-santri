@@ -1,0 +1,39 @@
+# Document Metadata for User Manual PDF
+
+document:
+  title: "Pasar Santri Marketplace - User Manual"
+  subtitle: "Platform E-Commerce Multi-Vendor"
+  version: "1.0"
+  date: "September 2025"
+  
+author:
+  name: "PT. Sidogiri Fintech Utama"
+  website: "https://www.pasarsantri.com"
+  email: "support@pasarsantri.com"
+  
+system:
+  name: "Pasar Santri Marketplace"
+  framework: "Laravel 11.6.1"
+  type: "Multi-Vendor E-Commerce Platform"
+  
+pdf:
+  filename: "User-Manual.pdf"
+  output_path: "docs/"
+  
+generation:
+  timestamp: true
+  include_toc: true
+  page_numbers: true
+  watermark: false
+  
+styles:
+  font_family: "Arial, sans-serif"
+  font_size: "12px"
+  line_height: "1.6"
+  heading_color: "#333333"
+  text_color: "#444444"
+  link_color: "#0066cc"
+  
+copyright:
+  notice: "© 2025 PT. Sidogiri Fintech Utama. Semua hak dilindungi undang-undang."
+  permissions: "Dokumen ini adalah milik PT. Sidogiri Fintech Utama dan tidak boleh disebarkan tanpa izin tertulis."
