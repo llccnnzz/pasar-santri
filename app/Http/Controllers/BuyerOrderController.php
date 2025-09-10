@@ -60,7 +60,7 @@ class BuyerOrderController extends Controller
     public function track(BuyerOrderTrackingRequest $request, BiteshipService $biteship)
     {
         $order = Order::where('user_id', auth()->id())
-            ->where('tracking_details->waybill_id', $request->waybill_id)
+            ->where('tracking_details->waybill_id', $request['waybill_id'])
             ->first();
 
         if (! $order) {
@@ -79,7 +79,7 @@ class BuyerOrderController extends Controller
             ], 400);
         }
 
-        $tracking = $biteship->trackOrder($request->waybill_id, $trackingId);
+        $tracking = $biteship->trackOrder($request['waybill_id'], $trackingId);
 
         if (! $tracking) {
             return response()->json([
@@ -106,6 +106,6 @@ class BuyerOrderController extends Controller
             'status' => 'finished',
         ]);
 
-        return redirect()->back()->with('success', 'Order has been marked as finished.');
+        return redirect('/me?page=orders')->with('success', 'Order has been marked as finished!');
     }
 }

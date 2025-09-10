@@ -56,15 +56,27 @@
                                     <tr>
                                         <td>
                                             <a href="{{ route('seller.orders.show', $order) }}"
-                                                class="text-decoration-none fw-medium">
+                                                class="text-decoration-none fw-medium text-primary">
                                                 #{{ $order->invoice }}<br>
                                                 {{ $order->created_at ? $order->created_at->format('d M Y H:i') : '-' }}
                                             </a>
                                         </td>
 
-                                        <td class="text-muted">
-                                            {{ $order['order_details']['shipping']['courier_name'] }} ({{ $order['order_details']['shipping']['description'] }})<br>
-                                            Rp. {{ number_format($order['order_details']['shipping']['price'],0,'.',',') }}
+                                        <td class="text-muted" style="width: 100%; white-space: normal;">
+                                            <div class="d-flex justify-content-between align-items-center w-100">
+                                                <div>
+                                                    {{ $order['order_details']['shipping']['courier_name'] }}
+                                                    ({{ $order['order_details']['shipping']['description'] }})
+                                                    <br>
+                                                    Rp.
+                                                    {{ number_format($order['order_details']['shipping']['price'], 0, '.', ',') }}
+                                                </div>
+
+                                                <a href="{{ route('seller.orders.show', $order) }}" class="btn icon border-0 rounded-circle text-center bg-success-transparent ms-2"
+                                                    data-bs-toggle="tooltip" title="Change">
+                                                    <i data-feather="edit"></i>
+                                                </a>
+                                            </div>
                                         </td>
 
                                         <td>{{ $order->user->name ?? '-' }}
@@ -74,8 +86,8 @@
                                             @php $firstItem = $order->order_items[0] ?? null; @endphp
                                             <div class="d-flex align-items-center">
                                                 @if ($firstItem && isset($firstItem['image']))
-                                                    <img class="rounded me-2" src="{{ $firstItem['image'] }}" alt="item"
-                                                        style="width:40px;height:40px;object-fit:cover;">
+                                                    <img class="rounded me-2" src="{{ $firstItem['image'] }}"
+                                                        alt="item" style="width:40px;height:40px;object-fit:cover;">
                                                 @endif
                                                 <span>{{ $order->order_items_count }}
                                                     item{{ $order->order_items_count > 1 ? 's' : '' }}</span>
@@ -91,8 +103,8 @@
 
                                         <td class="text-center">
                                             {{-- Accept form --}}
-                                            <form action="{{ route('seller.orders.create-order', $order) }}"
-                                                method="POST" class="d-inline accept-form me-1">
+                                            <form action="{{ route('seller.orders.create-order', $order) }}" method="POST"
+                                                class="d-inline accept-form me-1">
                                                 @csrf
                                                 @method('PUT')
                                                 <input type="hidden" name="status" value="processing">
@@ -104,15 +116,15 @@
                                                 </button>
                                             </form>
 
-                                            <form action="{{ route('seller.orders.create-order', $order) }}"
-                                                  method="POST" class="d-inline accept-form me-1">
+                                            <form action="{{ route('seller.orders.create-order', $order) }}" method="POST"
+                                                class="d-inline accept-form me-1">
                                                 @csrf
                                                 @method('PUT')
                                                 <input type="hidden" name="status" value="processing">
                                                 <input type="hidden" name="collection_method" value="pick_up">
                                                 <button type="submit"
-                                                        class="icon border-0 rounded-circle text-center bg-success-transparent"
-                                                        data-bs-toggle="tooltip" title="Pick Up">
+                                                    class="icon border-0 rounded-circle text-center bg-success-transparent"
+                                                    data-bs-toggle="tooltip" title="Pick Up">
                                                     <i data-feather="archive"></i>
                                                 </button>
                                             </form>

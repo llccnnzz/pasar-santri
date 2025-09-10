@@ -116,6 +116,7 @@ Route::group(['prefix' => 'seller', 'middleware' => ['auth']], function () {
             Route::get('/{order}', [OrderController::class, 'show'])->name('seller.orders.show');
             Route::put('/{order}/status', [OrderController::class, 'updateStatus'])->name('seller.orders.update-status')->middleware('check.shop.suspension');
             Route::put('/{order}/create', [OrderController::class, 'createOrderBiteship'])->name('seller.orders.create-order')->middleware('check.shop.suspension');
+            Route::put('/{order}/update-courier', [OrderController::class, 'updateCourier'])->name('seller.orders.update-courier')->middleware('check.shop.suspension');
         });
 
         // Profile Management (always accessible)

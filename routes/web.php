@@ -61,9 +61,9 @@ Route::middleware('auth')->group(function () {
 
     // Orders management routes
     Route::get('/me/orders', [BuyerOrderController::class, 'index'])->name('orders.index');
-    Route::get('/me/orders/{order}', [BuyerOrderController::class, 'show'])->name('orders.show');
     Route::post('/me/orders/track', [BuyerOrderController::class, 'track'])->name('orders.track');
-    Route::post('/me/orders/{order}/finish', [BuyerOrderController::class, 'finish'])->name('orders.finish');
+    Route::get('/me/orders/show/{order}', [BuyerOrderController::class, 'show'])->name('orders.show');
+    Route::post('/me/orders/finish/{order}', [BuyerOrderController::class, 'finish'])->name('orders.finish');
 
     // Address management routes
     Route::get('/me/addresses', [AddressController::class, 'index'])->name('addresses.index');

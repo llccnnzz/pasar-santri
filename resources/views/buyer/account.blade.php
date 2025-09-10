@@ -573,6 +573,92 @@
             </div>
         </div>
     </div>
+
+    <style>
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #dee2e6;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: -22px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 2px #dee2e6;
+        }
+
+        .timeline-marker.bg-confirmed {
+            background-color: #0dcaf0;
+        }
+
+        /* info */
+        .timeline-marker.bg-allocated {
+            background-color: #ffc107;
+        }
+
+        /* warning */
+        .timeline-marker.bg-picking {
+            background-color: #fd7e14;
+        }
+
+        /* orange */
+        .timeline-marker.bg-picked {
+            background-color: #0d6efd;
+        }
+
+        /* primary */
+        .timeline-marker.bg-dropping {
+            background-color: #20c997;
+        }
+
+        /* teal */
+        .timeline-marker.bg-delivered {
+            background-color: #28a745;
+        }
+
+        /* success */
+        .timeline-marker.bg-default {
+            background-color: #6c757d;
+        }
+
+        /* secondary */
+
+        .timeline-content {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 3px solid #007bff;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .timeline-content:hover {
+            transform: translateX(5px);
+            background: #e9ecef;
+        }
+
+        .badge-lg {
+            font-size: 0.9em;
+            padding: 0.5em 0.75em;
+        }
+    </style>
 @endsection
 
 @push('script')
@@ -813,7 +899,7 @@
             e.preventDefault();
             let orderId = $(this).data('id');
 
-            $.get("{{ url('/me/orders') }}/" + orderId, function(res) {
+            $.get("{{ url('/me/orders/show') }}/" + orderId, function(res) {
                 // Header
                 $('#orderModal .modal-title').text('Order ' + res.invoice);
                 $('#orderModal .order-invoice').text(res.invoice);
@@ -904,30 +990,58 @@
                 .then(res => {
                     if (res.success) {
                         let tracking = res.tracking;
-                        let histories = tracking.histories || [];
+                        let histories = tracking.history || [];
+                        console.log("Tracking response:", tracking);
+                        console.log("Histories:", histories);
 
                         let html = `<div class="timeline">`;
+                        console.log("HTML result:", html);
 
                         histories.forEach(h => {
+                            let markerClass = "bg-default";
+
+                            switch (h.status) {
+                                case "confirmed":
+                                    markerClass = "bg-confirmed";
+                                    break;
+                                case "allocated":
+                                    markerClass = "bg-allocated";
+                                    break;
+                                case "picking_up":
+                                    markerClass = "bg-picking";
+                                    break;
+                                case "picked":
+                                    markerClass = "bg-picked";
+                                    break;
+                                case "dropping_off":
+                                    markerClass = "bg-dropping";
+                                    break;
+                                case "delivered":
+                                    markerClass = "bg-delivered";
+                                    break;
+                                default:
+                                    markerClass = "bg-default";
+                            }
+
                             html += `
-                        <div class="timeline-item">
-                            <div class="timeline-marker bg-primary"></div>
-                            <div class="timeline-content">
-                                <h6>${h.status}</h6>
-                                <p class="text-muted mb-0">${h.updated_at}</p>
-                                <small class="text-muted">${h.note || ''}</small>
-                            </div>
-                        </div>
-                    `;
+        <div class="timeline-item">
+            <div class="timeline-marker ${markerClass}"></div>
+            <div class="timeline-content">
+                <h6 class="mb-1 text-capitalize">${h.status.replace('_', ' ')}</h6>
+                <p class="text-muted mb-0">${new Date(h.updated_at).toLocaleString()}</p>
+                ${h.note ? `<small class="text-muted">${h.note}</small>` : ""}
+            </div>
+        </div>
+    `;
                         });
 
                         html += `</div>`;
 
                         // If delivered → show Finish button
-                        if (tracking.status === 'Delivered') {
-                            html += `
+                        if (tracking.status === 'delivered') {
+                        html += `
                         <div class="mt-3">
-                            <form method="POST" action="{{ url('/me/orders') }}/${tracking.order_id}/finish">
+                            <form method="POST" action="{{ url('/me/orders/finish') }}/${tracking.order_id}">
                                 <input type="hidden" name="_token" value="${token}">
                                 <button type="submit" class="btn btn-success">Mark as Finished</button>
                             </form>
