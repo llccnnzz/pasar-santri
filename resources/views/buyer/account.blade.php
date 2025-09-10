@@ -867,7 +867,7 @@
                         Method: ${lp.channel}<br>
                         Status: ${lp.status}<br>
                         Total Amount: Rp ${parseInt(lp.total_amount).toLocaleString('id-ID')}<br>
-                        ${lp.status === 'PAID' ? `Paid At: ${lp.paid_at}<br>` : '<a href="/checkout/success?order_id=' + res.id + '" target="_blank" class="btn btn-sm btn-primary">Bayar Sekarang</a>'}
+                        ${lp.status === 'Success' ? `Paid At: ${lp.paid_at}<br>` : '<a href="/checkout/success?order_id=' + res.id + '" target="_blank" class="btn btn-sm btn-primary">Bayar Sekarang</a>'}
                     `);
                 } else {
                     $('#orderModal .order-latest-payment').html('<em>No payment recorded</em>');
@@ -924,7 +924,7 @@
                         html += `</div>`;
 
                         // If delivered → show Finish button
-                        if (tracking.status === 'delivered') {
+                        if (tracking.status === 'Delivered') {
                             html += `
                         <div class="mt-3">
                             <form method="POST" action="{{ url('/me/orders') }}/${tracking.order_id}/finish">

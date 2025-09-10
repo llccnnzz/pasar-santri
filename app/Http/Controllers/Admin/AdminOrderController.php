@@ -40,6 +40,7 @@ class AdminOrderController extends Controller
                 ->update([
                     'status'     => 'success',
                     'updated_at' => now(),
+                    'paid_at'    => now(),
                 ]);
 
             DB::commit();
