@@ -28,7 +28,7 @@ generation:
   
 styles:
   font_family: "Arial, sans-serif"
-  font_size: "12px"
+  font_size: "24px"
   line_height: "1.6"
   heading_color: "#333333"
   text_color: "#444444"

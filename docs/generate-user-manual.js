@@ -194,18 +194,18 @@ async function generatePDF() {
         }
         
         h1 {
-            font-size: 24px;
+            font-size: 48px;
             border-bottom: 2px solid #333;
             padding-bottom: 10px;
         }
         
         h2 {
-            font-size: 20px;
+            font-size: 40px;
             color: #0066cc;
         }
         
         h3 {
-            font-size: 16px;
+            font-size: 32px;
         }
         
         p {
@@ -282,14 +282,14 @@ async function generatePDF() {
         }
         
         .cover-page h1 {
-            font-size: 36px;
+            font-size: 72px;
             color: #0066cc;
             border: none;
             page-break-before: auto;
         }
         
         .cover-page h2 {
-            font-size: 24px;
+            font-size: 48px;
             color: #666;
             margin-bottom: 50px;
         }
@@ -330,7 +330,7 @@ async function generatePDF() {
 
 ${htmlContent}
 
-    <div style="margin-top: 50px; text-align: center; font-size: 10px; color: #666; border-top: 1px solid #ddd; padding-top: 20px;">
+    <div style="margin-top: 50px; text-align: center; font-size: 20px; color: #666; border-top: 1px solid #ddd; padding-top: 20px;">
         <p>Generated on: ${new Date().toLocaleDateString('id-ID', { 
             year: 'numeric', 
             month: 'long', 
