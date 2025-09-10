@@ -42,14 +42,13 @@
                             <thead class="text-dark">
                                 <tr>
                                     <th scope="col">Invoice</th>
-                                    <th scope="col">Date</th>
+                                    <th scope="col">Courier</th>
                                     <th scope="col">Customer</th>
                                     <th scope="col">Items</th>
                                     <th scope="col">Total</th>
                                     <th scope="col">Status</th>
                                     <th scope="col">Tracking ID</th>
                                     <th scope="col">Waybill</th>
-                                    <th scope="col">Courier</th>
                                     <th scope="col">Tracking</th>
                                 </tr>
                             </thead>
@@ -59,11 +58,15 @@
                                     <tr>
                                         <td>
                                             <a href="{{ route('seller.orders.show', $order) }}"
-                                                class="text-decoration-none fw-medium">#{{ $order->invoice }}</a>
+                                               class="text-decoration-none fw-medium">
+                                                #{{ $order->invoice }}<br>
+                                                {{ $order->created_at ? $order->created_at->format('d M Y H:i') : '-' }}
+                                            </a>
                                         </td>
-
                                         <td class="text-muted">
-                                            {{ $order->created_at ? $order->created_at->format('d M Y H:i') : '-' }}</td>
+                                            {{ $order['order_details']['shipping']['courier_name'] }} ({{ $order['order_details']['shipping']['description'] }})<br>
+                                            Rp. {{ number_format($order['order_details']['shipping']['price'],0,'.',',') }}
+                                        </td>
 
                                         <td>{{ $order->user->name ?? ($order->order_details['address']['name'] ?? '-') }}
                                         </td>
@@ -73,7 +76,7 @@
                                             <div class="d-flex align-items-center">
                                                 @if ($firstItem && isset($firstItem['image']))
                                                     <img class="rounded me-2" src="{{ $firstItem['image'] }}" alt="item"
-                                                        style="width:40px;height:40px;object-fit:cover;">
+                                                         style="width:40px;height:40px;object-fit:cover;">
                                                 @endif
                                                 <span>{{ $order->order_items_count }}
                                                     item{{ $order->order_items_count > 1 ? 's' : '' }}</span>
@@ -90,7 +93,6 @@
                                         {{-- Tracking details --}}
                                         <td>{{ $order->tracking_details['tracking_id'] ?? '-' }}</td>
                                         <td>{{ $order->tracking_details['waybill_id'] ?? '-' }}</td>
-                                        <td>{{ $order->tracking_details['company'] ?? '-' }}</td>
                                         <td>
                                             @if(!empty($order->tracking_details['link']))
                                                 <a href="{{ $order->tracking_details['link'] ?? '' }}" target="_blank" class="btn icon border-0 rounded-circle text-center bg-success-transparent" title="Track">
