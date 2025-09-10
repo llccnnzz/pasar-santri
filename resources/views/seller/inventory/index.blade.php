@@ -57,7 +57,6 @@
                                     <th scope="col">Stock</th>
                                     <th scope="col">Category</th>
                                     <th scope="col">Price</th>
-                                    <th scope="col">Product Colors</th>
                                     <th scope="col">SKU</th>
                                     <th scope="col">Rating</th>
                                     <th scope="col">Actions</th>
@@ -90,14 +89,6 @@
                                     <td class="edit">
                                         Rp. {{ number_format($product->final_price) }}<br>
                                         <s>Rp. {{ number_format($product->price) }}</s>
-                                    </td>
-                                    <td>
-                                        <ul class="ps-0 mb-0 list-unstyled d-flex justify-content-between">
-                                            <li style="width: 15px; height: 15px;" class="bg-danger rounded-1 me-1" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Pink"></li>
-                                            <li style="width: 15px; height: 15px;" class="bg-success rounded-1 me-1" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Green"></li>
-                                            <li style="width: 15px; height: 15px;" class="bg-warning rounded-1 me-1" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Yellow"></li>
-                                            <li style="width: 15px; height: 15px;" class="bg-info rounded-1 me-1" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Sky Blue"></li>
-                                        </ul>
                                     </td>
                                     <td class="edit">{{ $product->sku }}</td>
                                     <td>
