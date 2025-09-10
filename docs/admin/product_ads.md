@@ -1,16 +1,16 @@
-# 🎯 Product Ads Management - Admin Pasar Santri
+# Product Ads Management - Admin Pasar Santri
 
-## 📋 Deskripsi
+## Deskripsi
 Product Ads Management adalah modul untuk mengelola iklan produk yang ditampilkan di berbagai section khusus dalam Pasar Santri Marketplace. Sistem ini memungkinkan admin untuk mempromosikan produk-produk pilihan dengan berbagai kategori promosi seperti Flash Sale, Hot Promo, Big Discount, dan lainnya.
 
-## 🎯 Tujuan
+## Tujuan
 - Meningkatkan visibilitas produk-produk tertentu di marketplace
 - Mengelola berbagai jenis promosi dan kampanye marketing
 - Mengoptimalkan conversion rate melalui penempatan strategis
 - Memberikan exposure lebih kepada produk berkualitas
 - Mengelola flash sale dan promosi terbatas waktu
 
-## 🔐 Akses & Permission
+## Akses & Permission
 **Role Required:** Administrator  
 **Permission:** 
 - `admin-dashboard|index ads` - Melihat daftar product ads
@@ -20,41 +20,41 @@ Product Ads Management adalah modul untuk mengelola iklan produk yang ditampilka
 
 **URL:** `/admin/ads`
 
-## 🏗️ Struktur Product Ads System
+## Struktur Product Ads System
 
 ### **Layout Product Ads di Homepage:**
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ PASAR SANTRI HOMEPAGE                                       │
 ├─────────────────────────────────────────────────────────────┤
-│ 🔥 FLASH SALE SECTION (Time-limited)                        │
+│ FLASH SALE SECTION (Time-limited)                           │
 │ ├─ Valid Until: Countdown timer                             │
 │ ├─ Special pricing & urgency                                │
 │ └─ Maximum visibility placement                             │
 ├─────────────────────────────────────────────────────────────┤
-│ 🔥 HOT PROMO SECTION (Featured promotions)                  │
+│ HOT PROMO SECTION (Featured promotions)                     │
 │ ├─ Sort Order: Custom positioning                           │
 │ ├─ Premium placement for trending items                     │
 │ └─ High conversion focus                                    │
 ├─────────────────────────────────────────────────────────────┤
-│ 💰 BIG DISCOUNT SECTION (High discount items)               │
+│ BIG DISCOUNT SECTION (High discount items)                  │
 │ ├─ Auto-suggest: >40% discount products                     │
 │ ├─ Price comparison display                                 │
 │ └─ Value proposition highlighting                           │
 ├─────────────────────────────────────────────────────────────┤
-│ ✨ NEW PRODUCT SECTION (Recently added items)               │
+│ NEW PRODUCT SECTION (Recently added items)                  │
 │ ├─ Auto-suggest: <7 days old products                       │
 │ ├─ Fresh inventory showcase                                 │
 │ └─ Innovation & trends focus                                │
 ├─────────────────────────────────────────────────────────────┤
-│ 💸 LESS THAN 10K SECTION (Budget-friendly)                  │
+│ LESS THAN 10K SECTION (Budget-friendly)                     │
 │ ├─ Auto-suggest: <Rp50,000 products                         │
 │ ├─ Accessibility & affordability                            │
 │ └─ Volume sales strategy                                    │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## 📂 Kategori Product Ads
+## Kategori Product Ads
 
 ### 1. **Flash Sale** ⚡
 **Karakteristik:**
@@ -70,11 +70,11 @@ Product Ads Management adalah modul untuk mengelola iklan produk yang ditampilka
 - Product launch dengan early bird pricing
 
 **Requirements:**
-- ✅ Valid until date wajib diisi
-- ✅ Produk harus aktif dan tersedia
-- ✅ Harga khusus biasanya diperlukan
+- Valid until date wajib diisi
+- Produk harus aktif dan tersedia
+- Harga khusus biasanya diperlukan
 
-### 2. **Hot Promo** 🔥  
+### 2. **Hot Promo**   
 **Karakteristik:**
 - **Custom Positioning:** Menggunakan `sort_order` untuk mengatur urutan
 - **Strategic Placement:** Posisi dapat disesuaikan berdasarkan prioritas
@@ -88,11 +88,11 @@ Product Ads Management adalah modul untuk mengelola iklan produk yang ditampilka
 - Cross-selling strategic products
 
 **Requirements:**
-- ✅ Sort order untuk mengatur prioritas tampil
-- ✅ Produk berkualitas dengan rating tinggi
-- ✅ Stock availability yang cukup
+- Sort order untuk mengatur prioritas tampil
+- Produk berkualitas dengan rating tinggi
+- Stock availability yang cukup
 
-### 3. **Big Discount** 💰
+### 3. **Big Discount** 
 **Karakteristik:**
 - **Auto-Suggest Feature:** Sistem otomatis suggest produk dengan diskon >40%
 - **Value Proposition:** Focus pada penghematan maksimal
@@ -110,7 +110,7 @@ Product Ads Management adalah modul untuk mengelola iklan produk yang ditampilka
 - Competitive pricing campaigns
 - Customer acquisition dengan value proposition
 
-### 4. **New Product** ✨
+### 4. **New Product** 
 **Karakteristik:**
 - **Auto-Suggest Feature:** Produk yang dibuat <7 hari yang lalu
 - **Innovation Focus:** Highlight produk dan trend terbaru
@@ -128,7 +128,7 @@ Product Ads Management adalah modul untuk mengelola iklan produk yang ditampilka
 - Trend showcasing
 - Innovation highlighting
 
-### 5. **Less Than 10K** 💸
+### 5. **Less Than 10K** 
 **Karakteristik:**
 - **Auto-Suggest Feature:** Produk dengan harga <Rp50,000
 - **Accessibility Focus:** Produk terjangkau untuk semua kalangan
@@ -146,7 +146,7 @@ Product Ads Management adalah modul untuk mengelola iklan produk yang ditampilka
 - Daily necessities
 - Gift items dengan budget rendah
 
-## 🛠️ Cara Menggunakan Product Ads Management
+## Cara Menggunakan Product Ads Management
 
 ### **Akses Halaman Product Ads**
 1. Login sebagai Administrator
@@ -235,7 +235,7 @@ Dashboard menggunakan tab system untuk setiap kategori:
 - **Emergency Response:** Quick deactivate jika ada masalah produk
 - **Campaign Launch:** Activate multiple ads untuk campaign besar
 
-## ⚙️ Detail Konfigurasi
+## Detail Konfigurasi
 
 ### **Sort Order (Hot Promo):**
 - **Purpose:** Mengatur urutan tampil dalam section
@@ -271,7 +271,7 @@ Dashboard menggunakan tab system untuk setiap kategori:
   - Performance notes dan observations
   - Vendor/seller coordination notes
 
-## 📊 Auto-Suggest Intelligence
+## Auto-Suggest Intelligence
 
 ### **Big Discount Algorithm:**
 ```sql
@@ -308,7 +308,7 @@ ORDER BY final_price ASC
 - Out of stock products tidak dimasukkan
 - Duplicate prevention across categories
 
-## 📈 Performance Analytics
+## Performance Analytics
 
 ### **Key Metrics per Category:**
 1. **Click-Through Rate (CTR):** Berapa banyak yang klik dari impression
@@ -329,7 +329,7 @@ ORDER BY final_price ASC
 - **Customer Engagement:** Repeat visits dan brand awareness
 - **Seller Satisfaction:** Impact pada seller performance
 
-## ⚠️ Best Practices & Guidelines
+## Best Practices & Guidelines
 
 ### **Content Quality Standards:**
 1. **Product Selection:**
@@ -362,7 +362,7 @@ ORDER BY final_price ASC
 - **Customer Feedback:** Monitor reviews dan complaints
 - **Seller Collaboration:** Work dengan top performing sellers
 
-## 🔍 Troubleshooting
+## Troubleshooting
 
 ### **Problem: Auto-suggestions tidak muncul**
 **Possible Causes:**
@@ -416,7 +416,7 @@ ORDER BY final_price ASC
 3. Confirm product still active
 4. Clear frontend cache
 
-## 🚀 Advanced Features & Tips
+## Advanced Features & Tips
 
 ### **Strategic Campaign Management:**
 1. **Cross-Category Coordination:** Plan campaigns across multiple categories
@@ -438,7 +438,7 @@ ORDER BY final_price ASC
 
 ---
 
-## 📞 Support & Bantuan
+## Support & Bantuan
 
 Jika mengalami kesulitan dalam menggunakan Product Ads Management:
 

@@ -1,23 +1,23 @@
-# 🏪 Pengaturan Toko Seller - Pasar Santri
+# Pengaturan Toko Seller - Pasar Santri
 
-## 📋 Deskripsi
+## Deskripsi
 Pengaturan Toko adalah menu yang memungkinkan penjual untuk mengatur dan mengelola seluruh aspek toko online mereka di **Pasar Santri Marketplace**. Menu ini mencakup informasi dasar toko, kontak, lokasi, media sosial, dan status operasional toko.
 
-## 🎯 Tujuan
+## Tujuan
 - Mengatur profil lengkap toko untuk menarik pembeli
 - Mengelola informasi kontak dan lokasi toko
 - Mengoptimalkan branding toko dengan logo dan deskripsi
 - Mengintegrasikan media sosial untuk jangkauan lebih luas
 - Mengelola status operasional dan jam buka toko
 
-## 🔐 Akses & Persyaratan
+## Akses & Persyaratan
 **Role Required:** Seller dengan KYC approved  
 **Permission:** Akses penuh ke pengaturan toko  
 **URL:** `/seller/shop/settings`
 
 ---
 
-## 📋 Persyaratan Akses Pengaturan Toko
+## Persyaratan Akses Pengaturan Toko
 
 ### 1. **KYC Telah Disetujui**
 - Status KYC harus **"Disetujui"**
@@ -36,13 +36,13 @@ Pengaturan Toko adalah menu yang memungkinkan penjual untuk mengatur dan mengelo
 
 ---
 
-## 🛠️ Komponen Pengaturan Toko
+## Komponen Pengaturan Toko
 
 ### 1. **Informasi Dasar Toko**
 
 #### A. Logo Toko
 ```
-📸 Persyaratan Logo:
+Persyaratan Logo:
 ✓ Format File: JPEG, PNG, JPG, WebP
 ✓ Ukuran File: Maksimal 2 MB
 ✓ Ukuran Gambar: Disarankan 300x300px (kotak)
@@ -58,7 +58,7 @@ Pengaturan Toko adalah menu yang memungkinkan penjual untuk mengatur dan mengelo
 
 #### B. Nama Toko
 ```
-📝 Persyaratan Nama Toko:
+Persyaratan Nama Toko:
 ✓ Wajib diisi (Required field)
 ✓ Maksimal 255 karakter
 ✓ Harus unik (tidak boleh sama dengan toko lain)
@@ -96,7 +96,7 @@ https://pasarsantri.com/shop/[your-slug]
 
 #### D. Shop Description
 ```
-📖 Description Guidelines:
+Description Guidelines:
 ✓ Opsional tapi highly recommended
 ✓ Maksimal 1.000 karakter
 ✓ Jelaskan apa yang dijual
@@ -116,7 +116,7 @@ dengan [value proposition]. Pengiriman [cakupan area] dan [garansi/after sales].
 
 #### A. Phone Number
 ```
-📞 Phone Requirements:
+Phone Requirements:
 ✓ Opsional tapi recommended
 ✓ Format internasional: +62xxx
 ✓ Maksimal 20 karakter
@@ -132,7 +132,7 @@ dengan [value proposition]. Pengiriman [cakupan area] dan [garansi/after sales].
 
 #### B. Shop Status (Buka/Tutup)
 ```
-🏪 Status Control:
+Status Control:
 ✓ Toggle switch: Open/Closed
 ✓ Default: Open (dapat menerima pesanan)
 ✓ Closed: Customer tidak bisa checkout
@@ -149,7 +149,7 @@ dengan [value proposition]. Pengiriman [cakupan area] dan [garansi/after sales].
 
 #### A. Address Fields (Alamat Lengkap)
 ```
-📍 Required Address Fields:
+Required Address Fields:
 ✓ Province (Provinsi) - Dropdown selection
 ✓ City (Kota/Kabupaten) - Dropdown selection  
 ✓ Subdistrict (Kecamatan) - Dropdown selection
@@ -166,7 +166,7 @@ dengan [value proposition]. Pengiriman [cakupan area] dan [garansi/after sales].
 
 #### B. Address Hierarchy
 ```
-🏛️ Indonesia Address System:
+Indonesia Address System:
 Province → City → Subdistrict → Village
 Provinsi → Kota → Kecamatan → Kelurahan
 
@@ -184,7 +184,7 @@ DKI Jakarta → Jakarta Selatan → Kebayoran Baru → Senayan
 
 #### A. Supported Platforms
 ```
-🌐 Social Media Integration:
+Social Media Integration:
 ✓ Facebook - facebook.com/yourpage
 ✓ Instagram - instagram.com/youraccount
 ✓ Twitter - twitter.com/yourhandle  
@@ -193,7 +193,7 @@ DKI Jakarta → Jakarta Selatan → Kebayoran Baru → Senayan
 
 #### B. URL Format Requirements
 ```
-📱 URL Guidelines:
+URL Guidelines:
 ✓ Must be valid URL format (https://)
 ✓ Publicly accessible
 ✓ Active social media accounts
@@ -249,7 +249,7 @@ DKI Jakarta → Jakarta Selatan → Kebayoran Baru → Senayan
 
 #### Phone Number:
 ```
-📞 Format Examples:
+Format Examples:
 ✓ +628123456789 (Indonesian mobile)
 ✓ +622187654321 (Indonesian landline)
 ✓ +6281234567890 (with country code)
@@ -279,7 +279,7 @@ DKI Jakarta → Jakarta Selatan → Kebayoran Baru → Senayan
 
 #### Full Address:
 ```
-📍 Address Format Example:
+Address Format Example:
 "Jl. Sudirman No. 123, RT 01/RW 05, 
 Kompleks ABC, Lantai 2"
 ```
@@ -296,14 +296,14 @@ Kompleks ABC, Lantai 2"
 
 #### Instagram:
 ```
-📸 Instagram URL Examples:
+Instagram URL Examples:
 ✓ https://instagram.com/yourbusiness
 ✓ https://www.instagram.com/yourbusiness
 ```
 
 #### Website:
 ```
-🌐 Website URL Examples:
+Website URL Examples:
 ✓ https://yourdomain.com
 ✓ https://www.yourbusiness.id
 ✓ https://yourbusiness.wordpress.com
@@ -323,7 +323,7 @@ Kompleks ABC, Lantai 2"
 
 ### 1. **Required Field Validation**
 ```
-❌ Common Validation Errors:
+Common Validation Errors:
 - Shop name is required
 - Shop slug is required  
 - Province is required
@@ -336,7 +336,7 @@ Kompleks ABC, Lantai 2"
 
 ### 2. **Unique Field Validation**
 ```
-❌ Uniqueness Errors:
+Uniqueness Errors:
 - "This shop name is already taken"
 - "This shop slug is already taken"
 ```
@@ -348,7 +348,7 @@ Kompleks ABC, Lantai 2"
 
 ### 3. **Format Validation**
 ```
-❌ Format Errors:
+Format Errors:
 - Invalid URL format (social media)
 - Invalid image format (logo)
 - File too large (>2MB)
@@ -357,7 +357,7 @@ Kompleks ABC, Lantai 2"
 
 ### 4. **Business Logic Validation**
 ```
-⚠️ Business Rules:
+Business Rules:
 - Cannot change slug if shop has active orders
 - Logo changes may take time to reflect
 - Address changes affect shipping calculations
@@ -412,7 +412,7 @@ Kompleks ABC, Lantai 2"
 
 ### 1. **Branding Consistency**
 ```
-🎨 Brand Guidelines:
+Brand Guidelines:
 ✓ Use same logo across all platforms
 ✓ Consistent color scheme and fonts
 ✓ Uniform messaging and tone
@@ -422,7 +422,7 @@ Kompleks ABC, Lantai 2"
 
 ### 2. **SEO Optimization**
 ```
-🔍 SEO Best Practices:
+SEO Best Practices:
 ✓ Include relevant keywords in shop name
 ✓ Optimize slug for search engines
 ✓ Write keyword-rich descriptions
@@ -432,7 +432,7 @@ Kompleks ABC, Lantai 2"
 
 ### 3. **Customer Communication**
 ```
-💬 Communication Tips:
+Communication Tips:
 ✓ Provide multiple contact channels
 ✓ Set clear expectations for response times
 ✓ Use professional language
@@ -442,7 +442,7 @@ Kompleks ABC, Lantai 2"
 
 ### 4. **Regular Updates**
 ```
-📅 Maintenance Schedule:
+Maintenance Schedule:
 ✓ Review shop info monthly
 ✓ Update seasonal promotions
 ✓ Refresh social media links
@@ -562,16 +562,16 @@ Kompleks ABC, Lantai 2"
 
 Untuk bantuan terkait pengaturan toko:
 
-### 📞 **Support Channels:**
+### **Support Channels:**
 ```
-📧 Email Shop : shop-support@pasarsantri.com
-📱 WhatsApp   : +62 812-3456-7890
-💬 Live Chat  : Available di seller dashboard
-🌐 Help Center: help.pasarsantri.com/shop-settings
-🏢 Developer : PT. Sidogiri Fintech Utama
+Email Shop : shop-support@pasarsantri.com
+WhatsApp   : +62 812-3456-7890
+Live Chat  : Available di seller dashboard
+Help Center: help.pasarsantri.com/shop-settings
+Developer : PT. Sidogiri Fintech Utama
 ```
 
-### ⏰ **Jam Operasional:**
+### **Jam Operasional:**
 ```
 Shop Settings Support:
 Senin - Jumat  : 08:00 - 17:00 WIB  
@@ -582,12 +582,12 @@ Technical Support:
 24/7 untuk masalah urgent
 ```
 
-### 📚 **Resources:**
+### **Resources:**
 ```
-📖 Shop Setup Guide    : docs.pasarsantri.com/seller/shop
-📹 Video Tutorials     : youtube.com/pasarsantri/shop
-🎯 Best Practices      : help.pasarsantri.com/shop-tips
-❓ FAQ                : faq.pasarsantri.com/shop-settings
+Shop Setup Guide    : docs.pasarsantri.com/seller/shop
+Video Tutorials     : youtube.com/pasarsantri/shop
+Best Practices      : help.pasarsantri.com/shop-tips
+FAQ                : faq.pasarsantri.com/shop-settings
 ```
 
 ---

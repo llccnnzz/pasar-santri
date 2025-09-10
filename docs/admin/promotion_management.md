@@ -322,10 +322,10 @@ Table: promotions
 
 Untuk bantuan lebih lanjut terkait sistem promosi:
 
-📧 **Email Support**: support@pasarsantri.com  
-📱 **WhatsApp**: +62 812-3456-7890  
-🌐 **Website**: www.pasarsantri.com  
-🏢 **Developer**: PT. Sidogiri Fintech Utama
+**Email Support**: support@pasarsantri.com  
+**WhatsApp**: +62 812-3456-7890  
+**Website**: www.pasarsantri.com  
+**Developer**: PT. Sidogiri Fintech Utama
 
 **Jam Operasional Support**:  
 Senin - Jumat: 08:00 - 17:00 WIB  

@@ -1,20 +1,20 @@
-# 💰 Service Fee Management - Admin Pasar Santri
+#  Service Fee Management - Admin Pasar Santri
 
-## 📋 Deskripsi
+## Deskripsi
 Service Fee Management adalah modul untuk mengatur biaya layanan/fee yang dikenakan pada setiap transaksi pembayaran di Pasar Santri Marketplace. Admin dapat mengonfigurasi berbagai jenis fee dan parameter perhitungan fee secara fleksibel.
 
-## 🎯 Tujuan
+## Tujuan
 - Mengatur biaya layanan yang dikenakan kepada seller atau buyer
 - Menentukan metode perhitungan fee (persentase atau tetap)
 - Mengonfigurasi batas minimum dan maksimum fee
 - Mengelola struktur biaya marketplace secara terpusat
 
-## 🔐 Akses & Permission
+## Akses & Permission
 **Role Required:** Administrator  
 **Permission:** `admin-dashboard|index service fee`, `admin-dashboard|update service fee`  
 **URL:** `/admin/service-fees`
 
-## ⚙️ Jenis Konfigurasi Service Fee
+## Jenis Konfigurasi Service Fee
 
 ### 1. **Payment Fee Type** (Jenis Fee Pembayaran)
 Menentukan metode perhitungan fee pembayaran.
@@ -63,7 +63,7 @@ Jumlah fee tetap yang dikenakan jika menggunakan jenis "Fixed".
 - **Default:** IDR 2.500
 - **Contoh:** Setiap transaksi akan dikenakan fee IDR 2.500 terlepas dari nominal transaksi
 
-## 🛠️ Cara Menggunakan
+## Cara Menggunakan
 
 ### **Akses Halaman Service Fee**
 1. Login sebagai Administrator
@@ -99,7 +99,7 @@ Halaman akan menampilkan:
 2. Atur **"Fixed Fee Amount"** (contoh: 2500 untuk IDR 2.500)
 3. Klik **Update** untuk menyimpan
 
-## 📊 Contoh Skenario Perhitungan
+## Contoh Skenario Perhitungan
 
 ### **Skenario 1: Fee Persentase dengan Min/Max**
 **Konfigurasi:**
@@ -123,7 +123,7 @@ Halaman akan menampilkan:
 - Transaksi IDR 1.000.000 → **Fee Final: IDR 2.500**
 - Transaksi IDR 5.000.000 → **Fee Final: IDR 2.500**
 
-## ⚠️ Hal Penting yang Perlu Diperhatikan
+## Hal Penting yang Perlu Diperhatikan
 
 ### **Best Practices:**
 1. **Testing:** Selalu test konfigurasi fee dengan transaksi kecil terlebih dahulu
@@ -143,7 +143,7 @@ Halaman akan menampilkan:
 - Maximum Value: ≥ 0 (atau kosong)
 - Fixed Amount: ≥ 0
 
-## 🔍 Troubleshooting
+## Troubleshooting
 
 ### **Problem: Fee tidak terapply pada transaksi**
 **Solution:**
@@ -163,7 +163,7 @@ Halaman akan menampilkan:
 2. Adjust minimum dan maximum values
 3. Consider impact terhadap competitiveness marketplace
 
-## 📈 Monitoring & Analytics
+## Monitoring & Analytics
 
 ### **Metrics yang Perlu Dipantau:**
 - Total revenue dari service fees
@@ -178,7 +178,7 @@ Halaman akan menampilkan:
 
 ---
 
-## 📞 Support & Bantuan
+## Support & Bantuan
 
 Jika mengalami kesulitan dalam menggunakan Service Fee Management:
 

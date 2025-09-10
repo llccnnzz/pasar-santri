@@ -21,3 +21,6 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+# User Manual generated files
+/docs/User-Manual.html

@@ -1,21 +1,21 @@
-# 📦 Marketplace Order Management - Pasar Santri
+# Marketplace Order Management - Pasar Santri
 
-## 📋 Deskripsi
+## Deskripsi
 Marketplace Order Management adalah sistem lengkap untuk mengelola dan memantau pesanan pelanggan di Pasar Santri. Fitur ini memungkinkan buyer yang telah login untuk melihat daftar pesanan, melacak status pengiriman, mengelola riwayat pembelian, dan berinteraksi dengan seller terkait pesanan mereka. Sistem ini memberikan transparansi penuh dalam proses fulfillment pesanan dari konfirmasi hingga produk diterima.
 
-## 🎯 Tujuan
+## Tujuan
 - Memberikan visibilitas lengkap terhadap semua pesanan yang pernah dibuat
 - Memfasilitasi tracking real-time status pesanan dan pengiriman
 - Menyediakan interface mudah untuk komunikasi dengan seller
 - Memungkinkan pengelolaan return, exchange, dan complaint
 - Memberikan akses ke invoice, receipt, dan dokumentasi pesanan
 
-## 🔐 Akses & Persyaratan
+## Akses & Persyaratan
 **Role Required:** Buyer/Customer yang sudah login  
 **Permission:** Akses ke order history dan tracking information  
 **URL:** `/orders`, `/orders/tracking/{order_id}`, `/orders/{order_id}`
 
-## ⭐ Fitur Utama Order Management
+## Fitur Utama Order Management
 
 ### 1. **Comprehensive Order List**
 - Daftar lengkap semua pesanan dengan filter berdasarkan status dan periode
@@ -44,7 +44,7 @@ Marketplace Order Management adalah sistem lengkap untuk mengelola dan memantau 
 
 ---
 
-## 📋 Persyaratan Akses Order Management
+## Persyaratan Akses Order Management
 
 ### Prasyarat Wajib
 
@@ -61,7 +61,7 @@ Marketplace Order Management adalah sistem lengkap untuk mengelola dan memantau 
 
 ---
 
-## 📋 Order List Management
+## Order List Management
 
 ### Tentang Order List
 
@@ -181,7 +181,7 @@ Marketplace Order Management adalah sistem lengkap untuk mengelola dan memantau 
 
 ---
 
-## 📍 Order Tracking System
+## Order Tracking System
 
 ### Tentang Real-time Tracking
 
@@ -287,7 +287,7 @@ Marketplace Order Management adalah sistem lengkap untuk mengelola dan memantau 
 
 ---
 
-## 💬 Communication & Support
+## Communication & Support
 
 ### Order-related Communication
 
@@ -347,7 +347,7 @@ Marketplace Order Management adalah sistem lengkap untuk mengelola dan memantau 
 
 ---
 
-## 🔄 Post-Purchase Actions
+## Post-Purchase Actions
 
 ### Return & Exchange Management
 
@@ -409,7 +409,7 @@ Marketplace Order Management adalah sistem lengkap untuk mengelola dan memantau 
 
 ---
 
-## 📊 Analytics & Reporting
+## Analytics & Reporting
 
 ### Order Analytics Dashboard
 
@@ -470,7 +470,7 @@ Marketplace Order Management adalah sistem lengkap untuk mengelola dan memantau 
 
 ---
 
-## ⚠️ Troubleshooting & FAQ
+## Troubleshooting & FAQ
 
 ### Common Order Management Issues
 
@@ -547,7 +547,7 @@ Marketplace Order Management adalah sistem lengkap untuk mengelola dan memantau 
 
 ---
 
-## 💡 Tips & Best Practices
+## Tips & Best Practices
 
 ### Optimasi Order Management
 

@@ -1,23 +1,23 @@
-# 🔐 Verifikasi KYC Seller - Pasar Santri
+# Verifikasi KYC Seller - Pasar Santri
 
-## 📋 Deskripsi
+## Deskripsi
 Sistem **KYC (Know Your Customer)** adalah proses verifikasi identitas yang **WAJIB** dilakukan oleh setiap penjual untuk dapat berjualan di **Pasar Santri Marketplace**. Proses ini memastikan keamanan platform dan melindungi pembeli dari penjual yang tidak terverifikasi.
 
-## 🎯 Tujuan
+## Tujuan
 - Memverifikasi identitas dan kredibilitas calon penjual
 - Memastikan kepatuhan terhadap regulasi perdagangan elektronik
 - Mencegah penipuan dan aktivitas ilegal di marketplace
 - Memberikan kepercayaan kepada pembeli terhadap penjual terverifikasi
 - Melindungi semua pihak dalam transaksi jual-beli
 
-## 🔐 Akses & Persyaratan
+## Akses & Persyaratan
 **Role Required:** User terdaftar (akan upgrade ke Seller setelah KYC approved)  
 **Permission:** Akses terbuka untuk semua user terdaftar  
 **URL:** `/seller/kyc`
 
 ---
 
-## ⭐ Manfaat Verifikasi KYC
+## Manfaat Verifikasi KYC
 
 ### 1. **Keamanan Platform**
 - Memastikan hanya penjual terverifikasi yang dapat berjualan
@@ -40,7 +40,7 @@ Sistem **KYC (Know Your Customer)** adalah proses verifikasi identitas yang **WA
 
 ---
 
-## 📋 Persyaratan Verifikasi KYC
+## Persyaratan Verifikasi KYC
 
 ### 1. **Informasi Pribadi yang Diperlukan**
 
@@ -64,9 +64,9 @@ Sistem **KYC (Know Your Customer)** adalah proses verifikasi identitas yang **WA
 
 #### Dokumen Identitas (Pilih Salah Satu):
 ```
-🆔 KTP (Kartu Tanda Penduduk)    - Recommended
-🛂 Passport (Paspor)             - Untuk WNA  
-🚗 SIM (Surat Izin Mengemudi)    - Alternative
+KTP (Kartu Tanda Penduduk)    - Recommended
+Passport (Paspor)             - Untuk WNA  
+SIM (Surat Izin Mengemudi)    - Alternative
 ```
 
 #### File Requirements:
@@ -100,15 +100,15 @@ Sistem **KYC (Know Your Customer)** adalah proses verifikasi identitas yang **WA
 
 ## Status Aplikasi KYC
 
-### 1. 🟡 **Pending** (Menunggu Review)
+### 1. **Pending** (Menunggu Review)
 **Deskripsi**: Aplikasi KYC telah disubmit dan menunggu review admin
 
 **Timeline**: 3-5 hari kerja  
 **Yang Bisa Dilakukan**:
-- ✅ Melihat status aplikasi
-- ✅ Mengakses dashboard seller (terbatas)
-- ❌ Tidak bisa berjualan
-- ❌ Tidak bisa withdraw saldo
+- Melihat status aplikasi
+- Mengakses dashboard seller (terbatas)
+- Tidak bisa berjualan
+- Tidak bisa withdraw saldo
 
 **Informasi Ditampilkan**:
 - Tanggal submit aplikasi
@@ -116,44 +116,44 @@ Sistem **KYC (Know Your Customer)** adalah proses verifikasi identitas yang **WA
 - Checklist dokumen yang sudah diupload
 - Status "Under Review" notification
 
-### 2. 🔵 **Under Review** (Sedang Direview)
+### 2. **Under Review** (Sedang Direview)
 **Deskripsi**: Admin sedang memeriksa dokumen yang disubmit
 
 **Timeline**: 1-3 hari kerja  
 **Yang Bisa Dilakukan**:
-- ✅ Monitoring status real-time
-- ✅ Menunggu hasil review
-- ❌ Tidak bisa edit aplikasi
-- ❌ Masih belum bisa berjualan
+- Monitoring status real-time
+- Menunggu hasil review
+- Tidak bisa edit aplikasi
+- Masih belum bisa berjualan
 
 **Informasi Ditampilkan**:
 - Progress review (30%, 60%, 90%)
 - Estimasi completion time
 - Contact support jika urgent
 
-### 3. ✅ **Approved** (Disetujui)
+### 3. **Approved** (Disetujui)
 **Deskripsi**: KYC berhasil diverifikasi, seller dapat mulai berjualan
 
 **Yang Bisa Dilakukan**:
-- ✅ **Full access** semua fitur seller
-- ✅ Berjualan dan upload produk
-- ✅ Withdraw saldo penjualan
-- ✅ Mendapat badge "Verified Seller"
-- ✅ Akses ke semua menu dan fitur
+- **Full access** semua fitur seller
+- Berjualan dan upload produk
+- Withdraw saldo penjualan
+- Mendapat badge "Verified Seller"
+- Akses ke semua menu dan fitur
 
 **Benefit yang Didapat**:
 ```
-🏪 Setup Toko Complete     ✓
-📦 Upload Produk Unlimited ✓  
-💰 Withdraw Saldo         ✓
-📊 Analytics Advanced     ✓
-🎯 Product Ads           ✓
-🚚 Shipping Integration  ✓
-💬 Customer Chat         ✓
-⭐ Review Management     ✓
+Setup Toko Complete     ✓
+Upload Produk Unlimited ✓  
+ Withdraw Saldo         ✓
+Analytics Advanced     ✓
+Product Ads           ✓
+Shipping Integration  ✓
+Customer Chat         ✓
+Review Management     ✓
 ```
 
-### 4. ❌ **Rejected** (Ditolak)
+### 4. **Rejected** (Ditolak)
 **Deskripsi**: Dokumen tidak memenuhi syarat dan perlu diperbaiki
 
 **Alasan Umum Penolakan**:
@@ -164,10 +164,10 @@ Sistem **KYC (Know Your Customer)** adalah proses verifikasi identitas yang **WA
 - Data personal tidak konsisten
 
 **Yang Bisa Dilakukan**:
-- ✅ **Reapply KYC** dengan dokumen perbaikan
-- ✅ Lihat detail alasan penolakan
-- ✅ Upload dokumen baru
-- ❌ Masih belum bisa berjualan
+- **Reapply KYC** dengan dokumen perbaikan
+- Lihat detail alasan penolakan
+- Upload dokumen baru
+- Masih belum bisa berjualan
 
 ---
 
@@ -203,7 +203,7 @@ Country           : [Indonesia (default)]
 Phone Number      : [+62xxxxxxxxxx]
 ```
 
-**💡 Tips Pengisian:**
+**Tips Pengisian:**
 - Gunakan data sesuai **KTP/identitas resmi**
 - Alamat harus **detail dan akurat**  
 - Nomor telepon harus **aktif** (untuk verifikasi)
@@ -212,17 +212,17 @@ Phone Number      : [+62xxxxxxxxxx]
 ### Langkah 3: Pilih Jenis Dokumen
 
 #### Pilihan Dokumen Identitas:
-1. **🆔 KTP (Kartu Tanda Penduduk)** - Recommended
+1. **KTP (Kartu Tanda Penduduk)** - Recommended
    - Untuk WNI (Warga Negara Indonesia)
    - Paling mudah dan cepat diverifikasi
    - Tidak ada expiry date
 
-2. **🛂 Passport (Paspor)**
+2. **Passport (Paspor)**
    - Untuk WNA (Warga Negara Asing)
    - Harus masih berlaku (belum expired)
    - Memerlukan visa/permit tinggal
 
-3. **🚗 SIM (Surat Izin Mengemudi)**
+3. **SIM (Surat Izin Mengemudi)**
    - Alternative untuk WNI
    - Harus SIM A/B/C yang masih berlaku
    - Proses review lebih lama
@@ -238,7 +238,7 @@ Issued Country      : [Negara penerbit]
 
 #### A. Foto Sisi Depan Dokumen:
 ```
-📋 Checklist Foto Dokumen:
+Checklist Foto Dokumen:
 ✓ Seluruh dokumen masuk frame
 ✓ Semua text jelas terbaca  
 ✓ Tidak ada bayangan/pantulan
@@ -248,7 +248,7 @@ Issued Country      : [Negara penerbit]
 ✓ Ukuran: Maksimal 5 MB
 ```
 
-**🚫 Hindari Kesalahan:**
+**Hindari Kesalahan:**
 - Foto terpotong/tidak lengkap
 - Flash yang menimbulkan silau
 - Foto miring/tidak lurus
@@ -257,7 +257,7 @@ Issued Country      : [Negara penerbit]
 
 #### B. Foto Selfie dengan Dokumen:
 ```
-📸 Checklist Foto Selfie:
+Checklist Foto Selfie:
 ✓ Wajah jelas dan terfokus
 ✓ Dokumen dipegang di samping wajah
 ✓ Kedua mata terbuka dan terlihat
@@ -267,7 +267,7 @@ Issued Country      : [Negara penerbit]
 ✓ Background bersih dan tidak ramai
 ```
 
-**💡 Tips Foto Selfie:**
+**Tips Foto Selfie:**
 - Gunakan **kamera depan** smartphone
 - **Pencahayaan alami** (di dekat jendela)
 - **Posisi tegak**, pandangan ke kamera
@@ -293,18 +293,18 @@ Issued Country      : [Negara penerbit]
 
 #### Yang Harus Disetujui:
 ```
-☑️ Terms & Conditions
+Terms & Conditions
    - Kebijakan platform Pasar Santri
    - Aturan dan tanggung jawab seller
    - Sanksi pelanggaran
    
-☑️ Privacy Policy  
+Privacy Policy  
    - Penggunaan data personal
    - Keamanan informasi
    - Hak dan kewajiban user
 ```
 
-**⚠️ Penting**: Wajib membaca dan memahami sebelum menyetujui
+**Penting**: Wajib membaca dan memahami sebelum menyetujui
 
 ### Langkah 7: Submit Aplikasi
 
@@ -317,11 +317,11 @@ Issued Country      : [Negara penerbit]
 
 #### Setelah Submit:
 ```
-✅ Aplikasi berhasil dikirim
-📧 Email konfirmasi dikirim  
-⏰ Review 3-5 hari kerja
-📱 Notifikasi real-time di dashboard
-💬 Bisa contact support jika ada masalah
+Aplikasi berhasil dikirim
+Email konfirmasi dikirim  
+Review 3-5 hari kerja
+Notifikasi real-time di dashboard
+Bisa contact support jika ada masalah
 ```
 
 ---
@@ -339,10 +339,10 @@ Issued Country      : [Negara penerbit]
 
 #### Status Colors:
 ```
-🟡 Pending      : Yellow/Warning
-🔵 Under Review : Blue/Info  
-✅ Approved     : Green/Success
-❌ Rejected     : Red/Danger
+Pending      : Yellow/Warning
+Under Review : Blue/Info  
+Approved     : Green/Success
+Rejected     : Red/Danger
 ```
 
 ### 2. Notifikasi Real-time
@@ -398,39 +398,39 @@ Day 8-10  : Final Decision
 
 #### Alasan Penolakan Umum:
 
-##### 🖼️ **Masalah Foto/Dokumen:**
+##### **Masalah Foto/Dokumen:**
 ```
-❌ Document photo unclear/blurry
+Document photo unclear/blurry
    → Upload foto dengan kualitas HD
    
-❌ Selfie doesn't match document  
+Selfie doesn't match document  
    → Pastikan wajah sama dengan foto di dokumen
    
-❌ Document partially hidden/cut off
+Document partially hidden/cut off
    → Upload foto dokumen lengkap, semua sudut terlihat
    
-❌ Poor lighting in photos
+Poor lighting in photos
    → Gunakan pencahayaan natural yang cukup
    
-❌ Glare/reflection on document
+Glare/reflection on document
    → Hindari flash, gunakan pencahayaan tidak langsung
 ```
 
-##### 📝 **Masalah Data:**
+##### **Masalah Data:**
 ```
-❌ Personal info doesn't match document
+Personal info doesn't match document
    → Pastikan nama, alamat sesuai dengan dokumen
    
-❌ Expired document provided
+Expired document provided
    → Upload dokumen yang masih berlaku
    
-❌ Invalid/fake document detected  
+Invalid/fake document detected  
    → Gunakan dokumen asli dan resmi
    
-❌ Incomplete address information
+Incomplete address information
    → Lengkapi alamat sampai detail RT/RW
    
-❌ Phone number not reachable
+Phone number not reachable
    → Gunakan nomor yang aktif dan bisa dihubungi
 ```
 
@@ -447,13 +447,13 @@ Day 8-10  : Final Decision
 
 #### Yang Bisa Diubah saat Reapply:
 ```
-✅ Personal Information
-✅ Address Details  
-✅ Document Photos
-✅ Selfie Photo
-✅ Additional Documents
-❌ Document Type (harus sama)
-❌ Basic Identity (nama sesuai dokumen)
+Personal Information
+Address Details  
+Document Photos
+Selfie Photo
+Additional Documents
+Document Type (harus sama)
+Basic Identity (nama sesuai dokumen)
 ```
 
 #### Tips Successful Reapply:
@@ -467,10 +467,10 @@ Day 8-10  : Final Decision
 
 #### Contact Support:
 ```
-📧 Email   : kyc-support@pasarsantri.com
-📱 WhatsApp: +62 812-3456-7890  
-💬 Live Chat: Available di dashboard
-⏰ Jam Kerja: Senin-Jumat 08:00-17:00 WIB
+Email   : kyc-support@pasarsantri.com
+WhatsApp: +62 812-3456-7890  
+Live Chat: Available di dashboard
+Jam Kerja: Senin-Jumat 08:00-17:00 WIB
 ```
 
 #### Yang Disediakan Support:
@@ -485,43 +485,43 @@ Day 8-10  : Final Decision
 
 ### 1. **Persiapan Dokumen**
 ```
-📋 Checklist Persiapan:
-✅ Siapkan dokumen asli (KTP/Passport/SIM)
-✅ Pastikan dokumen masih berlaku
-✅ Bersihkan dokumen dari debu/kotoran
-✅ Siapkan smartphone dengan kamera HD
-✅ Cari tempat dengan pencahayaan baik
-✅ Siapkan background yang kontras
+Checklist Persiapan:
+Siapkan dokumen asli (KTP/Passport/SIM)
+Pastikan dokumen masih berlaku
+Bersihkan dokumen dari debu/kotoran
+Siapkan smartphone dengan kamera HD
+Cari tempat dengan pencahayaan baik
+Siapkan background yang kontras
 ```
 
 ### 2. **Teknik Fotografi**
 ```
-📸 Photography Best Practices:
-✅ Gunakan mode HDR jika tersedia
-✅ Focus manual pada dokumen
-✅ Hindari zoom digital berlebihan  
-✅ Ambil beberapa foto, pilih yang terbaik
-✅ Check hasil foto sebelum upload
-✅ Pastikan file size tidak melebihi limit
+Photography Best Practices:
+Gunakan mode HDR jika tersedia
+Focus manual pada dokumen
+Hindari zoom digital berlebihan  
+Ambil beberapa foto, pilih yang terbaik
+Check hasil foto sebelum upload
+Pastikan file size tidak melebihi limit
 ```
 
 ### 3. **Data Accuracy**
 ```
-📝 Data Entry Tips:
-✅ Ketik data dengan teliti, hindari typo
-✅ Gunakan format yang konsisten
-✅ Pastikan alamat sesuai dengan KTP
-✅ Nomor telepon dengan format +62
-✅ Double-check semua field sebelum submit
+Data Entry Tips:
+Ketik data dengan teliti, hindari typo
+Gunakan format yang konsisten
+Pastikan alamat sesuai dengan KTP
+Nomor telepon dengan format +62
+Double-check semua field sebelum submit
 ```
 
 ### 4. **Timing Strategy**
 ```
-⏰ Optimal Submission Timing:
-✅ Submit di hari kerja (Senin-Kamis)
-✅ Waktu pagi (09:00-11:00 WIB) untuk review cepat
-✅ Hindari submit di Jumat sore atau weekend
-✅ Jangan submit menjelang holiday/libur panjang
+Optimal Submission Timing:
+Submit di hari kerja (Senin-Kamis)
+Waktu pagi (09:00-11:00 WIB) untuk review cepat
+Hindari submit di Jumat sore atau weekend
+Jangan submit menjelang holiday/libur panjang
 ```
 
 ---
@@ -604,17 +604,17 @@ Day 8-10  : Final Decision
 
 ### 4. **Sanksi Pelanggaran**
 ```
-⚠️ Dokumen Palsu:
+Dokumen Palsu:
 - Permanent ban dari platform
 - Laporan ke authorities terkait
 - Blacklist di sistem industri
 
-⚠️ Identity Fraud:
+Identity Fraud:
 - Account suspension
 - Legal action jika diperlukan  
 - Collaboration dengan law enforcement
 
-⚠️ Data Manipulation:
+Data Manipulation:
 - Application rejection
 - Extended review period
 - Additional verification required
@@ -626,16 +626,16 @@ Day 8-10  : Final Decision
 
 Untuk bantuan terkait verifikasi KYC seller:
 
-### 📞 **Support Channels:**
+### **Support Channels:**
 ```
-📧 Email KYC     : kyc-support@pasarsantri.com
-📱 WhatsApp      : +62 812-3456-7890
-💬 Live Chat     : Available di seller dashboard  
-🌐 Help Center   : help.pasarsantri.com/kyc
-🏢 Developer     : PT. Sidogiri Fintech Utama
+Email KYC     : kyc-support@pasarsantri.com
+WhatsApp      : +62 812-3456-7890
+Live Chat     : Available di seller dashboard  
+Help Center   : help.pasarsantri.com/kyc
+Developer     : PT. Sidogiri Fintech Utama
 ```
 
-### ⏰ **Jam Operasional:**
+### **Jam Operasional:**
 ```
 Support KYC:
 Senin - Jumat  : 08:00 - 17:00 WIB
@@ -646,12 +646,12 @@ Urgent/Emergency:
 WhatsApp 24/7 untuk masalah kritis
 ```
 
-### 📚 **Resources:**
+### **Resources:**
 ```
-📖 KYC Guidelines    : docs.pasarsantri.com/seller/kyc
-📹 Video Tutorial    : youtube.com/pasarsantri/kyc
-🎯 Best Practices    : help.pasarsantri.com/kyc-tips
-❓ FAQ              : faq.pasarsantri.com/kyc
+KYC Guidelines    : docs.pasarsantri.com/seller/kyc
+Video Tutorial    : youtube.com/pasarsantri/kyc
+Best Practices    : help.pasarsantri.com/kyc-tips
+FAQ              : faq.pasarsantri.com/kyc
 ```
 
 ---

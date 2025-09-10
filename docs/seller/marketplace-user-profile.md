@@ -1,21 +1,21 @@
-# 👤 Marketplace User Profile - Pasar Santri
+# Marketplace User Profile - Pasar Santri
 
-## 📋 Deskripsi
+## Deskripsi
 Marketplace User Profile adalah halaman khusus untuk pengguna terdaftar yang menyediakan akses ke fitur-fitur akun pribadi, manajemen alamat, dan pengelolaan wishlist. Halaman ini memerlukan autentikasi dan memberikan pengalaman personal yang lebih baik untuk aktivitas belanja di marketplace Pasar Santri.
 
-## 🎯 Tujuan
+## Tujuan
 - Memberikan kontrol penuh atas informasi akun pribadi
 - Memudahkan pengelolaan alamat pengiriman untuk proses checkout yang lebih cepat
 - Menyediakan fitur wishlist untuk menyimpan dan mengelola produk favorit
 - Meningkatkan pengalaman berbelanja yang personal dan efisien
 - Mempertahankan riwayat preferensi dan aktivitas pengguna
 
-## 🔐 Akses & Persyaratan
+## Akses & Persyaratan
 **Role Required:** Buyer/Customer yang sudah terdaftar dan login  
 **Permission:** Akses ke profil pribadi dan fitur wishlist  
 **URL:** `/user/profile`, `/user/address-book`, `/user/wishlist`
 
-## ⭐ Fitur Utama User Profile
+## Fitur Utama User Profile
 
 ### 1. **Manajemen Akun Pribadi**
 - Update informasi profil seperti nama, email, dan nomor telepon
@@ -44,7 +44,7 @@ Marketplace User Profile adalah halaman khusus untuk pengguna terdaftar yang men
 
 ---
 
-## 📋 Persyaratan Akses User Profile
+## Persyaratan Akses User Profile
 
 ### Prasyarat Wajib
 
@@ -61,7 +61,7 @@ Marketplace User Profile adalah halaman khusus untuk pengguna terdaftar yang men
 
 ---
 
-## 🏠 User Account & Address Book
+## User Account & Address Book
 
 ### Informasi Akun Dasar
 
@@ -130,7 +130,7 @@ Marketplace User Profile adalah halaman khusus untuk pengguna terdaftar yang men
 
 ---
 
-## 💝 Wishlist Management
+## Wishlist Management
 
 ### Tentang Fitur Wishlist
 
@@ -210,7 +210,7 @@ Marketplace User Profile adalah halaman khusus untuk pengguna terdaftar yang men
 
 ---
 
-## 🔧 Pengaturan dan Personalisasi
+## Pengaturan dan Personalisasi
 
 ### Preferensi Akun
 
@@ -242,7 +242,7 @@ Marketplace User Profile adalah halaman khusus untuk pengguna terdaftar yang men
 
 ---
 
-## 📊 Aktivitas dan Riwayat
+## Aktivitas dan Riwayat
 
 ### Dashboard Aktivitas Pengguna
 
@@ -275,7 +275,7 @@ Marketplace User Profile adalah halaman khusus untuk pengguna terdaftar yang men
 
 ---
 
-## ⚠️ Troubleshooting & FAQ
+## Troubleshooting & FAQ
 
 ### Masalah Umum User Profile
 
@@ -343,7 +343,7 @@ Marketplace User Profile adalah halaman khusus untuk pengguna terdaftar yang men
 
 ---
 
-## 💡 Tips & Best Practices
+## Tips & Best Practices
 
 ### Optimasi Penggunaan User Profile
 
