@@ -1,16 +1,16 @@
-# 🚚 Shipping Method Management - Admin Pasar Santri
+# Shipping Method Management - Admin Pasar Santri
 
-## 📋 Deskripsi
+## Deskripsi
 Shipping Method Management adalah modul untuk mengelola semua metode pengiriman yang tersedia di Pasar Santri Marketplace. Sistem ini terintegrasi dengan Biteship API untuk menyediakan berbagai pilihan kurir dan layanan pengiriman dengan kalkulasi ongkir real-time.
 
-## 🎯 Tujuan
+## Tujuan
 - Mengelola daftar kurir dan layanan pengiriman yang tersedia
 - Mengintegrasikan kalkulasi ongkir real-time melalui Biteship API
 - Mengatur status aktif/non-aktif untuk setiap metode pengiriman
 - Memberikan fleksibilitas kepada seller dalam memilih metode pengiriman
 - Memastikan pengalaman checkout yang smooth untuk buyer
 
-## 🔐 Akses & Permission
+## Akses & Permission
 **Role Required:** Administrator  
 **Permission:** 
 - `admin-dashboard|index shipping method` - Melihat daftar
@@ -20,7 +20,7 @@ Shipping Method Management adalah modul untuk mengelola semua metode pengiriman 
 
 **URL:** `/admin/shipping-methods`
 
-## 🏗️ Arsitektur System
+## Arsitektur System
 
 ### **Integrasi Biteship API:**
 ```
@@ -51,7 +51,7 @@ Shipping Method Management adalah modul untuk mengelola semua metode pengiriman 
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## 📦 Kurir yang Didukung
+## Kurir yang Didukung
 
 Sistem mendukung 19+ kurir utama Indonesia melalui Biteship API:
 
@@ -80,7 +80,7 @@ Sistem mendukung 19+ kurir utama Indonesia melalui Biteship API:
 18. **Sentral Cargo** - `sentralcargo`
 19. **Ninja Express** - `ninja`
 
-## 🛠️ Cara Menggunakan Shipping Method Management
+## Cara Menggunakan Shipping Method Management
 
 ### **Akses Halaman Shipping Methods**
 1. Login sebagai Administrator
@@ -101,10 +101,10 @@ Halaman menampilkan statistik:
 1. Klik tombol **"Sync from API"** di bagian atas halaman
 2. Sistem akan mengambil data terbaru dari Biteship
 3. Proses sync akan:
-   - ✅ **Menambah** kurir/layanan baru yang belum ada
-   - ✅ **Update** informasi kurir/layanan yang sudah ada
-   - ✅ **Mempertahankan** status aktif/nonaktif yang sudah diset
-   - ✅ **Menambahkan** logo kurir secara otomatis
+   - **Menambah** kurir/layanan baru yang belum ada
+   - **Update** informasi kurir/layanan yang sudah ada
+   - **Mempertahankan** status aktif/nonaktif yang sudah diset
+   - **Menambahkan** logo kurir secara otomatis
 
 #### **Yang Terjadi Saat Sync:**
 - **New Services:** Layanan baru akan ditambahkan dengan status aktif
@@ -139,7 +139,7 @@ Halaman menampilkan statistik:
 - Cari berdasarkan **nama layanan** (contoh: "REG")
 - Cari berdasarkan **kode layanan** (contoh: "reg")
 
-## ⚙️ Detail Teknis
+## Detail Teknis
 
 ### **Database Structure:**
 ```sql
@@ -172,7 +172,7 @@ $logos = [
 ];
 ```
 
-## 📊 Impact pada System
+## Impact pada System
 
 ### **Untuk Seller:**
 - Seller bisa memilih kurir mana yang ingin mereka support
@@ -190,7 +190,7 @@ $logos = [
 - Monitoring penggunaan setiap kurir
 - Kemudahan sync dengan provider eksternal
 
-## 🎛️ Best Practices
+## Best Practices
 
 ### **Kurir Management:**
 1. **Popular Couriers First:** Aktifkan kurir populer seperti JNE, J&T, SiCepat
@@ -210,7 +210,7 @@ $logos = [
 3. **Seller Feedback:** Dengar feedback seller tentang performa kurir
 4. **Competitive Advantage:** Sediakan opsi shipping yang kompetitif
 
-## ⚠️ Hal Penting yang Perlu Diperhatikan
+## Hal Penting yang Perlu Diperhatikan
 
 ### **API Dependencies:**
 - **Biteship Account:** Pastikan akun Biteship aktif dan memiliki kredit
@@ -230,7 +230,7 @@ $logos = [
 - **API Calls:** Rate calculation membutuhkan API call ke Biteship
 - **Caching:** Implement caching untuk rate calculation yang sering digunakan
 
-## 🔍 Troubleshooting
+## Troubleshooting
 
 ### **Problem: Sync from API gagal**
 **Possible Causes:**
@@ -282,7 +282,7 @@ $logos = [
 3. Refresh halaman dan coba lagi
 4. Check database connection dan constraints
 
-## 📈 Monitoring & Analytics
+## Monitoring & Analytics
 
 ### **Key Metrics yang Perlu Dipantau:**
 1. **Usage Statistics:** Kurir mana yang paling banyak digunakan
@@ -297,7 +297,7 @@ $logos = [
 - **Regional Preference:** Preferensi kurir per wilayah
 - **Seller Adoption:** Seberapa banyak seller menggunakan kurir tertentu
 
-## 🚀 Future Enhancements
+## Future Enhancements
 
 ### **Potential Features:**
 1. **Auto-disable:** Otomatis nonaktifkan kurir dengan performance buruk
@@ -314,7 +314,7 @@ $logos = [
 
 ---
 
-## 📞 Support & Bantuan
+## Support & Bantuan
 
 Jika mengalami kesulitan dalam menggunakan Shipping Method Management:
 

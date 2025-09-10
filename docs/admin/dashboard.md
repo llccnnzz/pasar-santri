@@ -592,18 +592,18 @@ POST /admin/dashboard/settings    - Update settings
 
 Untuk bantuan lebih lanjut terkait dashboard admin:
 
-📧 **Email Support**: support@pasarsantri.com  
-📱 **WhatsApp**: +62 812-3456-7890  
-🌐 **Website**: www.pasarsantri.com  
-🏢 **Developer**: PT. Sidogiri Fintech Utama
+**Email Support**: support@pasarsantri.com  
+**WhatsApp**: +62 812-3456-7890  
+**Website**: www.pasarsantri.com  
+**Developer**: PT. Sidogiri Fintech Utama
 
 **Jam Operasional Support**:  
 Senin - Jumat: 08:00 - 17:00 WIB  
 Sabtu: 08:00 - 12:00 WIB
 
 **Technical Support** (untuk masalah dashboard):  
-📱 **Hotline**: +62 811-2233-4455 (24/7)  
-💬 **Live Chat**: Available di admin panel
+**Hotline**: +62 811-2233-4455 (24/7)  
+**Live Chat**: Available di admin panel
 
 ---
 

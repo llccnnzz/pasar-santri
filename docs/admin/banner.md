@@ -51,7 +51,7 @@ Login Page:
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## 📂 Jenis Banner yang Tersedia
+## Jenis Banner yang Tersedia
 
 ### 1. **Primary Banner (Headline Primary)**
 **Lokasi:** Homepage - Area utama (carousel)  
@@ -90,7 +90,7 @@ Login Page:
 **Fungsi:** Banner branding atau promosi untuk user baru  
 **Rekomendasi Ukuran:** 800x400px
 
-## 🛠️ Cara Menggunakan Banner Management
+## Cara Menggunakan Banner Management
 
 ### **Akses Halaman Banner Management**
 1. Login sebagai Administrator
@@ -258,7 +258,7 @@ Jika mengalami kesulitan dalam menggunakan fitur pengelolaan banner, Anda dapat 
 - Pantau performa banner secara berkala
 - Koordinasi dengan tim marketing untuk strategi banner yang efektif
 
-## 📈 Optimization Tips
+## Optimization Tips
 
 ### **Performance Optimization:**
 1. **Compress Images:** Gunakan tool seperti TinyPNG
@@ -280,7 +280,7 @@ Jika mengalami kesulitan dalam menggunakan fitur pengelolaan banner, Anda dapat 
 
 ---
 
-## 📞 Support & Bantuan
+## Support & Bantuan
 
 Jika mengalami kesulitan dalam menggunakan Banner Management:
 

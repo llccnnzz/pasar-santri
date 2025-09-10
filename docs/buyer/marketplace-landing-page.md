@@ -1,4 +1,4 @@
-# 🏪 Marketplace Landing Page
+# Marketplace Landing Page
 
 ## Tentang Marketplace Landing Page
 

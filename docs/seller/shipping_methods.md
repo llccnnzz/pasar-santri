@@ -1,23 +1,23 @@
-# 🚚 Pengaturan Metode Pengiriman - Pasar Santri
+# Pengaturan Metode Pengiriman - Pasar Santri
 
-## 📋 Deskripsi
+## Deskripsi
 Pengaturan Metode Pengiriman adalah sistem yang memungkinkan penjual untuk mengaktifkan dan mengelola layanan kurir yang akan tersedia untuk pembeli saat proses checkout. Sistem ini terintegrasi dengan **Biteship API** untuk mendapatkan data kurir dan perhitungan ongkos kirim secara otomatis.
 
-## 🎯 Tujuan
+## Tujuan
 - Menyediakan pilihan kurir yang sesuai untuk toko
 - Mengintegrasikan perhitungan ongkos kirim otomatis
 - Memberikan fleksibilitas pengiriman kepada pembeli
 - Mengoptimalkan biaya dan waktu pengiriman
 - Mengelola layanan pengiriman per toko
 
-## 🔐 Akses & Persyaratan
+## Akses & Persyaratan
 **Role Required:** Seller dengan toko aktif  
 **Permission:** Akses penuh ke pengaturan pengiriman  
 **URL:** `/seller/shipping`
 
 ---
 
-## 📋 Persyaratan Akses Metode Pengiriman
+## Persyaratan Akses Metode Pengiriman
 
 ### 1. **KYC Disetujui & Toko Aktif**
 - Status KYC harus **"Disetujui"**
@@ -37,17 +37,17 @@ Pengaturan Metode Pengiriman adalah sistem yang memungkinkan penjual untuk menga
 
 ---
 
-## 🏗️ Struktur Sistem Pengiriman
+## Struktur Sistem Pengiriman
 
 ### 1. **Pengelolaan Bertingkat**
 ```
-🏢 Level Administrator (Global):
+Level Administrator (Global):
 ├── Sinkronisasi dari Biteship API
 ├── Mengaktifkan/menonaktifkan kurir secara global
 ├── Memperbarui database metode pengiriman
 └── Mengelola logo kurir dan data
 
-👤 Level Penjual (Per Toko):
+Level Penjual (Per Toko):
 ├── Memilih dari kurir yang sudah diaktifkan admin
 ├── Mengaktifkan/menonaktifkan per layanan
 ├── Mengatur semua kurir sekaligus
@@ -73,7 +73,7 @@ Biteship API → Sinkronisasi Admin → Metode Pengiriman Global → Pilihan Pen
 
 #### A. Available Methods
 ```
-📊 Total Methods Available:
+Total Methods Available:
 - Semua shipping methods yang bisa digunakan shop
 - Gabungan dari: Active + Inactive + Not Used
 - Update otomatis saat admin sync dari Biteship
@@ -81,7 +81,7 @@ Biteship API → Sinkronisasi Admin → Metode Pengiriman Global → Pilihan Pen
 
 #### B. Active Methods  
 ```
-✅ Active Shipping Methods:
+Active Shipping Methods:
 - Methods yang sudah diaktifkan seller
 - Akan muncul di checkout customer
 - Bisa dikalkulasi ongkirnya via Biteship
@@ -90,7 +90,7 @@ Biteship API → Sinkronisasi Admin → Metode Pengiriman Global → Pilihan Pen
 
 #### C. Inactive Methods
 ```
-⏸️ Inactive Shipping Methods:  
+Inactive Shipping Methods:  
 - Methods yang pernah ditambah tapi di-disable
 - Masih tersimpan di database (shop_shipping_methods)
 - Tidak muncul di checkout customer
@@ -110,7 +110,7 @@ Biteship API → Sinkronisasi Admin → Metode Pengiriman Global → Pilihan Pen
 
 #### A. Courier Information
 ```
-🚚 Courier Card Components:
+Courier Card Components:
 ✓ Courier Logo (jika ada)
 ✓ Courier Name (JNE, POS, TIKI, dll)
 ✓ Courier Code (uppercase, ex: JNE)  
@@ -120,7 +120,7 @@ Biteship API → Sinkronisasi Admin → Metode Pengiriman Global → Pilihan Pen
 
 #### B. Service Statistics per Courier
 ```
-📈 Per-Courier Statistics:
+Per-Courier Statistics:
 - Total Services: Semua layanan courier tersebut
 - Enabled: Services yang aktif untuk shop
 - Disabled: Services yang non-aktif tapi pernah ditambah  
@@ -129,7 +129,7 @@ Biteship API → Sinkronisasi Admin → Metode Pengiriman Global → Pilihan Pen
 
 #### C. Visual Indicators
 ```
-🎨 Card Visual States:
+Card Visual States:
 - White Background: Ada services yang enabled
 - Red Background (#ffcaca): Semua services disabled
 - Hover Effect: Transform dan shadow
@@ -140,7 +140,7 @@ Biteship API → Sinkronisasi Admin → Metode Pengiriman Global → Pilihan Pen
 
 #### A. Individual Service Management
 ```
-⚙️ Per-Service Controls:
+Per-Service Controls:
 ✓ Service Name (REG, YES, OKE, dll)
 ✓ Service Code (uppercase badge)
 ✓ Description (jika tersedia dari Biteship)
@@ -150,7 +150,7 @@ Biteship API → Sinkronisasi Admin → Metode Pengiriman Global → Pilihan Pen
 
 #### B. Service States
 ```
-🏷️ Service Status Types:
+Service Status Types:
 
 1. NOT ADDED (Not Used):
    - Badge: Secondary/Gray "Not Added"
@@ -183,7 +183,7 @@ Biteship API → Sinkronisasi Admin → Metode Pengiriman Global → Pilihan Pen
 
 #### Review Available Methods:
 ```
-📊 Check Statistics Cards:
+Check Statistics Cards:
 1. Available Methods: Total semua methods yang bisa dipakai
 2. Active: Methods yang sudah aktif dan bisa dipilih customer
 3. Inactive: Methods yang di-disable temporary
@@ -238,7 +238,7 @@ Biteship API → Sinkronisasi Admin → Metode Pengiriman Global → Pilihan Pen
 
 #### Pilih Courier Populer:
 ```
-🏆 Courier Recommendations:
+Courier Recommendations:
 1. JNE: Coverage luas, reliable, populer
 2. POS Indonesia: Jaringan nasional, affordable
 3. TIKI: Good service, competitive rates  
@@ -248,7 +248,7 @@ Biteship API → Sinkronisasi Admin → Metode Pengiriman Global → Pilihan Pen
 
 #### Balance Coverage vs Cost:
 ```
-⚖️ Selection Strategy:
+Selection Strategy:
 ✓ Enable 3-5 courier minimum (customer choice)
 ✓ Mix premium (JNE YES) dan ekonomi (POS Reguler)  
 ✓ Consider coverage area shop location
@@ -258,7 +258,7 @@ Biteship API → Sinkronisasi Admin → Metode Pengiriman Global → Pilihan Pen
 
 #### Services per Courier:
 ```
-📦 Service Type Recommendations:
+Service Type Recommendations:
 - Regular/Standard: Untuk economical shipping
 - Express/Next Day: Untuk urgent orders  
 - Cargo/Heavy: Untuk large items jika applicable
@@ -303,7 +303,7 @@ updated_at         TIMESTAMP
 
 #### Biteship Integration Points:
 ```
-🔄 API Integration Flow:
+API Integration Flow:
 
 1. Admin Sync:
    GET /api/biteship/couriers → Update shipping_methods table
@@ -364,7 +364,7 @@ Messages:
 
 #### Common Validation Scenarios:
 ```
-❌ Validation Errors:
+Validation Errors:
 
 1. Method Not Found:
    - Shipping method sudah dihapus admin
@@ -430,7 +430,7 @@ Messages:
 
 #### Order Processing Flow:
 ```
-📦 Order Processing:
+Order Processing:
 
 1. Order Creation:
    - Validate shipping method still enabled
@@ -452,7 +452,7 @@ Messages:
 
 #### Shipping Analytics:
 ```
-📊 Analytics Integration:
+Analytics Integration:
 
 1. Popular Shipping Methods:
    - Track usage frequency per method
@@ -478,7 +478,7 @@ Messages:
 
 #### Rate Caching:
 ```
-🚀 Performance Optimization:
+Performance Optimization:
 
 1. Rate Cache:
    - Cache Biteship rate responses
@@ -518,7 +518,7 @@ ON shipping_methods(active, courier_code, service_code);
 
 #### Biteship API Management:
 ```
-🔄 API Rate Management:
+API Rate Management:
 
 1. Request Throttling:
    - Implement exponential backoff
@@ -640,7 +640,7 @@ ON shipping_methods(active, courier_code, service_code);
 
 ### 2. **Maintenance Tasks**
 ```
-🔧 Regular Maintenance:
+Regular Maintenance:
 
 1. Daily:
    - Monitor Biteship API health
@@ -664,7 +664,7 @@ ON shipping_methods(active, courier_code, service_code);
 
 ### 1. **Method Selection Strategy**
 ```
-🎯 Selection Best Practices:
+Selection Best Practices:
 
 1. Customer Coverage:
    ✓ Enable 4-6 courier options minimum
@@ -687,7 +687,7 @@ ON shipping_methods(active, courier_code, service_code);
 
 ### 2. **Regular Review Process**
 ```
-📊 Method Performance Review:
+Method Performance Review:
 
 1. Weekly Analysis:
    - Review order data untuk popular methods
@@ -710,7 +710,7 @@ ON shipping_methods(active, courier_code, service_code);
 
 ### 3. **Customer Communication**
 ```
-💬 Shipping Communication Tips:
+Shipping Communication Tips:
 
 1. Clear Expectations:
    ✓ Inform estimated delivery times
@@ -737,16 +737,16 @@ ON shipping_methods(active, courier_code, service_code);
 
 Untuk bantuan terkait shipping methods management:
 
-### 📞 **Support Channels:**
+### **Support Channels:**
 ```
-📧 Email Shipping: shipping-support@pasarsantri.com
-📱 WhatsApp     : +62 812-3456-7890 (Shipping Issues)
-💬 Live Chat    : Available di seller dashboard
-🌐 Help Center  : help.pasarsantri.com/shipping
-🏢 Developer    : PT. Sidogiri Fintech Utama
+Email Shipping: shipping-support@pasarsantri.com
+WhatsApp     : +62 812-3456-7890 (Shipping Issues)
+Live Chat    : Available di seller dashboard
+Help Center  : help.pasarsantri.com/shipping
+Developer    : PT. Sidogiri Fintech Utama
 ```
 
-### ⏰ **Jam Operasional:**
+### **Jam Operasional:**
 ```
 Shipping Support:
 Senin - Jumat  : 08:00 - 17:00 WIB  
@@ -757,13 +757,13 @@ Biteship Issues:
 24/7 untuk critical shipping problems
 ```
 
-### 📚 **Resources:**
+### **Resources:**
 ```
-📖 Shipping Guide     : docs.pasarsantri.com/seller/shipping  
-📹 Video Tutorials    : youtube.com/pasarsantri/shipping
-🎯 Best Practices     : help.pasarsantri.com/shipping-tips
-❓ FAQ                : faq.pasarsantri.com/shipping
-🔧 Troubleshooting    : support.pasarsantri.com/shipping-issues
+Shipping Guide     : docs.pasarsantri.com/seller/shipping  
+Video Tutorials    : youtube.com/pasarsantri/shipping
+Best Practices     : help.pasarsantri.com/shipping-tips
+FAQ                : faq.pasarsantri.com/shipping
+Troubleshooting    : support.pasarsantri.com/shipping-issues
 ```
 
 ---

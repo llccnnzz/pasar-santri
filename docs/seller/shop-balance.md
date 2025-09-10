@@ -1,6 +1,6 @@
-# 💰 Manajemen Saldo Toko
+#  Manajemen Saldo Toko
 
-> **⚠️ DOKUMENTASI TIDAK TERKONFIRMASI**
+> **DOKUMENTASI TIDAK TERKONFIRMASI**
 > 
 > Fitur ini telah dikembangkan secara teknis dan siap untuk digunakan, namun saat ini tidak tersedia untuk pengguna karena kebijakan perusahaan yang tidak mengizinkan sistem untuk menyimpan dana pengguna.
 

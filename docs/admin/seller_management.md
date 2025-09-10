@@ -1,9 +1,9 @@
 # 👥 Seller Management - Admin Pasar Santri
 
-## 📋 Deskripsi
+## Deskripsi
 Seller Management adalah modul untuk mengelola semua penjual (seller) yang terdaftar di Pasar Santri Marketplace. Sistem ini memberikan kontrol penuh kepada admin untuk memantau, mengelola, dan mengsupervisi aktivitas seller serta toko mereka.
 
-## 🎯 Tujuan
+## Tujuan
 - Mengelola database seller yang terverifikasi KYC
 - Memantau performa dan aktivitas seller
 - Mengatur status aktif/non-aktif seller
@@ -11,7 +11,7 @@ Seller Management adalah modul untuk mengelola semua penjual (seller) yang terda
 - Memastikan compliance seller terhadap kebijakan marketplace
 - Memberikan dukungan dan bantuan kepada seller
 
-## 🔐 Akses & Permission
+## Akses & Permission
 **Role Required:** Administrator  
 **Permission:** 
 - `admin-dashboard|index seller` - Melihat daftar seller
@@ -20,7 +20,7 @@ Seller Management adalah modul untuk mengelola semua penjual (seller) yang terda
 
 **URL:** `/admin/sellers`
 
-## 🏗️ Seller Lifecycle Management
+## Seller Lifecycle Management
 
 ### **Seller Journey dalam Sistem:**
 ```
@@ -55,16 +55,16 @@ Seller Management adalah modul untuk mengelola semua penjual (seller) yang terda
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## 📊 Status & Classification Seller
+## Status & Classification Seller
 
 ### **1. User Status (Account Level):**
-- **Active** ✅ - Account aktif, bisa login dan beroperasi
-- **Inactive** ❌ - Account dinonaktifkan, tidak bisa login
+- **Active** - Account aktif, bisa login dan beroperasi
+- **Inactive** - Account dinonaktifkan, tidak bisa login
 
 ### **2. Shop Status (Business Level):**
-- **Active** 🏪 - Toko beroperasi normal
-- **Suspended** 🚫 - Toko disuspend sementara
-- **No Shop** ❓ - Seller belum setup toko
+- **Active** - Toko beroperasi normal
+- **Suspended** - Toko disuspend sementara
+- **No Shop** - Seller belum setup toko
 
 ### **3. Seller Categories:**
 - **New Sellers** - Baru bergabung < 30 hari
@@ -72,7 +72,7 @@ Seller Management adalah modul untuk mengelola semua penjual (seller) yang terda
 - **Dormant Sellers** - Punya akun tapi tidak aktif
 - **Suspended Sellers** - Toko atau akun disuspend
 
-## 🛠️ Cara Menggunakan Seller Management
+## Cara Menggunakan Seller Management
 
 ### **Akses Halaman Seller Management**
 1. Login sebagai Administrator
@@ -149,7 +149,7 @@ Pencarian berdasarkan:
 - 5 pesanan terakhir yang diterima
 - Activity log dan history
 
-## 🔧 Mengelola Seller
+## Mengelola Seller
 
 ### **Edit Informasi Seller**
 
@@ -184,7 +184,7 @@ Pencarian berdasarkan:
 3. Konfirmasi action
 4. Status berubah secara real-time
 
-## 🏪 Mengelola Shop Seller
+## Mengelola Shop Seller
 
 ### **Akses Shop Management**
 1. Dari detail seller, klik **"View Shop"**
@@ -202,12 +202,12 @@ Pencarian berdasarkan:
 - Fraud suspicion (dugaan penipuan)
 
 **Yang Terjadi Saat Suspend:**
-- 🚫 Toko tidak muncul di search results
-- 🚫 Produk tidak bisa dibeli buyer
-- 🚫 Seller tidak bisa update produk
-- ✅ Pesanan existing tetap berjalan
-- ✅ Seller masih bisa komunikasi dengan buyer
-- ✅ Withdrawal dana tetap bisa dilakukan
+- Toko tidak muncul di search results
+- Produk tidak bisa dibeli buyer
+- Seller tidak bisa update produk
+- Pesanan existing tetap berjalan
+- Seller masih bisa komunikasi dengan buyer
+- Withdrawal dana tetap bisa dilakukan
 
 #### **Cara Suspend Shop:**
 1. Buka shop management page
@@ -245,7 +245,7 @@ Pencarian berdasarkan:
 - Shipping configuration
 - Customer reviews dan ratings
 
-## 📊 Analytics & Monitoring
+## Analytics & Monitoring
 
 ### **Individual Seller Analytics:**
 **Performance Metrics:**
@@ -275,7 +275,7 @@ Pencarian berdasarkan:
 - **Policy Compliance:** Overall compliance rate
 - **Customer Satisfaction:** Average satisfaction terhadap seller
 
-## 🚨 Policy Enforcement
+## Policy Enforcement
 
 ### **Common Violations:**
 1. **Product Policy Violations:**
@@ -317,7 +317,7 @@ Pencarian berdasarkan:
 4. **Resolution:** Implementation of decision
 5. **Follow-up:** Monitoring post-resolution
 
-## 🔍 Troubleshooting
+## Troubleshooting
 
 ### **Problem: Seller tidak bisa login**
 **Possible Causes:**
@@ -371,7 +371,7 @@ Pencarian berdasarkan:
 3. Refresh dan retry
 4. Check system logs for errors
 
-## 📈 Best Practices
+## Best Practices
 
 ### **Seller Onboarding:**
 1. **Welcome Communication:** Proper introduction dan guidance
@@ -397,7 +397,7 @@ Pencarian berdasarkan:
 3. **Technical Support:** Assist dengan platform usage
 4. **Business Guidance:** Provide business development advice
 
-## ⚖️ Legal & Compliance
+## Legal & Compliance
 
 ### **Data Protection:**
 - **GDPR Compliance:** Protect seller personal data
@@ -419,7 +419,7 @@ Pencarian berdasarkan:
 
 ---
 
-## 📞 Support & Bantuan
+## Support & Bantuan
 
 Jika mengalami kesulitan dalam menggunakan Seller Management:
 

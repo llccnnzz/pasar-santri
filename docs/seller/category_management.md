@@ -1,23 +1,23 @@
-# 📂 Manajemen Kategori Toko - Pasar Santri
+# Manajemen Kategori Toko - Pasar Santri
 
-## 📋 Deskripsi
+## Deskripsi
 Manajemen Kategori adalah sistem yang memungkinkan penjual untuk membuat dan mengelola kategori internal khusus toko mereka. Kategori ini berfungsi sebagai sistem pengorganisasian produk tingkat toko dan dapat digunakan bersamaan dengan kategori global platform untuk memberikan fleksibilitas maksimal dalam pengelompokan produk.
 
-## 🎯 Tujuan
+## Tujuan
 - Mengorganisir produk toko dengan kategori yang spesifik
 - Memberikan fleksibilitas pengelompokan produk sesuai kebutuhan bisnis
 - Memudahkan pembeli mencari produk dalam toko
 - Mengoptimalkan navigasi dan pengalaman berbelanja
 - Melengkapi sistem kategori global platform
 
-## 🔐 Akses & Persyaratan
+## Akses & Persyaratan
 **Role Required:** Seller dengan toko aktif  
 **Permission:** Akses penuh ke manajemen kategori toko  
 **URL:** `/seller/categories`
 
 ---
 
-## 📋 Persyaratan Akses Manajemen Kategori
+## Persyaratan Akses Manajemen Kategori
 
 ### 1. **KYC Disetujui & Toko Aktif**
 - Status KYC harus **"Disetujui"**
@@ -37,11 +37,11 @@ Manajemen Kategori adalah sistem yang memungkinkan penjual untuk membuat dan men
 
 ---
 
-## 🔄 Konsep Kategori Dua Tingkat
+## Konsep Kategori Dua Tingkat
 
 ### 1. **Kategori Global (Seluruh Platform)**
 ```
-🌐 Kategori Global:
+Kategori Global:
 ├── Dikelola oleh Administrator platform
 ├── Tersedia untuk semua penjual
 ├── Digunakan untuk pencarian dan penyaringan umum
@@ -53,7 +53,7 @@ Contoh: Elektronik, Fashion, Rumah & Taman, Buku, dll.
 
 ### 2. **Kategori Toko (Khusus Penjual)**
 ```
-🏪 Kategori Toko (Internal):
+Kategori Toko (Internal):
 ├── Dibuat dan dikelola penjual sendiri
 ├── Spesifik untuk organisasi internal toko
 ├── Kontrol penuh oleh pemilik toko
@@ -65,7 +65,7 @@ Examples: "Best Sellers", "New Arrivals", "Seasonal Items", etc.
 
 ### 3. **Kombinasi Usage Pattern**
 ```
-📦 Product Category Assignment:
+Product Category Assignment:
 Global Category: "Electronics" → "Smartphone"
 Shop Category: "Best Sellers" + "New Arrivals"
 
@@ -83,7 +83,7 @@ Result: Produk bisa ditemukan via:
 
 #### A. Search dan Filter
 ```
-🔍 Search Functionality:
+Search Functionality:
 ✓ Real-time search by category name
 ✓ Search by slug (URL identifier)
 ✓ Case-insensitive matching
@@ -93,7 +93,7 @@ Result: Produk bisa ditemukan via:
 
 #### B. Category Information Display
 ```
-📋 Category List Columns:
+Category List Columns:
 ✓ Name: Display name kategori
 ✓ Slug: URL-friendly identifier (dengan <code> styling)
 ✓ Products Count: Badge dengan jumlah produk per kategori
@@ -103,7 +103,7 @@ Result: Produk bisa ditemukan via:
 
 #### C. Statistics Overview
 ```
-📊 Category Usage Statistics:
+Category Usage Statistics:
 - Total Categories: Jumlah kategori yang dibuat shop
 - Products Distribution: Sebaran produk per kategori
 - Active Usage: Kategori yang benar-benar digunakan
@@ -114,7 +114,7 @@ Result: Produk bisa ditemukan via:
 
 #### A. Form Fields
 ```
-📝 Category Creation Fields:
+Category Creation Fields:
 
 1. Name (Required):
    - Type: Text input
@@ -147,7 +147,7 @@ Example:
 
 #### C. Informational Sidebar
 ```
-💡 Help Information:
+Help Information:
 - Explanation internal vs global categories
 - Best practices untuk naming
 - SEO tips untuk category structure
@@ -158,7 +158,7 @@ Example:
 
 #### A. Edit Capabilities
 ```
-✏️ Editable Fields:
+Editable Fields:
 ✓ Name: Can be updated anytime
 ✓ Slug: Auto-regenerated or manual override
 ✓ Timestamp tracking: Created/updated dates
@@ -167,7 +167,7 @@ Example:
 
 #### B. Update Validation
 ```
-🔒 Update Restrictions:
+Update Restrictions:
 - Name uniqueness: Only within same shop
 - Slug uniqueness: Global atau per shop
 - Concurrent editing: Handle race conditions
@@ -176,7 +176,7 @@ Example:
 
 #### C. Danger Zone
 ```
-⚠️ Delete Functionality:
+Delete Functionality:
 - Only available: If no products assigned
 - Confirmation required: JavaScript confirm dialog
 - Permanent action: Cannot be undone
@@ -259,7 +259,7 @@ Example:
 
 #### Assign Products to Categories:
 ```
-📦 Product Category Assignment:
+Product Category Assignment:
 
 When Creating/Editing Products:
 1. Global Categories Section:
@@ -275,7 +275,7 @@ When Creating/Editing Products:
 
 #### Category Strategy Planning:
 ```
-🎯 Category Planning Strategy:
+Category Planning Strategy:
 
 1. Business Logic Categories:
    - "Best Sellers" → Track popular products
@@ -417,7 +417,7 @@ Mixed Types: Global + shop categories pada same product
 
 #### Category Display di Shop:
 ```
-🏪 Shop Category Usage:
+Shop Category Usage:
 
 1. Shop Navigation:
    - Display shop categories as menu items
@@ -439,7 +439,7 @@ Mixed Types: Global + shop categories pada same product
 
 #### Category Performance Tracking:
 ```
-📊 Category Analytics:
+Category Analytics:
 
 1. Usage Statistics:
    - Products per category count
@@ -463,14 +463,14 @@ Mixed Types: Global + shop categories pada same product
 
 ### 1. **Category Naming Strategy**
 ```
-🏷️ Naming Best Practices:
+Naming Best Practices:
 
 1. Clear dan Descriptive:
    ✓ "Best Sellers" (clear purpose)
    ✓ "New Arrivals" (time-based)
    ✓ "Premium Collection" (quality-based)
-   ❌ "Misc Items" (too vague)
-   ❌ "Category 1" (not descriptive)
+   "Misc Items" (too vague)
+   "Category 1" (not descriptive)
 
 2. Business-Focused:
    ✓ "Featured Products" (marketing focus)
@@ -485,7 +485,7 @@ Mixed Types: Global + shop categories pada same product
 
 ### 2. **Category Organization Strategy**
 ```
-📋 Organization Best Practices:
+Organization Best Practices:
 
 1. Limit Category Count:
    - 5-10 categories optimal untuk most shops
@@ -505,7 +505,7 @@ Mixed Types: Global + shop categories pada same product
 
 ### 3. **SEO dan Marketing Optimization**
 ```
-🎯 Optimization Tips:
+Optimization Tips:
 
 1. SEO-Friendly Slugs:
    ✓ Use relevant keywords
@@ -640,7 +640,7 @@ $categories = Category::where('shop_id', $shop->id)
 
 ### 3. **Caching Strategy**
 ```
-🚀 Caching Implementation:
+Caching Implementation:
 
 1. Category List Cache:
    - Cache category list per shop
@@ -664,7 +664,7 @@ $categories = Category::where('shop_id', $shop->id)
 
 ### 1. **Usage Analytics**
 ```
-📊 Category Usage Monitoring:
+Category Usage Monitoring:
 
 1. Creation Patterns:
    - Categories created per day/month
@@ -684,7 +684,7 @@ $categories = Category::where('shop_id', $shop->id)
 
 ### 2. **Business Intelligence**
 ```
-🧠 Category Intelligence:
+Category Intelligence:
 
 1. Shop Behavior Analysis:
    - Category creation patterns
@@ -708,16 +708,16 @@ $categories = Category::where('shop_id', $shop->id)
 
 Untuk bantuan terkait category management:
 
-### 📞 **Support Channels:**
+### **Support Channels:**
 ```
-📧 Email Categories : categories-support@pasarsantri.com
-📱 WhatsApp        : +62 812-3456-7890 (Category Issues)
-💬 Live Chat       : Available di seller dashboard
-🌐 Help Center     : help.pasarsantri.com/categories
-🏢 Developer       : PT. Sidogiri Fintech Utama
+Email Categories : categories-support@pasarsantri.com
+WhatsApp        : +62 812-3456-7890 (Category Issues)
+Live Chat       : Available di seller dashboard
+Help Center     : help.pasarsantri.com/categories
+Developer       : PT. Sidogiri Fintech Utama
 ```
 
-### ⏰ **Jam Operasional:**
+### **Jam Operasional:**
 ```
 Category Support:
 Senin - Jumat  : 08:00 - 17:00 WIB  
@@ -728,13 +728,13 @@ Technical Support:
 24/7 untuk critical system issues
 ```
 
-### 📚 **Resources:**
+### **Resources:**
 ```
-📖 Category Guide      : docs.pasarsantri.com/seller/categories
-📹 Video Tutorials     : youtube.com/pasarsantri/categories  
-🎯 Best Practices      : help.pasarsantri.com/category-tips
-❓ FAQ                : faq.pasarsantri.com/categories
-🔧 Troubleshooting     : support.pasarsantri.com/category-issues
+Category Guide      : docs.pasarsantri.com/seller/categories
+Video Tutorials     : youtube.com/pasarsantri/categories  
+Best Practices      : help.pasarsantri.com/category-tips
+FAQ                : faq.pasarsantri.com/categories
+Troubleshooting     : support.pasarsantri.com/category-issues
 ```
 
 ---

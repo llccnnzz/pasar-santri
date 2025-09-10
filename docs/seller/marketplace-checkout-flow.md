@@ -1,21 +1,21 @@
 # 🛒 Marketplace Checkout Flow - Pasar Santri
 
-## 📋 Deskripsi
+## Deskripsi
 Marketplace Checkout Flow adalah sistem lengkap untuk proses pembelian produk di Pasar Santri, mulai dari menambahkan produk ke keranjang belanja, mengelola item, menggunakan kode promo, hingga menyelesaikan pembayaran melalui integrasi Emaal. Sistem ini dirancang untuk memberikan pengalaman berbelanja yang aman, mudah, dan efisien bagi pelanggan terdaftar.
 
-## 🎯 Tujuan
+## Tujuan
 - Menyediakan keranjang belanja yang fleksibel dan mudah dikelola
 - Memfasilitasi proses checkout yang streamlined dan user-friendly
 - Mengintegrasikan sistem pembayaran Emaal untuk transaksi yang aman
 - Memberikan opsi kode promo dan diskon untuk pengalaman berbelanja yang menguntungkan
 - Memastikan keamanan data pembayaran dan informasi pribadi pelanggan
 
-## 🔐 Akses & Persyaratan
+## Akses & Persyaratan
 **Role Required:** Buyer/Customer yang sudah login  
 **Permission:** Akses ke keranjang belanja dan sistem pembayaran  
 **URL:** `/cart`, `/checkout`, `/payment`
 
-## ⭐ Fitur Utama Checkout Flow
+## Fitur Utama Checkout Flow
 
 ### 1. **Shopping Cart Management**
 - Menambah, mengurangi, dan menghapus produk dari keranjang
@@ -44,7 +44,7 @@ Marketplace Checkout Flow adalah sistem lengkap untuk proses pembelian produk di
 
 ---
 
-## 📋 Persyaratan Akses Checkout Flow
+## Persyaratan Akses Checkout Flow
 
 ### Prasyarat Wajib
 
@@ -168,7 +168,7 @@ Marketplace Checkout Flow adalah sistem lengkap untuk proses pembelian produk di
 
 ---
 
-## 🎫 Promo Code System
+## Promo Code System
 
 ### Tentang Sistem Promo Code
 
@@ -228,7 +228,7 @@ Marketplace Checkout Flow adalah sistem lengkap untuk proses pembelian produk di
 
 ---
 
-## 💳 Checkout Integration (Emaal)
+## Checkout Integration (Emaal)
 
 ### Tentang Integrasi Emaal
 
@@ -339,7 +339,7 @@ Emaal adalah payment gateway yang terintegrasi dengan marketplace untuk memfasil
 
 ---
 
-## 💰 Payment Handling
+##  Payment Handling
 
 ### Payment Processing Workflow
 
@@ -414,7 +414,7 @@ Emaal adalah payment gateway yang terintegrasi dengan marketplace untuk memfasil
 
 ---
 
-## 📊 Order Management Post-Payment
+## Order Management Post-Payment
 
 ### Order Creation dan Tracking
 
@@ -459,7 +459,7 @@ Emaal adalah payment gateway yang terintegrasi dengan marketplace untuk memfasil
 
 ---
 
-## ⚠️ Troubleshooting & FAQ
+## Troubleshooting & FAQ
 
 ### Common Checkout Issues
 
@@ -537,7 +537,7 @@ Emaal adalah payment gateway yang terintegrasi dengan marketplace untuk memfasil
 
 ---
 
-## 💡 Tips & Best Practices
+## Tips & Best Practices
 
 ### Optimasi Checkout Experience
 

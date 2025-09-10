@@ -1,21 +1,21 @@
-# 📊 Dashboard Seller - Pasar Santri
+# Dashboard Seller - Pasar Santri
 
-## 📋 Deskripsi
+## Deskripsi
 Dashboard Seller adalah halaman utama yang memberikan gambaran lengkap tentang kinerja toko Anda di marketplace Pasar Santri. Dashboard ini menampilkan berbagai metrik bisnis, statistik penjualan, dan data analitik yang membantu penjual dalam mengambil keputusan bisnis yang tepat.
 
-## 🎯 Tujuan
+## Tujuan
 - Memberikan gambaran real-time kinerja toko
 - Memantau statistik penjualan dan revenue secara terpusat
 - Menganalisis trend dan pertumbuhan bisnis
 - Membantu pengambilan keputusan strategis
 - Mengoptimalkan operasional toko berdasarkan data
 
-## 🔐 Akses & Persyaratan
+## Akses & Persyaratan
 **Role Required:** Seller dengan toko aktif dan KYC approved  
 **Permission:** Akses penuh ke dashboard dan analytics  
 **URL:** `/seller/dashboard`
 
-## ⭐ Fitur Utama Dashboard
+## Fitur Utama Dashboard
 
 ### 1. **Statistik Real-time**
 - Statistik penjualan, revenue, produk, dan pesanan yang diperbarui secara otomatis
@@ -39,7 +39,7 @@ Dashboard Seller adalah halaman utama yang memberikan gambaran lengkap tentang k
 
 ---
 
-## 📋 Persyaratan Akses Dashboard
+## Persyaratan Akses Dashboard
 
 ### Prasyarat Wajib
 

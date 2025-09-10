@@ -1,16 +1,16 @@
-# 📋 KYC Management - Admin Pasar Santri
+# KYC Management - Admin Pasar Santri
 
-## 📋 Deskripsi
+## Deskripsi
 KYC (Know Your Customer) Management adalah modul untuk mengelola proses verifikasi identitas calon seller di Pasar Santri Marketplace. Sistem ini memastikan bahwa semua penjual telah terverifikasi secara sah sesuai dengan regulasi keuangan dan hukum yang berlaku di Indonesia.
 
-## 🎯 Tujuan
+## Tujuan
 - Memverifikasi identitas dan kelayakan calon seller
 - Memastikan compliance terhadap regulasi KYC Indonesia
 - Mencegah fraud dan aktivitas ilegal di marketplace
 - Memberikan kepercayaan kepada buyer terhadap seller yang terverifikasi
 - Mengelola proses onboarding seller secara sistematis
 
-## 🔐 Akses & Permission
+## Akses & Permission
 **Role Required:** Administrator  
 **Permission:** 
 - `admin-dashboard|index kyc` - Melihat daftar aplikasi KYC
@@ -19,7 +19,7 @@ KYC (Know Your Customer) Management adalah modul untuk mengelola proses verifika
 
 **URL:** `/admin/kyc`
 
-## 🏗️ Alur KYC Process
+## Alur KYC Process
 
 ### **User Journey:**
 ```
@@ -51,27 +51,27 @@ KYC (Know Your Customer) Management adalah modul untuk mengelola proses verifika
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## 📊 Status KYC Applications
+## Status KYC Applications
 
-### **1. Pending** 🟡
+### **1. Pending** 
 - **Deskripsi:** Aplikasi baru yang belum direview
 - **Action Required:** Admin perlu review dan buat keputusan
 - **Priority:** Tertinggi (ditampilkan paling atas)
 - **User Impact:** User tidak bisa menjadi seller
 
-### **2. Approved** ✅
+### **2. Approved** 
 - **Deskripsi:** Aplikasi yang telah disetujui
 - **Automatic Action:** User mendapat role "seller"
 - **User Access:** Bisa membuat toko dan jualan
 - **Admin Notes:** Bisa ditambahkan untuk referensi
 
-### **3. Rejected** ❌
+### **3. Rejected** 
 - **Deskripsi:** Aplikasi yang ditolak
 - **Required Field:** Rejection reason wajib diisi
 - **Automatic Action:** Role "seller" dicabut (jika ada)
 - **User Option:** Bisa mengajukan ulang dengan perbaikan
 
-## 🛠️ Cara Menggunakan KYC Management
+## Cara Menggunakan KYC Management
 
 ### **Akses Halaman KYC Management**
 1. Login sebagai Administrator
@@ -146,12 +146,12 @@ Pencarian berdasarkan:
 5. Konfirmasi approval
 
 #### **Yang Terjadi Saat Approve:**
-- ✅ Status berubah menjadi "approved"
-- ✅ User otomatis mendapat role "seller"
-- ✅ User bisa mengakses seller dashboard
-- ✅ User bisa setup toko dan jualan
-- ✅ Timestamp reviewed_at dicatat
-- ✅ Admin yang approve tercatat
+- Status berubah menjadi "approved"
+- User otomatis mendapat role "seller"
+- User bisa mengakses seller dashboard
+- User bisa setup toko dan jualan
+- Timestamp reviewed_at dicatat
+- Admin yang approve tercatat
 
 ### **Reject KYC Application**
 
@@ -163,12 +163,12 @@ Pencarian berdasarkan:
 5. Konfirmasi rejection
 
 #### **Yang Terjadi Saat Reject:**
-- ❌ Status berubah menjadi "rejected"
-- ❌ Role "seller" dicabut dari user (jika ada)
-- ❌ User tidak bisa akses seller features
-- ❌ User mendapat notifikasi dengan alasan penolakan
-- ✅ User bisa reapply dengan perbaikan dokumen
-- ✅ Admin notes dan rejection reason tersimpan
+- Status berubah menjadi "rejected"
+- Role "seller" dicabut dari user (jika ada)
+- User tidak bisa akses seller features
+- User mendapat notifikasi dengan alasan penolakan
+- User bisa reapply dengan perbaikan dokumen
+- Admin notes dan rejection reason tersimpan
 
 ### **Bulk Actions (Multiple KYC)**
 
@@ -195,41 +195,41 @@ Pencarian berdasarkan:
 - Pending applications tidak bisa dihapus
 - Permanent delete dari database
 
-## 📋 Document Verification Guidelines
+## Document Verification Guidelines
 
 ### **KTP (Kartu Tanda Penduduk) Verification:**
 **Yang Harus Dicek:**
-- ✅ **Foto jelas** dan tidak blur
-- ✅ **Semua teks terbaca** dengan jelas
-- ✅ **Tidak expired** (tanggal berlaku masih valid)
-- ✅ **Format KTP** sesuai standar Indonesia
-- ✅ **Data konsisten** dengan form yang diisi
-- ✅ **Tidak ada tanda editing** atau manipulasi foto
+- **Foto jelas** dan tidak blur
+- **Semua teks terbaca** dengan jelas
+- **Tidak expired** (tanggal berlaku masih valid)
+- **Format KTP** sesuai standar Indonesia
+- **Data konsisten** dengan form yang diisi
+- **Tidak ada tanda editing** atau manipulasi foto
 
 **Red Flags:**
-- ❌ Foto blur atau gelap
-- ❌ Ada bagian yang tertutup atau terpotong
-- ❌ Tanggal expired sudah lewat
-- ❌ Data tidak sesuai dengan form
-- ❌ Tanda-tanda photo editing
-- ❌ Format KTP tidak standar
+- Foto blur atau gelap
+- Ada bagian yang tertutup atau terpotong
+- Tanggal expired sudah lewat
+- Data tidak sesuai dengan form
+- Tanda-tanda photo editing
+- Format KTP tidak standar
 
 ### **Selfie Verification:**
 **Yang Harus Dicek:**
-- ✅ **Wajah jelas** dan terlihat dengan baik
-- ✅ **Sesuai dengan foto KTP** (face matching)
-- ✅ **Tidak ada masker** atau penutup wajah
-- ✅ **Pencahayaan cukup** untuk identifikasi
-- ✅ **Background natural** (bukan foto dari foto)
+- **Wajah jelas** dan terlihat dengan baik
+- **Sesuai dengan foto KTP** (face matching)
+- **Tidak ada masker** atau penutup wajah
+- **Pencahayaan cukup** untuk identifikasi
+- **Background natural** (bukan foto dari foto)
 
 **Red Flags:**
-- ❌ Wajah tidak sesuai dengan KTP
-- ❌ Menggunakan masker atau sunglasses
-- ❌ Foto terlalu gelap atau blur
-- ❌ Terlihat seperti foto dari layar/foto lain
-- ❌ Background mencurigakan
+- Wajah tidak sesuai dengan KTP
+- Menggunakan masker atau sunglasses
+- Foto terlalu gelap atau blur
+- Terlihat seperti foto dari layar/foto lain
+- Background mencurigakan
 
-## ⚖️ KYC Compliance Guidelines
+## KYC Compliance Guidelines
 
 ### **Legal Requirements (Indonesia):**
 1. **POJK No. 12/2017** - Penerapan Program APU-PPT
@@ -244,24 +244,24 @@ Pencarian berdasarkan:
 - **Data Retention:** Sesuai dengan regulasi yang berlaku
 
 ### **Risk Assessment Criteria:**
-**Low Risk:** ✅
+**Low Risk:** 
 - Dokumen lengkap dan valid
 - Data konsisten
 - Warga Negara Indonesia
 - Alamat jelas dan valid
 
-**Medium Risk:** 🟡
+**Medium Risk:** 
 - Dokumen valid tapi kualitas kurang baik
 - Minor inconsistency dalam data
 - Alamat di daerah remote
 
-**High Risk:** ❌
+**High Risk:** 
 - Dokumen tidak jelas atau mencurigakan
 - Data tidak konsisten
 - Alamat tidak valid
 - Indikasi fraud atau manipulation
 
-## 🚨 Fraud Prevention
+## Fraud Prevention
 
 ### **Common Fraud Patterns:**
 1. **Fake Documents:** KTP palsu atau manipulasi digital
@@ -283,7 +283,7 @@ Pencarian berdasarkan:
 3. **Report** ke authorities jika diperlukan
 4. **Block IP/Device** jika ada pattern abuse
 
-## 🔍 Troubleshooting
+## Troubleshooting
 
 ### **Problem: KYC aplikasi tidak muncul**
 **Possible Causes:**
@@ -333,7 +333,7 @@ Pencarian berdasarkan:
 3. Check file permissions
 4. Ask user untuk re-upload dokumen
 
-## 📈 KYC Analytics & Reporting
+## KYC Analytics & Reporting
 
 ### **Key Metrics to Monitor:**
 1. **Application Volume:** Berapa aplikasi KYC per hari/minggu/bulan
@@ -354,7 +354,7 @@ Pencarian berdasarkan:
 - **Feedback Loop:** Input dari seller untuk improve process
 - **Regular Training:** Update guidelines sesuai perkembangan
 
-## ⏰ SLA (Service Level Agreement)
+## SLA (Service Level Agreement)
 
 ### **Response Time Standards:**
 - **Pending Applications:** Maximum 2x24 jam untuk review
@@ -368,7 +368,7 @@ Pencarian berdasarkan:
 - **Customer Satisfaction:** Minimum 4.0/5.0 rating dari users
 - **Compliance Rate:** 100% sesuai dengan legal requirements
 
-## 🎓 Training & Best Practices
+## Training & Best Practices
 
 ### **Admin Training Requirements:**
 1. **KYC Fundamentals:** Understanding legal requirements
@@ -386,7 +386,7 @@ Pencarian berdasarkan:
 
 ---
 
-## 📞 Support & Bantuan
+## Support & Bantuan
 
 Jika mengalami kesulitan dalam menggunakan KYC Management:
 

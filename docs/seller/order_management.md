@@ -1,23 +1,23 @@
-# 📋 Manajemen Pesanan Toko - Pasar Santri
+# Manajemen Pesanan Toko - Pasar Santri
 
-## 📋 Deskripsi
+## Deskripsi
 Manajemen Pesanan adalah sistem lengkap yang memungkinkan penjual untuk mengelola seluruh siklus pesanan dari pembeli di **Pasar Santri Marketplace**. Sistem ini mencakup pemantauan status pesanan, pemrosesan pengiriman, integrasi dengan Biteship, dan pengelolaan riwayat transaksi.
 
-## 🎯 Tujuan
+## Tujuan
 - Mengelola seluruh siklus hidup pesanan dari konfirmasi hingga selesai
 - Memproses pengiriman dengan integrasi kurir otomatis
 - Memantau status pembayaran dan pengiriman secara real-time
 - Memberikan layanan terbaik kepada pembeli
 - Mengoptimalkan operasional bisnis dengan tracking lengkap
 
-## 🔐 Akses & Persyaratan
+## Akses & Persyaratan
 **Role Required:** Seller dengan toko aktif dan terverifikasi  
 **Permission:** Akses penuh ke manajemen pesanan toko  
 **URL:** `/seller/orders`
 
 ---
 
-## 📋 Persyaratan Akses Manajemen Pesanan
+## Persyaratan Akses Manajemen Pesanan
 
 ### 1. **KYC Disetujui & Toko Aktif**
 - Status KYC harus **"Disetujui"**
@@ -38,11 +38,11 @@ Manajemen Pesanan adalah sistem lengkap yang memungkinkan penjual untuk mengelol
 
 ---
 
-## 🔄 Siklus Status Pesanan
+## Siklus Status Pesanan
 
 ### 1. **Alur Status Pesanan**
 ```
-📦 Siklus Pesanan Normal:
+Siklus Pesanan Normal:
 ┌─ Pending → Paid → Confirmed → Processing → Shipped → Delivered → Finished
 │
 ├─ Pembatalan dapat dilakukan di:
@@ -76,7 +76,7 @@ Manajemen Pesanan adalah sistem lengkap yang memungkinkan penjual untuk mengelol
 
 ---
 
-## 🛠️ Fitur Utama Manajemen Pesanan
+## Fitur Utama Manajemen Pesanan
 
 ### 1. **Dashboard Pesanan Multi-Status**
 - Tampilan terpisah untuk setiap status pesanan
@@ -86,7 +86,7 @@ Manajemen Pesanan adalah sistem lengkap yang memungkinkan penjual untuk mengelol
 
 ### 2. **Detail Pesanan Komprehensif**
 ```
-📋 Informasi Pesanan Lengkap:
+Informasi Pesanan Lengkap:
 ├── Header Information
 │   ├── Nomor Invoice (INV/YYYY-MM-DD/XXXX)
 │   ├── Status dengan color coding
@@ -127,7 +127,7 @@ Manajemen Pesanan adalah sistem lengkap yang memungkinkan penjual untuk mengelol
 
 ---
 
-## 📊 Kategori Pesanan Berdasarkan Status
+## Kategori Pesanan Berdasarkan Status
 
 ### 1. **Pesanan Paid (Butuh Konfirmasi)**
 **URL:** `/seller/orders?status=paid`
@@ -266,11 +266,11 @@ Manajemen Pesanan adalah sistem lengkap yang memungkinkan penjual untuk mengelol
 
 ---
 
-## 🔍 Fitur Pencarian dan Filter
+## Fitur Pencarian dan Filter
 
 ### 1. **Pencarian Pesanan**
 ```
-🔍 Search Options:
+Search Options:
 ├── By Invoice Number (INV/2024-09-10/ABCD)
 ├── By Customer Name (John Doe)
 ├── By Customer Email (john@example.com)
@@ -291,11 +291,11 @@ Manajemen Pesanan adalah sistem lengkap yang memungkinkan penjual untuk mengelol
 
 ---
 
-## 📋 Informasi Invoice dan Tracking
+## Informasi Invoice dan Tracking
 
 ### 1. **Format Invoice**
 ```
-📄 Invoice Format:
+Invoice Format:
 INV/YYYY-MM-DD/XXXX
 
 Contoh: INV/2024-09-10/AB3F
@@ -306,7 +306,7 @@ Contoh: INV/2024-09-10/AB3F
 
 ### 2. **Tracking Information**
 ```
-🚚 Tracking Details:
+Tracking Details:
 ├── Tracking ID: Nomor tracking dari kurir
 ├── Waybill ID: Nomor resi pengiriman  
 ├── Courier Code: Kode kurir (JNE, SICEPAT, dll)
@@ -317,7 +317,7 @@ Contoh: INV/2024-09-10/AB3F
 
 ### 3. **Payment Summary Structure**
 ```
-💰 Payment Breakdown:
+ Payment Breakdown:
 ├── Subtotal: Total harga produk
 ├── Shipping Cost: Ongkos kirim
 ├── Tax Amount: Pajak (jika applicable)
@@ -328,7 +328,7 @@ Contoh: INV/2024-09-10/AB3F
 
 ---
 
-## ⚠️ Troubleshooting
+## Troubleshooting
 
 ### 1. **Pesanan Tidak Muncul**
 
@@ -420,7 +420,7 @@ Status yang valid:
 
 ---
 
-## ❓ FAQ
+## FAQ
 
 ### Q: Berapa lama pesanan otomatis berubah status?
 **A**: 
@@ -489,7 +489,7 @@ Status yang valid:
 
 ---
 
-## 💡 Tips Optimasi Manajemen Pesanan
+## Tips Optimasi Manajemen Pesanan
 
 ### 1. **Respons Time Optimal**
 - **Konfirmasi pesanan dalam 2-4 jam** untuk kepuasan pembeli

@@ -186,7 +186,7 @@ Fitur ini untuk mengatasi masalah pembayaran yang stuck atau error:
 3. Konfirmasi akan muncul dengan jumlah orders yang akan diproses
 4. Review dan confirm bulk action
 
-**⚠️ Peringatan**: 
+**Peringatan**: 
 - Fitur ini hanya untuk emergency atau testing
 - Pastikan pembayaran benar-benar sudah diterima
 - Dokumentasikan alasan bypass untuk audit
@@ -259,7 +259,7 @@ Untuk monitoring settlement payout ke seller:
 #### Cek Orders yang Butuh Settlement:
 1. Filter pesanan dengan status "Delivered"
 2. Lihat kolom **"Has Settlement"**
-3. Order yang belum settlement akan ditandai ❌
+3. Order yang belum settlement akan ditandai 
 
 #### Process Settlement:
 1. Buka detail pesanan yang sudah delivered
@@ -605,17 +605,17 @@ GET    /admin/orders/analytics/dashboard   - Analytics data
 
 Untuk bantuan lebih lanjut terkait sistem pesanan:
 
-📧 **Email Support**: support@pasarsantri.com  
-📱 **WhatsApp**: +62 812-3456-7890  
-🌐 **Website**: www.pasarsantri.com  
-🏢 **Developer**: PT. Sidogiri Fintech Utama
+**Email Support**: support@pasarsantri.com  
+**WhatsApp**: +62 812-3456-7890  
+**Website**: www.pasarsantri.com  
+**Developer**: PT. Sidogiri Fintech Utama
 
 **Jam Operasional Support**:  
 Senin - Jumat: 08:00 - 17:00 WIB  
 Sabtu: 08:00 - 12:00 WIB
 
 **Emergency Contact** (untuk masalah kritis):  
-📱 **Hotline**: +62 811-2233-4455 (24/7)
+**Hotline**: +62 811-2233-4455 (24/7)
 
 ---
 

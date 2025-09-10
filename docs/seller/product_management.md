@@ -1,23 +1,23 @@
-# 📦 Manajemen Produk Toko - Pasar Santri
+# Manajemen Produk Toko - Pasar Santri
 
-## 📋 Deskripsi
+## Deskripsi
 Manajemen Produk adalah sistem lengkap yang memungkinkan penjual untuk membuat, mengelola, dan mengoptimalkan produk mereka di **Pasar Santri Marketplace**. Sistem ini mendukung produk dengan varian, multi-kategori, pengelolaan media, optimisasi SEO, dan integrasi penuh dengan sistem inventori dan manajemen pesanan.
 
-## 🎯 Tujuan
+## Tujuan
 - Mengelola katalog produk toko secara komprehensif
 - Mendukung produk dengan varian yang kompleks
 - Mengoptimalkan produk untuk mesin pencari (SEO)
 - Mengelola inventori dan stok secara real-time
 - Memberikan pengalaman berbelanja yang optimal
 
-## 🔐 Akses & Persyaratan
+## Akses & Persyaratan
 **Role Required:** Seller dengan toko aktif dan terverifikasi  
 **Permission:** Akses penuh ke manajemen produk toko  
 **URL:** `/seller/products`
 
 ---
 
-## 📋 Persyaratan Akses Manajemen Produk
+## Persyaratan Akses Manajemen Produk
 
 ### 1. **KYC Disetujui & Setup Toko**
 - Status KYC harus **"Disetujui"**
@@ -38,11 +38,11 @@ Manajemen Produk adalah sistem lengkap yang memungkinkan penjual untuk membuat, 
 
 ---
 
-## 🏗️ Struktur Sistem Manajemen Produk
+## Struktur Sistem Manajemen Produk
 
 ### 1. **Struktur Inti Produk**
 ```
-📦 Entitas Produk:
+Entitas Produk:
 ├── Informasi Dasar (nama, deskripsi, harga, stok)
 ├── Pengelolaan Media (gambar utama, hover, galeri)
 ├── Penugasan Kategori (global + kategori toko)
@@ -55,7 +55,7 @@ Manajemen Produk adalah sistem lengkap yang memungkinkan penjual untuk membuat, 
 
 ### 2. **Arsitektur Sistem Varian**
 ```
-🔄 Varian Produk:
+Varian Produk:
 ├── Produk Sederhana (tanpa varian)
 │   ├── SKU, harga, stok tunggal
 │   ├── Manajemen inventori langsung
@@ -71,7 +71,7 @@ Manajemen Produk adalah sistem lengkap yang memungkinkan penjual untuk membuat, 
 
 ### 3. **Category Integration**
 ```
-🏷️ Dual Category System:
+Dual Category System:
 ├── Global Categories (Platform-Wide):
 │   ├── Electronics, Fashion, Home & Garden
 │   ├── SEO and marketplace categorization
@@ -93,7 +93,7 @@ Manajemen Produk adalah sistem lengkap yang memungkinkan penjual untuk membuat, 
 
 #### A. Search dan Filter System
 ```
-🔍 Advanced Search Features:
+Advanced Search Features:
 ✓ Product name search (case-insensitive)
 ✓ SKU number search
 ✓ Description content search
@@ -103,7 +103,7 @@ Manajemen Produk adalah sistem lengkap yang memungkinkan penjual untuk membuat, 
 
 #### B. Product Display Columns
 ```
-📋 Product List Information:
+Product List Information:
 ✓ Product Image + Name: Visual identification
 ✓ Stock Status: Out of stock, low stock, available
 ✓ Primary Category: First assigned category
@@ -116,7 +116,7 @@ Manajemen Produk adalah sistem lengkap yang memungkinkan penjual untuk membuat, 
 
 #### C. Stock Status Indicators
 ```
-📊 Stock Management Visual Cues:
+Stock Management Visual Cues:
 - Red Badge "Out of Stock": stock = 0
 - Orange Badge "Low Stock": stock <= 5
 - Normal Display: stock > 5
@@ -127,7 +127,7 @@ Manajemen Produk adalah sistem lengkap yang memungkinkan penjual untuk membuat, 
 
 #### A. Basic Product Information
 ```
-📝 Required Product Fields:
+Required Product Fields:
 
 1. Product Name:
    - Type: Text input (max 255 chars)
@@ -150,7 +150,7 @@ Manajemen Produk adalah sistem lengkap yang memungkinkan penjual untuk membuat, 
 
 #### B. Media Management System
 ```
-📸 Product Images:
+Product Images:
 
 1. Default Image (Required):
    - Primary product image
@@ -173,7 +173,7 @@ Manajemen Produk adalah sistem lengkap yang memungkinkan penjual untuk membuat, 
 
 #### C. Inventory Management
 ```
-📦 Stock and SKU Management:
+Stock and SKU Management:
 
 1. Stock Quantity:
    - Type: Integer input (min 0)
@@ -198,7 +198,7 @@ Manajemen Produk adalah sistem lengkap yang memungkinkan penjual untuk membuat, 
 
 #### A. Global Categories (Required)
 ```
-🌐 Platform Categories:
+Platform Categories:
 ✓ Selection: Multi-select checkboxes
 ✓ Requirement: Minimum 1 category
 ✓ Validation: Must exist dan be active
@@ -208,7 +208,7 @@ Manajemen Produk adalah sistem lengkap yang memungkinkan penjual untuk membuat, 
 
 #### B. Shop Categories (Optional)
 ```
-🏪 Internal Categories:
+Internal Categories:
 ✓ Selection: Multi-select from shop categories
 ✓ Requirement: Optional but recommended
 ✓ Purpose: Internal organization, marketing
@@ -218,7 +218,7 @@ Manajemen Produk adalah sistem lengkap yang memungkinkan penjual untuk membuat, 
 
 ### 4. **SEO Optimization Fields**
 ```
-🎯 SEO Enhancement:
+SEO Enhancement:
 
 1. Meta Title:
    - Custom page title for search engines
@@ -243,7 +243,7 @@ Manajemen Produk adalah sistem lengkap yang memungkinkan penjual untuk membuat, 
 
 ### 5. **Marketing Features**
 ```
-🎪 Promotional Options:
+Promotional Options:
 
 1. Featured Product:
    - Checkbox: Mark as featured
@@ -267,7 +267,7 @@ Manajemen Produk adalah sistem lengkap yang memungkinkan penjual untuk membuat, 
 
 ### 1. **Variant System Overview**
 ```
-🔄 Variant Architecture:
+Variant Architecture:
 
 Single Product (No Variants):
 ├── One SKU, one price, one stock level
@@ -309,7 +309,7 @@ Variable Product (With Variants):
 
 #### B. Variant Attributes System
 ```
-🏷️ Attribute Management:
+Attribute Management:
 
 Attribute Structure:
 - Key: Attribute name (Size, Color, Material)
@@ -328,7 +328,7 @@ Example Attributes:
 
 ### 3. **Variant Display dan Selection**
 ```
-👤 Customer Variant Experience:
+Customer Variant Experience:
 
 1. Product Detail Page:
    - Attribute dropdowns/buttons
@@ -363,7 +363,7 @@ Example Attributes:
 
 #### Persiapan Sebelum Create:
 ```
-📋 Pre-Creation Checklist:
+Pre-Creation Checklist:
 ✓ Product photos ready (minimum 1, maximum recommended 5)
 ✓ Product information lengkap (name, description, price)
 ✓ Category planning (global + shop categories)
@@ -466,7 +466,7 @@ Example Attributes:
 
 #### Managing Existing Variants:
 ```
-✏️ Variant Operations:
+Variant Operations:
 - View: See all variants in table format
 - Edit: Modify variant properties (coming soon)
 - Delete: Remove variant (dengan confirmation)
@@ -477,7 +477,7 @@ Example Attributes:
 
 #### Stock Management:
 ```
-📊 Inventory Monitoring:
+Inventory Monitoring:
 - Dashboard Overview: Stock levels per product
 - Low Stock Alerts: Automatic notifications
 - Out of Stock: Customer notification management
@@ -486,7 +486,7 @@ Example Attributes:
 
 #### Sales Analytics:
 ```
-📈 Performance Tracking:
+Performance Tracking:
 - View Count: Product page visits
 - Add to Cart Rate: Conversion metrics
 - Sales Volume: Units sold per period
@@ -640,7 +640,7 @@ Custom Business Rules:
 
 #### Platform Search:
 ```
-🔍 Search Integration:
+Search Integration:
 
 1. Elasticsearch Index:
    - Product name, description indexing
@@ -665,7 +665,7 @@ Custom Business Rules:
 
 #### Product Performance Analytics:
 ```
-📊 Analytics Integration:
+Analytics Integration:
 
 1. View Tracking:
    - Product page visits
@@ -692,7 +692,7 @@ Custom Business Rules:
 
 ### 1. **SEO Best Practices**
 ```
-🎯 SEO Optimization Strategy:
+SEO Optimization Strategy:
 
 1. Product Names:
    ✓ Include target keywords naturally
@@ -721,7 +721,7 @@ Custom Business Rules:
 
 ### 2. **Marketing Features Utilization**
 ```
-🎪 Marketing Strategy:
+Marketing Strategy:
 
 1. Featured Products:
    - Homepage prominence
@@ -744,7 +744,7 @@ Custom Business Rules:
 
 ### 3. **Pricing Strategies**
 ```
-💰 Pricing Optimization:
+ Pricing Optimization:
 
 1. Regular vs Sale Price:
    - Psychological pricing principles
@@ -789,7 +789,7 @@ CREATE INDEX idx_category_product_lookup ON category_product(category_id, produc
 
 ### 2. **Caching Strategy**
 ```
-🚀 Performance Caching:
+Performance Caching:
 
 1. Product Data Cache:
    - TTL: 1 hour for product information
@@ -814,7 +814,7 @@ CREATE INDEX idx_category_product_lookup ON category_product(category_id, produc
 
 ### 3. **Image Optimization**
 ```
-🖼️ Media Optimization:
+Media Optimization:
 
 1. Image Processing:
    - Auto-resize: Multiple size variants
@@ -931,7 +931,7 @@ CREATE INDEX idx_category_product_lookup ON category_product(category_id, produc
 
 ### 1. **Product Performance Metrics**
 ```
-📊 Key Performance Indicators:
+Key Performance Indicators:
 
 1. Product Metrics:
    - Total products created per shop
@@ -954,7 +954,7 @@ CREATE INDEX idx_category_product_lookup ON category_product(category_id, produc
 
 ### 2. **Business Intelligence**
 ```
-🧠 Analytics Insights:
+Analytics Insights:
 
 1. Product Performance:
    - Best selling products
@@ -981,16 +981,16 @@ CREATE INDEX idx_category_product_lookup ON category_product(category_id, produc
 
 Untuk bantuan terkait product management:
 
-### 📞 **Support Channels:**
+### **Support Channels:**
 ```
-📧 Email Products   : products-support@pasarsantri.com
-📱 WhatsApp        : +62 812-3456-7890 (Product Issues)
-💬 Live Chat       : Available di seller dashboard
-🌐 Help Center     : help.pasarsantri.com/products
-🏢 Developer       : PT. Sidogiri Fintech Utama
+Email Products   : products-support@pasarsantri.com
+WhatsApp        : +62 812-3456-7890 (Product Issues)
+Live Chat       : Available di seller dashboard
+Help Center     : help.pasarsantri.com/products
+Developer       : PT. Sidogiri Fintech Utama
 ```
 
-### ⏰ **Jam Operasional:**
+### **Jam Operasional:**
 ```
 Product Support:
 Senin - Jumat  : 08:00 - 17:00 WIB  
@@ -1001,13 +1001,13 @@ Technical Support:
 24/7 untuk critical product issues
 ```
 
-### 📚 **Resources:**
+### **Resources:**
 ```
-📖 Product Guide       : docs.pasarsantri.com/seller/products
-📹 Video Tutorials     : youtube.com/pasarsantri/products
-🎯 Best Practices      : help.pasarsantri.com/product-tips
-❓ FAQ                : faq.pasarsantri.com/products
-🔧 Troubleshooting     : support.pasarsantri.com/product-issues
+Product Guide       : docs.pasarsantri.com/seller/products
+Video Tutorials     : youtube.com/pasarsantri/products
+Best Practices      : help.pasarsantri.com/product-tips
+FAQ                : faq.pasarsantri.com/products
+Troubleshooting     : support.pasarsantri.com/product-issues
 ```
 
 ---
