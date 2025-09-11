@@ -1,14 +1,14 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Seller\CategoryController;
+use App\Http\Controllers\Seller\InventoryController;
 use App\Http\Controllers\Seller\KycController;
 use App\Http\Controllers\Seller\OrderController;
-use App\Http\Controllers\Seller\SellerController;
-use App\Http\Controllers\Seller\WalletController;
 use App\Http\Controllers\Seller\ProfileController;
-use App\Http\Controllers\Seller\CategoryController;
+use App\Http\Controllers\Seller\SellerController;
 use App\Http\Controllers\Seller\ShopBankController;
-use App\Http\Controllers\Seller\InventoryController;
+use App\Http\Controllers\Seller\WalletController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -117,6 +117,9 @@ Route::group(['prefix' => 'seller', 'middleware' => ['auth']], function () {
             Route::put('/{order}/status', [OrderController::class, 'updateStatus'])->name('seller.orders.update-status')->middleware('check.shop.suspension');
             Route::put('/{order}/create', [OrderController::class, 'createOrderBiteship'])->name('seller.orders.create-order')->middleware('check.shop.suspension');
             Route::put('/{order}/update-courier', [OrderController::class, 'updateCourier'])->name('seller.orders.update-courier')->middleware('check.shop.suspension');
+            Route::get('/{order}/label', [OrderController::class, 'labelPreview'])->name('seller.orders.label');
+            Route::get('/{order}/label/preview', [OrderController::class, 'labelPdf'])->name('seller.orders.label.pdf');
+
         });
 
         // Profile Management (always accessible)
