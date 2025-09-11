@@ -179,9 +179,11 @@
                                         </span>
                                     </td>
                                     <td>
+                                        @if(!in_array($order->status, ['pending', 'cancelled']))
                                         <a href="{{ route('seller.orders.show', $order->id) }}" class="icon border-0 rounded-circle text-center bg-primary-transparent">
                                             <i data-feather="eye"></i>
                                         </a>
+                                        @endif
                                     </td>
                                 </tr>
                                 @empty

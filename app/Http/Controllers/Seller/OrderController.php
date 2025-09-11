@@ -71,7 +71,11 @@ class OrderController extends Controller
             'cancelled'  => 'seller.orders.cancelled.show',
         ];
 
-        $view = $views[$currentStatus] ?? 'seller.orders.show';
+        $view = $views[$currentStatus] ?? null;
+
+        if (! $view) {
+            return redirect()->back()->withErrors("Can't show order with status: " . $currentStatus);
+        }
 
         return view($view, compact('order', 'currentStatus'));
     }
