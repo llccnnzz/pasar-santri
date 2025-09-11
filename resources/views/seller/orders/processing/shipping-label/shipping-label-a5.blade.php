@@ -8,7 +8,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            font-size: 9px;
+            font-size: 12px;
             line-height: 1.6;
             margin: 0 5mm;
             padding: 0;
@@ -68,12 +68,10 @@
             <table>
                 <tr>
                     <td class="logo">
-                        <img src="https://beta-marketplace.bitlion.io/assets/imgs/theme/logo.png" width="250"
+                        <img src="https://beta-marketplace.bitlion.io/assets/imgs/theme/logo.png" width="180"
                             alt="Pasar Santri Marketplace Logo" />
                     </td>
-                </tr>
-                <tr>
-                    <td><b>{{ $page['invoice'] }}</b></td>
+                    <td style="text-align: right; padding-top: 30px;"><b style="font-size: 20px; color: #0e4e1d;">{{ $page['invoice'] }}</b></td>
                 </tr>
             </table>
 

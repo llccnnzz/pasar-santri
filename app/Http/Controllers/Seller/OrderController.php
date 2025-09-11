@@ -358,7 +358,8 @@ class OrderController extends Controller
 
         $pdf = SnappyPdf::loadView('seller.orders.processing.shipping-label.shipping-label-a5', compact('pages'))
             ->setPaper('a5')
-            ->setOrientation('portrait');
+            ->setOrientation('portrait')
+            ->setOption('enable-local-file-access', true);
 
         $invoice = preg_replace('/[\/\\\\]/', '-', $order['invoice']);
 
