@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pasar Santri Marketplace Shipping Label</title>
-    {{-- <script src="{{ asset('assets/js/JsBarcode.all.min.js') }}"></script> --}}
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -145,14 +144,6 @@
                     </tr>
                 @endforeach
             </table>
-
-            {{-- <script>
-                JsBarcode("#barcode-{{ $index }}", "{{ $page['airwaybill'] }}", {
-                    width: 1,
-                    height: 55,
-                    fontSize: 13,
-                });
-            </script> --}}
         </div>
     @endforeach
 </body>
