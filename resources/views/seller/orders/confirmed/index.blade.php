@@ -62,19 +62,18 @@
                                             </a>
                                         </td>
 
-                                        <td class="text-muted" style="width: 100%; white-space: normal;">
-                                            <div class="d-flex justify-content-between align-items-center w-100">
+                                        <td class="text-muted">
+                                            <div>
                                                 <div>
-                                                    {{ $order['order_details']['shipping']['courier_name'] }}
+                                                    <b>{{ $order['order_details']['shipping']['courier_name'] }}</b>
                                                     ({{ $order['order_details']['shipping']['description'] }})
                                                     <br>
                                                     Rp.
                                                     {{ number_format($order['order_details']['shipping']['price'], 0, '.', ',') }}
                                                 </div>
 
-                                                <a href="{{ route('seller.orders.show', $order) }}" class="btn icon border-0 rounded-circle text-center bg-success-transparent ms-2"
-                                                    data-bs-toggle="tooltip" title="Change">
-                                                    <i data-feather="edit"></i>
+                                                <a href="{{ route('seller.orders.show', $order) }}" data-bs-toggle="tooltip" title="Change">
+                                                    Ubah Kurir
                                                 </a>
                                             </div>
                                         </td>
