@@ -47,6 +47,7 @@
                                     <th scope="col">Items</th>
                                     <th scope="col">Total</th>
                                     <th scope="col">Status</th>
+                                    <th scope="col">Actions</th>
                                 </tr>
                             </thead>
 
@@ -86,6 +87,12 @@
                                         <td>
                                             <span
                                                 class="badge bg-{{ $order->status_badge }}">{{ $order->status_label }}</span>
+                                        </td>
+                                        <td>
+                                            <a href="/seller/orders/{{ $order['id'] }}/label" class="text-success"
+                                                data-bs-toggle="tooltip" title="Print Airway Bill">
+                                                <i data-feather="file"></i>
+                                            </a>
                                         </td>
                                     </tr>
                                 @empty
