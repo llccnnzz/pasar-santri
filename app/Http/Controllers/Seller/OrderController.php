@@ -387,7 +387,7 @@ class OrderController extends Controller
             'courierCompany'     => $shipping['courier_name'] ?? '',
             'courierServiceName' => $shipping['service_name'] ?? '',
             'totalWeight'        => $totalWeight,
-            'shippingFee'        => $shipping['price'] ?? 0,
+            'shippingFee'        => 'Rp.'. number_format($shipping['price'] ?? 0),
             'buyerName'          => $address['name'] ?? $order['user']['name'],
             'buyerAddress'       => $address['address_line_1'] ?? '',
             'buyerPhone'         => $address['phone'] ?? '',
