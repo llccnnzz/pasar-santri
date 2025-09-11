@@ -14,7 +14,7 @@
                     </li>
                     <li class="breadcrumb-item fs-14">
                         <a class="text-decoration-none"
-                            href="{{ route('seller.orders.index', ['status' => 'confirmed']) }}">New Orders</a>
+                            href="{{ route('seller.orders.index', ['status' => 'confirmed']) }}">Confirmed</a>
                     </li>
                     <li class="breadcrumb-item fs-14 text-primary" aria-current="page">#{{ $order->invoice }}</li>
                 </ol>

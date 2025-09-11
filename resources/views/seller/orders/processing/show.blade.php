@@ -13,7 +13,8 @@
                         <a class="text-decoration-none" href="{{ route('seller.dashboard') }}">Seller Dashboard</a>
                     </li>
                     <li class="breadcrumb-item fs-14">
-                        <a class="text-decoration-none" href="{{ route('seller.orders.index', ['status' => 'processing']) }}">Processing</a>
+                        <a class="text-decoration-none"
+                            href="{{ route('seller.orders.index', ['status' => 'processing']) }}">Processing</a>
                     </li>
                     <li class="breadcrumb-item fs-14 text-primary" aria-current="page">#{{ $order->invoice }}</li>
                 </ol>
@@ -50,14 +51,27 @@
 
                     <!-- Shipping Info -->
                     <div class="col-md-6 mb-4">
-                        <h5 class="mb-3">Shipping Information</h5>
-                        @php $shipping = $order->order_details['shipping'] ?? null; @endphp
-                        @if ($shipping)
-                            <p><strong>Courier:</strong> {{ $shipping['courier_name'] ?? '-' }}</p>
-                            <p><strong>Service:</strong> {{ $shipping['service_name'] ?? '-' }}</p>
-                            <p><strong>Cost:</strong> Rp {{ number_format($shipping['price'] ?? 0) }}</p>
-                        @else
-                            <p class="text-muted">No shipping details available</p>
+                        <div>
+                            <h5 class="mb-3">Shipping Information</h5>
+                            @php $shipping = $order->order_details['shipping'] ?? null; @endphp
+                            @if ($shipping)
+                                <p><strong>Courier:</strong> {{ $shipping['courier_name'] ?? '-' }}</p>
+                                <p><strong>Service:</strong> {{ $shipping['service_name'] ?? '-' }}</p>
+                                <p><strong>Cost:</strong> Rp {{ number_format($shipping['price'] ?? 0) }}</p>
+                            @else
+                                <p class="text-muted">No shipping details available</p>
+                            @endif
+                        </div>
+
+                        @if ($order->status === 'processing')
+                            <div class="mt-4">
+                                <h5 class="mb-3">Print Shipping Label</h5>
+                                <a href="{{ route('seller.orders.label', $order) }}"
+                                    class="btn btn-outline-success icon border-0 rounded-circle text-center bg-success-transparent"
+                                    data-bs-toggle="tooltip" title="Print Shipping Label">
+                                    <i data-feather="printer"></i>
+                                </a>
+                            </div>
                         @endif
                     </div>
                 </div>

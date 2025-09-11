@@ -5,9 +5,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\OrderUpdateStatusRequest;
 use App\Models\Order;
 use App\Services\BiteshipService;
+use Barryvdh\Snappy\Facades\SnappyPdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Milon\Barcode\DNS1D;
 
 class OrderController extends Controller
 {
@@ -127,12 +129,13 @@ class OrderController extends Controller
         }
 
         $orderDetails['shipping'] = [
-            'courier_code'       => $shippingMethod->courier_code,
-            'courier_name'       => $shippingMethod->courier_name,
-            'service_code'       => $shippingMethod->service_code,
-            'service_name'       => $shippingMethod->service_name,
-            'description'        => $shippingMethod->description,
-            'price'              => $pickedRate['price'] ?? 0,
+            'courier_code'      => $shippingMethod->courier_code,
+            'courier_name'      => $shippingMethod->courier_name,
+            'service_code'      => $shippingMethod->service_code,
+            'service_name'      => $shippingMethod->service_name,
+            'description'       => $shippingMethod->description,
+            'logo_url'          => $shippingMethod->logo_url,
+            'price'             => $pickedRate['price'] ?? 0,
             'collection_method' => is_array($pickedRate['available_collection_method']) && in_array('pickup', $pickedRate['available_collection_method']) ? 'pickup' : 'drop_off',
         ];
 
@@ -174,7 +177,8 @@ class OrderController extends Controller
 
         $this->logStatusChange($order, $oldStatus, $newStatus);
 
-        return back()->with('success', 'Order status updated successfully to ' . ucfirst($newStatus));
+        return redirect()->route('seller.orders.label', $order)
+            ->with('success', 'Order created in Biteship. Shipping label ready.');
     }
 
     private function handleCreateByteship($order, BiteshipService $biteship, $collectionMethod): ?array
@@ -327,5 +331,74 @@ class OrderController extends Controller
             'changed_by' => Auth::id(),
             'timestamp'  => now(),
         ]);
+    }
+
+    public function labelPreview(Order $order)
+    {
+        $this->authorize('view', $order);
+        $order->load(['shop', 'user']);
+        $currentStatus = $order['status'];
+
+        return view('seller.orders.processing.shipping-label.index', compact('order', 'currentStatus'));
+    }
+
+    public function labelPdf(Order $order)
+    {
+        $this->authorize('view', $order);
+        $order->load(['shop', 'user']);
+
+        $pages = $this->buildLabelPages($order);
+
+        $d = new DNS1D();
+        foreach ($pages as &$page) {
+            $pngBase64            = $d->getBarcodePNG($page['airwaybill'], 'C128', 1, 55);
+            $page['barcodeImage'] = 'data:image/png;base64,' . $pngBase64;
+        }
+        unset($page);
+
+        $pdf = SnappyPdf::loadView('seller.orders.processing.shipping-label.shipping-label-a5', compact('pages'))
+            ->setPaper('a5')
+            ->setOrientation('portrait');
+
+        $invoice = preg_replace('/[\/\\\\]/', '-', $order['invoice']);
+
+        return $pdf->inline('Shipping-Label-' . $invoice . '.pdf');
+    }
+
+    private function buildLabelPages(Order $order): array
+    {
+        $shopId   = $order['shop_id'];
+        $details  = $order['order_details'] ?? [];
+        $shipping = $details['shipping'] ?? [];
+        $address  = $details['address'] ?? [];
+        $tracking = $order['tracking_details'] ?? [];
+        $biteship = $order['biteship_order'] ?? [];
+
+        $totalWeight = collect($details['items'] ?? [])->sum(function ($i) {
+            return (float) $i['weight'] * (int) $i['quantity'];
+        });
+
+        return [[
+            'invoice'            => $order['invoice'],
+            'airwaybill'         => $tracking['waybill_id'] ?? '',
+            'courierLogo'        => $shipping['logo_url'] ?? '',
+            'courierCompany'     => $shipping['courier_name'] ?? '',
+            'courierServiceName' => $shipping['service_name'] ?? '',
+            'totalWeight'        => $totalWeight,
+            'shippingFee'        => $shipping['price'] ?? 0,
+            'buyerName'          => $address['name'] ?? $order['user']['name'],
+            'buyerAddress'       => $address['address_line_1'] ?? '',
+            'buyerPhone'         => $address['phone'] ?? '',
+            'buyerAddressDetail' => $address['address_line_2'] ?? '',
+            'orderNotes'         => $details['notes'] ?? '',
+            'shopName'           => $order['shop']['name'],
+            'shopPhone'          => $order['shop']['phone'],
+            'items'              => collect($details['items'] ?? [])->map(function ($i) {
+                return [
+                    'name' => $i['name'],
+                    'qty'  => $i['quantity'],
+                ];
+            })->toArray(),
+        ]];
     }
 }
