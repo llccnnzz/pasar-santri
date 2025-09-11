@@ -30,6 +30,10 @@ class AdminOrderController extends Controller
         try {
             $order = Order::findOrFail($orderId);
 
+            if ($order->status !== 'pending') {
+                return back()->with('error', 'Hanya order dengan status pending yang dapat bayar');
+            }
+
             if (! in_array($status, ['paid'])) {
                 return back()->with('error', 'Status tidak valid');
             }

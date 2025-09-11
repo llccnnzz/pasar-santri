@@ -99,7 +99,7 @@
                                             </span>
                                         </td>
                                         <td class="text-center">
-                                            {{-- Accept form: change status to paid --}}
+                                            @if($order['status'] === 'pending')
                                             <form
                                                 action="{{ route('admin.orders.bypass-payment', ['order' => $order->id, 'status' => 'paid']) }}"
                                                 method="POST" class="d-inline accept-form me-1">
@@ -111,6 +111,7 @@
                                                     <i data-feather="check"></i>
                                                 </button>
                                             </form>
+                                            @endif
                                         </td>
                                     </tr>
                                 @empty
