@@ -72,7 +72,7 @@
                                                     {{ number_format($order['order_details']['shipping']['price'], 0, '.', ',') }}
                                                 </div>
 
-                                                <a href="{{ route('seller.orders.show', $order) }}" data-bs-toggle="tooltip" title="Change">
+                                                <a href="{{ route('seller.orders.show', $order) }}" class="text-primary" data-bs-toggle="tooltip" title="Change">
                                                     Ubah Kurir
                                                 </a>
                                             </div>
