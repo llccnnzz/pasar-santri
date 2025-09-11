@@ -68,7 +68,7 @@
             <table>
                 <tr>
                     <td class="logo">
-                        <img src="https://beta-marketplace.bitlion.io/assets/imgs/theme/logo.png" width="180"
+                        <img src="{{ $page['mainLogo'] }}" width="180"
                             alt="Pasar Santri Marketplace Logo" />
                     </td>
                     <td style="text-align: right; padding-top: 30px;"><b style="font-size: 20px; color: #0e4e1d;">{{ $page['invoice'] }}</b></td>

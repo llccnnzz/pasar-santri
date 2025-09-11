@@ -380,6 +380,7 @@ class OrderController extends Controller
         });
 
         return [[
+            'mainLogo'           => config('app.url').'/assets/imgs/theme/logo.png',
             'invoice'            => $order['invoice'],
             'airwaybill'         => $tracking['waybill_id'] ?? '',
             'courierLogo'        => $shipping['logo_url'] ? config('app.url').$shipping['logo_url'] : '',
