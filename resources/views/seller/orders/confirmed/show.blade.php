@@ -13,7 +13,8 @@
                         <a class="text-decoration-none" href="{{ route('seller.dashboard') }}">Seller Dashboard</a>
                     </li>
                     <li class="breadcrumb-item fs-14">
-                        <a class="text-decoration-none" href="{{ route('seller.orders.index', ['status' => 'confirmed']) }}">New Orders</a>
+                        <a class="text-decoration-none"
+                            href="{{ route('seller.orders.index', ['status' => 'confirmed']) }}">New Orders</a>
                     </li>
                     <li class="breadcrumb-item fs-14 text-primary" aria-current="page">#{{ $order->invoice }}</li>
                 </ol>
@@ -50,14 +51,66 @@
 
                     <!-- Shipping Info -->
                     <div class="col-md-6 mb-4">
-                        <h5 class="mb-3">Shipping Information</h5>
-                        @php $shipping = $order->order_details['shipping'] ?? null; @endphp
-                        @if ($shipping)
-                            <p><strong>Courier:</strong> {{ $shipping['courier_name'] ?? '-' }}</p>
-                            <p><strong>Service:</strong> {{ $shipping['service_name'] ?? '-' }}</p>
-                            <p><strong>Cost:</strong> Rp {{ number_format($shipping['price'] ?? 0) }}</p>
-                        @else
-                            <p class="text-muted">No shipping details available</p>
+                        <div>
+                            <h5 class="mb-3">Current Shipping Information</h5>
+                            @php $shipping = $order->order_details['shipping'] ?? null; @endphp
+                            @if ($shipping)
+                                <p><strong>Courier:</strong> {{ $shipping['courier_name'] ?? '-' }}</p>
+                                <p><strong>Service:</strong> {{ $shipping['service_name'] ?? '-' }}</p>
+                                <p><strong>Cost:</strong> Rp {{ number_format($shipping['price'] ?? 0) }}</p>
+                            @else
+                                <p class="text-muted">No shipping details available</p>
+                            @endif
+                        </div>
+                        @if ($order->status === 'confirmed')
+                            <div class="mt-4">
+                                @php
+                                    $shop = $order['shop'];
+                                @endphp
+                                <h5 class="mb-3">Change Shipping Courier</h5>
+                                <form action="{{ route('seller.orders.update-courier', $order) }}" method="POST"
+                                    class="d-flex align-items-end gap-2">
+                                    @csrf
+                                    @method('PUT')
+
+                                    <div class="flex-grow-1">
+                                        <select name="shipping_method_id" id="shipping_method_id" class="form-select">
+                                            <option value="">-- Pilih kurir --</option>
+                                            @foreach ($shop->shippingMethods as $method)
+                                                <option value="{{ $method->id }}"
+                                                    {{ ($order->order_details['shipping']['shipping_method_id'] ?? null) == $method->id ? 'selected' : '' }}>
+                                                    {{ $method->courier_name }} - {{ $method->service_name }}
+                                                    ({{ $method->description }})
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <button type="submit"
+                                        class="btn btn-outline-success icon border-0 rounded-circle text-center bg-success-transparent"
+                                        data-bs-toggle="tooltip" title="Change Courier">
+                                        <i data-feather="truck"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        @endif
+                        {{-- Flash messages --}}
+                        @if (session('success'))
+                            <div class="alert alert-success alert-dismissible fade show mt-4" role="alert">
+                                <i class="bi bi-check-circle me-1"></i>
+                                {{ session('success') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+                        @endif
+
+                        @if ($errors->any())
+                            <div class="alert alert-danger alert-dismissible fade show mt-4" role="alert">
+                                <i class="bi bi-x-circle me-1"></i>
+                                {{ $errors->first() }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
                         @endif
                     </div>
                 </div>
@@ -110,67 +163,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Accept / Reject Buttons -->
-                @if ($order->status === 'confirmed')
-                    <div class="mt-auto d-flex justify-content-end gap-2 pt-3 border-top">
-                        {{-- Accept form --}}
-                        <form action="{{ route('seller.orders.create-order', $order) }}" method="POST">
-                            @csrf
-                            @method('PUT')
-                            <input type="hidden" name="status" value="processing">
-                            <button type="submit" class="btn btn-success">
-                                <i data-feather="check"></i> Print Receipt
-                            </button>
-                        </form>
-
-                        {{-- Reject button (open modal) --}}
-                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal"
-                            title="Reject">
-                            <i data-feather="x"></i> Reject
-                        </button>
-
-                        <!-- Reject Modal -->
-                        <div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel"
-                            aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <form action="{{ route('seller.orders.update-status', $order) }}" method="POST">
-                                        @csrf
-                                        @method('PUT')
-                                        <input type="hidden" name="status" value="cancelled">
-
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="rejectModalLabel">Reject Order
-                                                #{{ $order->invoice }}</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
-                                        </div>
-
-                                        <div class="modal-body">
-                                            <div class="mb-3">
-                                                <label for="cancellation_reason" class="form-label">Reason for
-                                                    Rejection</label>
-                                                <textarea name="cancellation_reason" id="cancellation_reason" class="form-control w-100" rows="4"
-                                                    placeholder="Enter reason (optional)"></textarea>
-                                                <small class="text-muted">If left empty, the default
-                                                    reason will be "Cancelled by seller".</small>
-                                            </div>
-                                        </div>
-
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary"
-                                                data-bs-dismiss="modal">Cancel</button>
-                                            <button type="submit" class="btn btn-danger">
-                                                <i data-feather="x"></i> Reject Order
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                @endif
             </div>
         </div>
         <!--=== End Order Details Card ===-->
