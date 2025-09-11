@@ -382,7 +382,7 @@ class OrderController extends Controller
         return [[
             'invoice'            => $order['invoice'],
             'airwaybill'         => $tracking['waybill_id'] ?? '',
-            'courierLogo'        => $shipping['logo_url'] ?? '',
+            'courierLogo'        => $shipping['logo_url'] ? config('app.url').$shipping['logo_url'] : '',
             'courierCompany'     => $shipping['courier_name'] ?? '',
             'courierServiceName' => $shipping['service_name'] ?? '',
             'totalWeight'        => $totalWeight,
