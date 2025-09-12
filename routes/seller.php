@@ -1,15 +1,15 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Seller\KycController;
 use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\Seller\OrderController;
-use App\Http\Controllers\Seller\SellerController;
-use App\Http\Controllers\Seller\WalletController;
-use App\Http\Controllers\Seller\ProfileController;
 use App\Http\Controllers\Seller\CategoryController;
-use App\Http\Controllers\Seller\ShopBankController;
 use App\Http\Controllers\Seller\InventoryController;
+use App\Http\Controllers\Seller\KycController;
+use App\Http\Controllers\Seller\OrderController;
+use App\Http\Controllers\Seller\ProfileController;
+use App\Http\Controllers\Seller\SellerController;
+use App\Http\Controllers\Seller\ShopBankController;
+use App\Http\Controllers\Seller\WalletController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
