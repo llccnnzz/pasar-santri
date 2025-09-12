@@ -3,7 +3,6 @@ namespace App\Notifications;
 
 use App\Models\Order;
 use Illuminate\Bus\Queueable;
-use App\Notifications\BuyerNotification;
 use Illuminate\Notifications\Notification;
 
 class BuyerNotification extends Notification

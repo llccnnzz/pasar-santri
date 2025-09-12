@@ -1,17 +1,17 @@
 <?php
 namespace App\Http\Controllers\Seller;
 
-use App\Models\Order;
-use Milon\Barcode\DNS1D;
-use Illuminate\Http\Request;
-use App\Services\BiteshipService;
-use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Barryvdh\Snappy\Facades\SnappyPdf;
+use App\Http\Requests\OrderUpdateStatusRequest;
+use App\Models\Order;
 use App\Notifications\BuyerNotification;
 use App\Notifications\SellerNotification;
-use App\Http\Requests\OrderUpdateStatusRequest;
+use App\Services\BiteshipService;
+use Barryvdh\Snappy\Facades\SnappyPdf;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Milon\Barcode\DNS1D;
 
 class OrderController extends Controller
 {

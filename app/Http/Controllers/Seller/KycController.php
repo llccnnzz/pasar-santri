@@ -1,13 +1,12 @@
 <?php
 namespace App\Http\Controllers\Seller;
 
-use App\Models\User;
-use App\Models\KycApplication;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\KycStoreRequest;
-use App\Notifications\AdminNotification;
 use App\Http\Requests\KycReapplicationUpdateRequest;
+use App\Http\Requests\KycStoreRequest;
+use App\Models\KycApplication;
+use App\Models\User;
+use App\Notifications\AdminNotification;
 
 class KycController extends Controller
 {

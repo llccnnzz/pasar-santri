@@ -11,7 +11,6 @@ use App\Notifications\BuyerNotification;
 use App\Services\BiteshipService;
 use App\Traits\CartTrait;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class CheckoutController extends Controller

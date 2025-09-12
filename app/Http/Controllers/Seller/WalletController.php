@@ -2,15 +2,13 @@
 
 namespace App\Http\Controllers\Seller;
 
-use App\Models\ShopBank;
-use App\Models\ShopBalance;
-use Illuminate\Http\Request;
-use App\Models\ShopBalanceLog;
-use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\WalletWithdrawRequest;
+use App\Models\ShopBalance;
+use App\Models\ShopBalanceLog;
+use App\Models\ShopBank;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class WalletController extends Controller
 {

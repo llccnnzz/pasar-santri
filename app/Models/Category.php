@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use App\Traits\HasUuid;
 
 class Category extends Model implements HasMedia
 {
@@ -18,13 +18,13 @@ class Category extends Model implements HasMedia
     protected static function boot()
     {
         parent::boot();
-        
+
         static::creating(function ($category) {
             if (empty($category->slug)) {
                 $category->slug = \Illuminate\Support\Str::slug($category->name);
             }
         });
-        
+
         static::updating(function ($category) {
             if ($category->isDirty('name') && empty($category->slug)) {
                 $category->slug = \Illuminate\Support\Str::slug($category->name);

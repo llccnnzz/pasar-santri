@@ -1,7 +1,6 @@
 <?php
 namespace App\Models;
 
-use App\Models\ShopShippingMethod;
 use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;

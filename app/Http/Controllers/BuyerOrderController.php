@@ -1,13 +1,13 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Http\Requests\BuyerOrderTrackingRequest;
 use App\Models\Order;
-use Illuminate\Http\Request;
-use App\Services\BiteshipService;
-use Illuminate\Support\Facades\Auth;
 use App\Notifications\BuyerNotification;
 use App\Notifications\SellerNotification;
-use App\Http\Requests\BuyerOrderTrackingRequest;
+use App\Services\BiteshipService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class BuyerOrderController extends Controller
 {

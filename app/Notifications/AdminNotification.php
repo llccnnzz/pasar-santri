@@ -1,10 +1,9 @@
 <?php
 namespace App\Notifications;
 
-use Illuminate\Bus\Queueable;
 use App\Models\KycApplication;
+use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
-use Illuminate\Notifications\Messages\MailMessage;
 
 class AdminNotification extends Notification
 {

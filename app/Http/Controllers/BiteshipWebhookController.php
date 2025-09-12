@@ -3,11 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use App\Http\Controllers\Controller;
 use App\Notifications\BuyerNotification;
 use App\Notifications\SellerNotification;
+use Illuminate\Http\Request;
 
 class BiteshipWebhookController extends Controller
 {
