@@ -12,6 +12,7 @@ use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\BuyerOrderController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\BiteshipWebhookController;
 
 /*
@@ -36,6 +37,7 @@ Auth::routes();
 Route::middleware('auth')->group(function () {
     // Account management routes
     Route::get('/me', [HomeController::class, 'account'])->name('account');
+    Route::post('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('buyer.notifications.markAsRead');
 
     // Cart management routes
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');

@@ -1,11 +1,13 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Http\Requests\BuyerOrderTrackingRequest;
 use App\Models\Order;
-use App\Services\BiteshipService;
 use Illuminate\Http\Request;
+use App\Services\BiteshipService;
 use Illuminate\Support\Facades\Auth;
+use App\Notifications\BuyerNotification;
+use App\Notifications\SellerNotification;
+use App\Http\Requests\BuyerOrderTrackingRequest;
 
 class BuyerOrderController extends Controller
 {
@@ -105,6 +107,11 @@ class BuyerOrderController extends Controller
         $order->update([
             'status' => 'finished',
         ]);
+
+        $seller = $order['shop']['user'];
+
+        $seller->notify(new SellerNotification('order_finished', $order));
+        auth()->user()->notify(new BuyerNotification('order_finished', $order));
 
         return redirect('/me?page=orders')->with('success', 'Order has been marked as finished!');
     }

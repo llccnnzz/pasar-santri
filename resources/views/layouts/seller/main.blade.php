@@ -348,169 +348,102 @@
 
                                 <li class="ms-lg-4 ms-md-4 ms-2">
                                     <div class="dropdown notifications">
-                                        <button class="btn btn-secondary border-0 p-0 position-relative badge"
+                                        <button class="btn btn-secondary border-0 p-0 position-relative"
                                             type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                             <i data-feather="bell"></i>
+                                            @if (auth()->user()->unreadNotifications()->where('type', 'App\Notifications\SellerNotification')->count() > 0)
+                                                <span
+                                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                                    {{ auth()->user()->unreadNotifications()->where('type', 'App\Notifications\SellerNotification')->count() }}
+                                                </span>
+                                            @endif
                                         </button>
+
                                         <div class="dropdown-menu dropdown-lg p-0 border-0 box-shadow">
                                             <h6
                                                 class="dropdown-item-text fs-15 fw-semibold m-0 py-3 border-bottom border-color d-flex justify-content-between align-items-center">
                                                 Notifications
-                                                <span
-                                                    class="text-white bg-danger fs-12 py-1 px-1 rounded-1 fw-normal">08</span>
+                                                <span class="text-white bg-danger fs-12 py-1 px-1 rounded-1 fw-normal">
+                                                    {{ auth()->user()->notifications()->where('type', 'App\Notifications\SellerNotification')->count() }}
+                                                </span>
                                             </h6>
 
                                             <div class="notification-menu h-400" data-simplebar>
-                                                <a href="notifications.html" class="dropdown-item py-3">
-                                                    <small class="float-end ps-2 text-body fs-12">6 min ago</small>
-                                                    <div class="d-flex align-items-center">
-                                                        <div
-                                                            class="avatar-md rounded-circle text-center flex-shrink-0">
-                                                            <i data-feather="check-circle"></i>
-                                                        </div>
-                                                        <div class="flex-grow-1 ms-2 text-truncate">
-                                                            <h6 class="my-0 fs-14 fw-medium">Order Placed <span
-                                                                    class="text-success">ID: #1116773</span></h6>
-                                                            <small class="mb-0 text-body fs-12">Order Placed
-                                                                Successfully</small>
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                                <a href="notifications.html" class="dropdown-item py-3">
-                                                    <small class="float-end ps-2 text-body fs-12">8 min ago</small>
-                                                    <div class="d-flex align-items-center">
-                                                        <div
-                                                            class="avatar-md rounded-circle text-center flex-shrink-0">
-                                                            <i data-feather="clock"></i>
-                                                        </div>
-                                                        <div class="flex-grow-1 ms-2 text-truncate">
-                                                            <h6 class="my-0 fs-14 fw-medium">Order Delayed <span
-                                                                    class="text-danger">ID: 7731116</span></h6>
-                                                            <small class="mb-0 text-body fs-12">Order Delayed
-                                                                Unfortunately</small>
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                                <a href="notifications.html" class="dropdown-item py-3">
-                                                    <small class="float-end ps-2 text-body fs-12">1 min ago</small>
-                                                    <div class="d-flex align-items-center">
-                                                        <div
-                                                            class="avatar-md rounded-circle text-center flex-shrink-0">
-                                                            <i data-feather="shopping-bag"></i>
-                                                        </div>
-                                                        <div class="flex-grow-1 ms-2 text-truncate">
-                                                            <h6 class="my-0 fs-14 fw-medium">Your Order Has Been
-                                                                Shipped</h6>
-                                                            <small class="mb-0 text-body fs-12">Order No: 123456 Has
-                                                                Shipped To Your Delivery Address</small>
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                                <a href="notifications.html" class="dropdown-item py-3">
-                                                    <small class="float-end ps-2 text-body fs-12">3 min ago</small>
-                                                    <div class="d-flex align-items-center">
-                                                        <div
-                                                            class="avatar-md rounded-circle text-center flex-shrink-0">
-                                                            <i data-feather="percent"></i>
-                                                        </div>
-                                                        <div class="flex-grow-1 ms-2 text-truncate">
-                                                            <h6 class="my-0 fs-14 fw-medium">Discount Available</h6>
-                                                            <small class="mb-0 text-body fs-12">Discount Available On
-                                                                Selected Products</small>
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                                <a href="notifications.html" class="dropdown-item py-3">
-                                                    <small class="float-end ps-2 text-body fs-12">4 min ago</small>
-                                                    <div class="d-flex align-items-center">
-                                                        <div
-                                                            class="avatar-md rounded-circle text-center flex-shrink-0">
-                                                            <i data-feather="user-check"></i>
-                                                        </div>
-                                                        <div class="flex-grow-1 ms-2 text-truncate">
-                                                            <h6 class="my-0 fs-14 fw-medium">Account Has Been Verified
-                                                            </h6>
-                                                            <small class="mb-0 text-body fs-12">Your Account Has Been
-                                                                Verified Sucessfully</small>
+                                                @foreach (auth()->user()->notifications()->where('type', 'App\Notifications\SellerNotification')->orderBy('read_at', 'desc')->take(10)->get() as $notif)
+                                                    @php
+                                                        $data = $notif->data;
+                                                    @endphp
+                                                    <div
+                                                        class="dropdown-item py-3 {{ $notif->read_at ? 'bg-white text-muted' : 'bg-light' }}">
+                                                        <div class="d-flex align-items-start">
+                                                            @php
+                                                                $icon = 'bell';
+                                                                switch ($data['formatted_type'] ?? null) {
+                                                                    case 'kyc_approved':
+                                                                        $icon = 'user-check';
+                                                                        break;
+
+                                                                    case 'kyc_rejected':
+                                                                        $icon = 'user-x';
+                                                                        break;
+
+                                                                    case 'order_new':
+                                                                        $icon = 'check-circle';
+                                                                        break;
+
+                                                                    case 'order_shipped':
+                                                                        $icon = 'shopping-bag';
+                                                                        break;
+
+                                                                    case 'order_delivered':
+                                                                        $icon = 'shopping-bag';
+                                                                        break;
+
+                                                                    case 'order_finished':
+                                                                        $icon = 'check-circle';
+                                                                        break;
+
+                                                                    default:
+                                                                        $icon = 'bell';
+                                                                }
+                                                            @endphp
+
+                                                            <div
+                                                                class="avatar-md rounded-circle text-center flex-shrink-0">
+                                                                <i data-feather="{{ $icon }}"></i>
+                                                            </div>
+                                                            <div class="flex-grow-1 ms-2 text-truncate">
+                                                                <h6 class="my-0 fs-14 fw-medium">
+                                                                    {{ $data['message'] ?? 'No message' }}
+                                                                </h6>
+                                                                <small class="mb-0 text-body fs-12">
+                                                                    Status: {{ $data['formatted_type'] ?? 'N/A' }}
+                                                                </small>
+                                                            </div>
+                                                            <div class="text-center ms-2">
+                                                                <small class="d-block text-body fs-12">
+                                                                    {{ $notif->created_at->diffForHumans() }}
+                                                                </small>
+                                                                @if (!$notif->read_at)
+                                                                    <form
+                                                                        action="{{ route('seller.notifications.markAsRead', $notif['id']) }}"
+                                                                        method="POST" class="d-inline">
+                                                                        @csrf
+                                                                        <button type="submit"
+                                                                            class="btn btn-sm border-0 rounded-circle text-center text-success bg-success-transparent mt-1"
+                                                                            data-bs-toggle="tooltip"
+                                                                            title="Mark as read">
+                                                                            <i data-feather="check"></i>
+                                                                        </button>
+                                                                    </form>
+                                                                @endif
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </a>
-                                                <a href="notifications.html" class="dropdown-item py-3">
-                                                    <small class="float-end ps-2 text-body fs-12">6 min ago</small>
-                                                    <div class="d-flex align-items-center">
-                                                        <div
-                                                            class="avatar-md rounded-circle text-center flex-shrink-0">
-                                                            <i data-feather="check-circle"></i>
-                                                        </div>
-                                                        <div class="flex-grow-1 ms-2 text-truncate">
-                                                            <h6 class="my-0 fs-14 fw-medium">Order Placed <span
-                                                                    class="text-success">ID: #1116773</span></h6>
-                                                            <small class="mb-0 text-body fs-12">Order Placed
-                                                                Successfully</small>
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                                <a href="notifications.html" class="dropdown-item py-3">
-                                                    <small class="float-end ps-2 text-body fs-12">8 min ago</small>
-                                                    <div class="d-flex align-items-center">
-                                                        <div
-                                                            class="avatar-md rounded-circle text-center flex-shrink-0">
-                                                            <i data-feather="clock"></i>
-                                                        </div>
-                                                        <div class="flex-grow-1 ms-2 text-truncate">
-                                                            <h6 class="my-0 fs-14 fw-medium">Order Delayed <span
-                                                                    class="text-danger">ID: 7731116</span></h6>
-                                                            <small class="mb-0 text-body fs-12">Order Delayed
-                                                                Unfortunately</small>
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                                <a href="notifications.html" class="dropdown-item py-3">
-                                                    <small class="float-end ps-2 text-body fs-12">1 min ago</small>
-                                                    <div class="d-flex align-items-center">
-                                                        <div
-                                                            class="avatar-md rounded-circle text-center flex-shrink-0">
-                                                            <i data-feather="shopping-bag"></i>
-                                                        </div>
-                                                        <div class="flex-grow-1 ms-2 text-truncate">
-                                                            <h6 class="my-0 fs-14 fw-medium">Your Order Has Been
-                                                                Shipped</h6>
-                                                            <small class="mb-0 text-body fs-12">Order No: 123456 Has
-                                                                Shipped To Your Delivery Address</small>
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                                <a href="notifications.html" class="dropdown-item py-3">
-                                                    <small class="float-end ps-2 text-body fs-12">3 min ago</small>
-                                                    <div class="d-flex align-items-center">
-                                                        <div
-                                                            class="avatar-md rounded-circle text-center flex-shrink-0">
-                                                            <i data-feather="percent"></i>
-                                                        </div>
-                                                        <div class="flex-grow-1 ms-2 text-truncate">
-                                                            <h6 class="my-0 fs-14 fw-medium">Discount Available</h6>
-                                                            <small class="mb-0 text-body fs-12">Discount Available On
-                                                                Selected Products</small>
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                                <a href="notifications.html" class="dropdown-item py-3">
-                                                    <small class="float-end ps-2 text-body fs-12">4 min ago</small>
-                                                    <div class="d-flex align-items-center">
-                                                        <div
-                                                            class="avatar-md rounded-circle text-center flex-shrink-0">
-                                                            <i data-feather="user-check"></i>
-                                                        </div>
-                                                        <div class="flex-grow-1 ms-2 text-truncate">
-                                                            <h6 class="my-0 fs-14 fw-medium">Account Has Been Verified
-                                                            </h6>
-                                                            <small class="mb-0 text-body fs-12">Your Account Has Been
-                                                                Verified Sucessfully</small>
-                                                        </div>
-                                                    </div>
-                                                </a>
+                                                @endforeach
                                             </div>
-                                            <a href="notification.html"
+
+                                            <a href="{{ route('seller.notifications.index', 'seller') }}"
                                                 class="dropdown-item text-center text-white border-top border-color pt-2 pb-2 d-block bg-primary rounded-bottom fs-15">
                                                 View all
                                             </a>

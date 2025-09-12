@@ -1,11 +1,13 @@
 <?php
 namespace App\Http\Controllers\Seller;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\KycReapplicationUpdateRequest;
-use App\Http\Requests\KycStoreRequest;
+use App\Models\User;
 use App\Models\KycApplication;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\KycStoreRequest;
+use App\Notifications\AdminNotification;
+use App\Http\Requests\KycReapplicationUpdateRequest;
 
 class KycController extends Controller
 {
@@ -120,6 +122,11 @@ class KycController extends Controller
                 $kyc->addMedia($file)
                     ->toMediaCollection('additional_docs');
             }
+        }
+
+        $admins = User::role('admin')->get();
+        foreach ($admins as $admin) {
+            $admin->notify(new AdminNotification($kyc));
         }
 
         return redirect()->route('kyc.index')

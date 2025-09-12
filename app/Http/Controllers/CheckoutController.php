@@ -7,6 +7,7 @@ use App\Models\Promotion;
 use App\Models\ShippingMethod;
 use App\Models\Shop;
 use App\Models\ShopShippingMethod;
+use App\Notifications\BuyerNotification;
 use App\Services\BiteshipService;
 use App\Traits\CartTrait;
 use Illuminate\Http\Request;
@@ -354,6 +355,13 @@ class CheckoutController extends Controller
 
         if ($payments->isEmpty()) {
             return redirect('/me')->withMessage('Tidak ada pembayaran yang ditemukan atau sudah kadaluarsa.');
+        }
+
+        foreach ($payments as $payment) {
+            $order = $payment->order;
+            if ($order) {
+                auth()->user()->notify(new BuyerNotification('order_pending', $order));
+            }
         }
 
         return view('buyer.checkout.success', compact('payments'));

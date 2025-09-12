@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use App\Notifications\BuyerNotification;
+use App\Notifications\SellerNotification;
 
 class BiteshipWebhookController extends Controller
 {
@@ -35,6 +37,8 @@ class BiteshipWebhookController extends Controller
         $responseMessage = '[Update Status] Order not found';
 
         $order = Order::where('shipment_ref_id', $shipmentRefId)->first();
+        $buyer = $order['user'];
+        $seller = $order['shop']['user'];
 
         if (!$order) {
             return response()->json([
@@ -46,6 +50,10 @@ class BiteshipWebhookController extends Controller
         if($status === 'dropping_off') {
             $order['status'] = 'shipped';
             $order->save();
+
+            $user->notify(new BuyerNotification('order_shipped', $order));
+            $seller->notify(new SellerNotification('order_shipped', $order));
+
             return response()->json([
                 'success' => true,
                 'message' => '[Update Status] Order with ID ' . $order->id . ' is now shipped',
@@ -55,6 +63,10 @@ class BiteshipWebhookController extends Controller
         if($status === 'delivered') {
             $order['status'] = 'delivered';
             $order->save();
+
+            $user->notify(new BuyerNotification('order_delivered', $order));
+            $seller->notify(new SellerNotification('order_delivered', $order));
+
             return response()->json([
                 'success' => true,
                 'message' => '[Update Status] Order with ID ' . $order->id . ' is now delivered',

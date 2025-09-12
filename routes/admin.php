@@ -1,16 +1,17 @@
 <?php
 
-use App\Http\Controllers\Admin\AdminAdsController;
-use App\Http\Controllers\Admin\AdminBannerController;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\Admin\AdminAdsController;
 use App\Http\Controllers\Admin\AdminKycController;
 use App\Http\Controllers\Admin\AdminOrderController;
-use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Admin\AdminPromoController;
+use App\Http\Controllers\Admin\AdminBannerController;
 use App\Http\Controllers\Admin\AdminSellerController;
-use App\Http\Controllers\Admin\AdminServiceFeeController;
+use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Admin\AdminShippingController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\AdminServiceFeeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +29,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'role:admin']], func
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/', [AdminController::class, 'dashboard'])->name('admin.index');
     Route::get('/profile', [AdminController::class, 'profile'])->name('admin.profile');
+    Route::get('/notifications/{type}', [NotificationController::class, 'index'])->name('admin.notifications.index');
+    Route::post('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('admin.notifications.markAsRead');
 
     // ===================================================================
     // SELLER MANAGEMENT
