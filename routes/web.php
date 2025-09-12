@@ -1,18 +1,19 @@
 <?php
 
+use App\Http\Controllers\AddressController;
+use App\Http\Controllers\BiteshipWebhookController;
+use App\Http\Controllers\BuyerOrderController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\RobotsController;
+use App\Http\Controllers\ShopController;
+use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\WishlistController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\ShopController;
-use App\Http\Controllers\RobotsController;
-use App\Http\Controllers\AddressController;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\SitemapController;
-use App\Http\Controllers\CheckoutController;
-use App\Http\Controllers\WishlistController;
-use App\Http\Controllers\BuyerOrderController;
-use App\Http\Controllers\BiteshipWebhookController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +37,7 @@ Auth::routes();
 Route::middleware('auth')->group(function () {
     // Account management routes
     Route::get('/me', [HomeController::class, 'account'])->name('account');
+    Route::post('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('buyer.notifications.markAsRead');
 
     // Cart management routes
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');

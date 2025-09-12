@@ -1,12 +1,14 @@
 <?php
 namespace App\Http\Controllers\Admin;
 
-use Exception;
+use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderPayment;
+use App\Notifications\BuyerNotification;
+use App\Notifications\SellerNotification;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Controller;
 
 class AdminOrderController extends Controller
 {
@@ -28,7 +30,9 @@ class AdminOrderController extends Controller
         DB::beginTransaction();
 
         try {
-            $order = Order::findOrFail($orderId);
+            $order  = Order::findOrFail($orderId);
+            $user   = $order['user'];
+            $seller = $order['shop']['user'];
 
             if ($order->status !== 'pending') {
                 return back()->with('error', 'Hanya order dengan status pending yang dapat bayar');
@@ -39,6 +43,9 @@ class AdminOrderController extends Controller
             }
 
             $order->update(['status' => $status]);
+
+            $user->notify(new BuyerNotification('order_paid', $order));
+            $seller->notify(new SellerNotification('order_new', $order));
 
             OrderPayment::where('order_id', $order->id)
                 ->update([
@@ -66,6 +73,12 @@ class AdminOrderController extends Controller
 
             foreach ($pendingOrders as $order) {
                 $order->update(['status' => 'paid']);
+
+                $user   = $order['user'];
+                $seller = $order['shop']['user'];
+
+                $user->notify(new BuyerNotification('order_paid', $order));
+                $seller->notify(new SellerNotification('order_new', $order));
 
                 OrderPayment::where('order_id', $order->id)
                     ->update([

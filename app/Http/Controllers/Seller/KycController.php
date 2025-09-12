@@ -5,7 +5,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\KycReapplicationUpdateRequest;
 use App\Http\Requests\KycStoreRequest;
 use App\Models\KycApplication;
-use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use App\Notifications\AdminNotification;
 
 class KycController extends Controller
 {
@@ -120,6 +121,11 @@ class KycController extends Controller
                 $kyc->addMedia($file)
                     ->toMediaCollection('additional_docs');
             }
+        }
+
+        $admins = User::role('admin')->get();
+        foreach ($admins as $admin) {
+            $admin->notify(new AdminNotification($kyc));
         }
 
         return redirect()->route('kyc.index')

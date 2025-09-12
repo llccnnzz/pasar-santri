@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\AdminPromoController;
 use App\Http\Controllers\Admin\AdminSellerController;
 use App\Http\Controllers\Admin\AdminServiceFeeController;
 use App\Http\Controllers\Admin\AdminShippingController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,6 +29,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'role:admin']], func
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/', [AdminController::class, 'dashboard'])->name('admin.index');
     Route::get('/profile', [AdminController::class, 'profile'])->name('admin.profile');
+    Route::get('/notifications/{type}', [NotificationController::class, 'index'])->name('admin.notifications.index');
+    Route::post('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('admin.notifications.markAsRead');
 
     // ===================================================================
     // SELLER MANAGEMENT

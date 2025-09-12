@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Seller\CategoryController;
 use App\Http\Controllers\Seller\InventoryController;
 use App\Http\Controllers\Seller\KycController;
@@ -22,6 +23,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'seller', 'middleware' => ['auth']], function () {
     // KYC Management (no middleware required, but required before shop setup)
+    Route::get('/notifications/{type}', [NotificationController::class, 'index'])->name('seller.notifications.index');
+    Route::post('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('seller.notifications.markAsRead');
+
     Route::group(['prefix' => 'kyc'], function () {
         Route::get('/', [KycController::class, 'index'])->name('kyc.index');
         Route::get('/create', [KycController::class, 'create'])->name('kyc.create');

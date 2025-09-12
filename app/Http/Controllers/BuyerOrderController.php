@@ -3,6 +3,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\BuyerOrderTrackingRequest;
 use App\Models\Order;
+use App\Notifications\BuyerNotification;
+use App\Notifications\SellerNotification;
 use App\Services\BiteshipService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -105,6 +107,11 @@ class BuyerOrderController extends Controller
         $order->update([
             'status' => 'finished',
         ]);
+
+        $seller = $order['shop']['user'];
+
+        $seller->notify(new SellerNotification('order_finished', $order));
+        auth()->user()->notify(new BuyerNotification('order_finished', $order));
 
         return redirect('/me?page=orders')->with('success', 'Order has been marked as finished!');
     }

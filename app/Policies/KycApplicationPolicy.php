@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\KycApplication;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class KycApplicationPolicy
 {
@@ -72,7 +71,7 @@ class KycApplicationPolicy
      */
     public function reapply(User $user, KycApplication $kycApplication): bool
     {
-        return $user->id === $kycApplication->user_id 
+        return $user->id === $kycApplication->user_id
             && $kycApplication->status === 'rejected';
     }
 }

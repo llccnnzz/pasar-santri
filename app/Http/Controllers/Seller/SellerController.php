@@ -8,15 +8,13 @@ use App\Http\Requests\ShopSettingsUpdateRequest;
 use App\Http\Requests\ShopSetupStoreRequest;
 use App\Models\KycApplication;
 use App\Models\Order;
-use App\Models\Product;
 use App\Models\ShippingMethod;
 use App\Models\Shop;
 use App\Models\ShopShippingMethod;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class SellerController extends Controller
 {
@@ -96,11 +94,11 @@ class SellerController extends Controller
                 COUNT(*) as total_orders,
                 COUNT(CASE WHEN status IN ('completed', 'shipped', 'delivered') THEN 1 END) as total_sales,
                 COUNT(CASE WHEN status IN ('pending', 'confirmed', 'processing') THEN 1 END) as pending_orders,
-                COALESCE(SUM(CASE 
-                    WHEN status IN ('completed', 'shipped', 'delivered') 
+                COALESCE(SUM(CASE
+                    WHEN status IN ('completed', 'shipped', 'delivered')
                         AND created_at BETWEEN ? AND ?
                     THEN CAST((payment_detail::jsonb)->>'total_amount' AS DECIMAL(15,2))
-                    ELSE 0 
+                    ELSE 0
                 END), 0) as total_revenue
             ", [$startDate, $endDate])
             ->where('shop_id', $shop->id)
@@ -155,17 +153,17 @@ class SellerController extends Controller
 
         $revenues = DB::table('orders')
             ->selectRaw("
-                COALESCE(SUM(CASE 
-                    WHEN status IN ('completed', 'shipped', 'delivered') 
+                COALESCE(SUM(CASE
+                    WHEN status IN ('completed', 'shipped', 'delivered')
                         AND created_at BETWEEN ? AND ?
                     THEN CAST((payment_detail::jsonb)->>'total_amount' AS DECIMAL(15,2))
-                    ELSE 0 
+                    ELSE 0
                 END), 0) as current_revenue,
-                COALESCE(SUM(CASE 
-                    WHEN status IN ('completed', 'shipped', 'delivered') 
+                COALESCE(SUM(CASE
+                    WHEN status IN ('completed', 'shipped', 'delivered')
                         AND created_at BETWEEN ? AND ?
                     THEN CAST((payment_detail::jsonb)->>'total_amount' AS DECIMAL(15,2))
-                    ELSE 0 
+                    ELSE 0
                 END), 0) as previous_revenue
             ", [$currentStart, $currentEnd, $previousStart, $previousEnd])
             ->where('shop_id', $shop->id)
@@ -191,10 +189,10 @@ class SellerController extends Controller
         $monthlyData = DB::table('orders')
             ->selectRaw("
                 TO_CHAR(created_at, 'YYYY-MM') as month,
-                COALESCE(SUM(CASE 
+                COALESCE(SUM(CASE
                     WHEN status IN ('completed', 'shipped', 'delivered')
                     THEN CAST((payment_detail::jsonb)->>'total_amount' AS DECIMAL(15,2))
-                    ELSE 0 
+                    ELSE 0
                 END), 0) as revenue
             ")
             ->where('shop_id', $shop->id)
@@ -207,11 +205,11 @@ class SellerController extends Controller
 
         $months = [];
         $sales = [];
-        
+
         for ($i = 11; $i >= 0; $i--) {
             $date = now()->subMonths($i);
             $monthKey = $date->format('Y-m');
-            
+
             $months[] = $date->format('M Y');
             $sales[] = (float) ($monthlyData[$monthKey] ?? 0);
         }
@@ -227,7 +225,7 @@ class SellerController extends Controller
         // Get products that exist in completed orders from the JSON order_details column
         // This is a complex query for PostgreSQL JSON operations with proper casting
         $productSales = DB::select("
-            SELECT 
+            SELECT
                 p.id,
                 p.name,
                 p.slug,
@@ -235,10 +233,10 @@ class SellerController extends Controller
                 p.stock,
                 p.status,
                 COALESCE(SUM(
-                    CASE 
-                        WHEN o.status IN ('completed', 'shipped', 'delivered') 
+                    CASE
+                        WHEN o.status IN ('completed', 'shipped', 'delivered')
                         THEN (item->>'quantity')::integer
-                        ELSE 0 
+                        ELSE 0
                     END
                 ), 0) as total_sold
             FROM products p
@@ -273,10 +271,10 @@ class SellerController extends Controller
         $weeklyData = DB::table('orders')
             ->selectRaw("
                 EXTRACT(WEEK FROM created_at) as week_number,
-                COALESCE(SUM(CASE 
+                COALESCE(SUM(CASE
                     WHEN status IN ('completed', 'shipped', 'delivered')
                     THEN CAST((payment_detail::jsonb)->>'total_amount' AS DECIMAL(15,2))
-                    ELSE 0 
+                    ELSE 0
                 END), 0) as revenue
             ")
             ->where('shop_id', $shop->id)
@@ -288,20 +286,20 @@ class SellerController extends Controller
 
         $weeks = [];
         $revenue = [];
-        
+
         $currentWeek = $startOfMonth->copy();
         $weekCounter = 1;
-        
+
         while ($currentWeek->month == now()->month && $weekCounter <= 5) { // Limit to max 5 weeks
             $weekEnd = $currentWeek->copy()->endOfWeek();
             if ($weekEnd->month != now()->month) {
                 $weekEnd = now()->endOfMonth();
             }
-            
+
             $weekNumber = $currentWeek->week();
             $weeks[] = 'Week ' . $weekCounter;
             $revenue[] = (float) ($weeklyData[$weekNumber] ?? 0);
-            
+
             $currentWeek = $weekEnd->copy()->addDay();
             if ($currentWeek->month != now()->month) break;
             $currentWeek = $currentWeek->startOfWeek();
@@ -414,7 +412,7 @@ class SellerController extends Controller
                 return $method->pivot && !in_array($method->id, $activeShopMethodsIds);
             })->count();
             $notUsedCount = $methods->where('pivot', null)->count();
-            
+
             return [
                 'courier_code' => $courierCode,
                 'courier_name' => $firstMethod->courier_name,
@@ -502,8 +500,8 @@ class SellerController extends Controller
             }
         }
 
-        $message = $enabled 
-            ? "All {$shippingMethods->first()->courier_name} shipping methods enabled" 
+        $message = $enabled
+            ? "All {$shippingMethods->first()->courier_name} shipping methods enabled"
             : "All {$shippingMethods->first()->courier_name} shipping methods disabled";
 
         return response()->json([
@@ -517,7 +515,7 @@ class SellerController extends Controller
     public function shippingDestroy(Request $request, $shippingId)
     {
         $shop = $request->user()->shop;
-        
+
         $record = ShopShippingMethod::where('shop_id', $shop->id)
             ->where('shipping_method_id', $shippingId)
             ->first();
@@ -666,20 +664,20 @@ class SellerController extends Controller
         // Get revenue breakdown for different periods with proper JSON casting
         $result = DB::table('orders')
             ->selectRaw("
-                COALESCE(SUM(CASE 
+                COALESCE(SUM(CASE
                     WHEN status IN ('completed', 'shipped', 'delivered')
                     THEN CAST((payment_detail::jsonb)->>'total_amount' AS DECIMAL(15,2))
-                    ELSE 0 
+                    ELSE 0
                 END), 0) as income,
-                COALESCE(SUM(CASE 
+                COALESCE(SUM(CASE
                     WHEN status IN ('completed', 'shipped', 'delivered')
                     THEN CAST((payment_detail::jsonb)->>'total_amount' AS DECIMAL(15,2)) * 0.85
-                    ELSE 0 
+                    ELSE 0
                 END), 0) as profit,
-                COALESCE(SUM(CASE 
+                COALESCE(SUM(CASE
                     WHEN status IN ('completed', 'shipped', 'delivered')
                     THEN CAST((payment_detail::jsonb)->>'total_amount' AS DECIMAL(15,2)) * 0.15
-                    ELSE 0 
+                    ELSE 0
                 END), 0) as expenses
             ")
             ->where('shop_id', $shop->id)
@@ -709,10 +707,10 @@ class SellerController extends Controller
                 users.name,
                 users.email,
                 COUNT(orders.id) as order_count,
-                COALESCE(SUM(CASE 
+                COALESCE(SUM(CASE
                     WHEN orders.status IN ('completed', 'shipped', 'delivered')
                     THEN CAST((orders.payment_detail::jsonb)->>'total_amount' AS DECIMAL(15,2))
-                    ELSE 0 
+                    ELSE 0
                 END), 0) as total_spent
             ")
             ->where('orders.shop_id', $shop->id)
@@ -732,10 +730,10 @@ class SellerController extends Controller
             ->selectRaw("
                 COALESCE((order_details::jsonb)->'address'->>'city', 'Unknown') as city,
                 COUNT(orders.id) as order_count,
-                COALESCE(SUM(CASE 
+                COALESCE(SUM(CASE
                     WHEN orders.status IN ('completed', 'shipped', 'delivered')
                     THEN 1
-                    ELSE 0 
+                    ELSE 0
                 END), 0) as completed_orders
             ")
             ->where('orders.shop_id', $shop->id)
@@ -779,7 +777,7 @@ class SellerController extends Controller
 
         return $orderActivities->map(function ($activity) {
             $timeAgo = Carbon::parse($activity->updated_at)->diffForHumans();
-            
+
             return [
                 'type' => 'order',
                 'icon' => 'shopping-cart',

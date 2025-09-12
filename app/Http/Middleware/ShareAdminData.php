@@ -2,11 +2,11 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\KycApplication;
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
-use App\Models\KycApplication;
 use Illuminate\Support\Facades\View;
+use Symfony\Component\HttpFoundation\Response;
 
 class ShareAdminData
 {
@@ -20,7 +20,7 @@ class ShareAdminData
         // Only share data for admin routes
         if ($request->routeIs('admin.*')) {
             $pendingKycCount = KycApplication::where('status', 'pending')->count();
-            
+
             View::share('pendingKycCount', $pendingKycCount);
         }
 

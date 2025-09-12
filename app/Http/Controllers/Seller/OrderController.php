@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Seller;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\OrderUpdateStatusRequest;
 use App\Models\Order;
+use App\Notifications\BuyerNotification;
+use App\Notifications\SellerNotification;
 use App\Services\BiteshipService;
 use Barryvdh\Snappy\Facades\SnappyPdf;
 use Illuminate\Http\Request;
@@ -256,13 +258,25 @@ class OrderController extends Controller
             $order['cancellation_reason'] = $request['cancellation_reason'] ?? 'Cancelled by seller';
         }
 
-        if ($newStatus === 'shipped' && $request->filled('tracking_details')) {
-            $order['tracking_details'] = $request['tracking_details'];
-        }
-
         $order->save();
 
         $this->logStatusChange($order, $oldStatus, $newStatus);
+
+        $buyer = $order['user'];
+
+        if ($newStatus === 'confirmed' && $buyer) {
+            $buyer->notify(new BuyerNotification('order_confirmed', $order));
+        } else if ($newStatus === 'processing' && $buyer) {
+            $buyer->notify(new BuyerNotification('order_processing', $order));
+        } else if ($newStatus === 'cancelled' && $buyer) {
+            $buyer->notify(new BuyerNotification('order_cancelled', $order));
+        }
+
+        $seller = auth()->user();
+
+        if ($newStatus === 'cancelled' && $buyer) {
+            $buyer->notify(new SellerNotification('order_cancelled', $order));
+        }
 
         return back()->with('success', "Receipt has been generated and the order has been processed in Biteship. Current status: " . ucfirst($newStatus));
     }
@@ -380,14 +394,14 @@ class OrderController extends Controller
         });
 
         return [[
-            'mainLogo'           => config('app.url').'/assets/imgs/theme/logo.png',
+            'mainLogo'           => config('app.url') . '/assets/imgs/theme/logo.png',
             'invoice'            => $order['invoice'],
             'airwaybill'         => $tracking['waybill_id'] ?? '',
-            'courierLogo'        => $shipping['logo_url'] ? config('app.url').$shipping['logo_url'] : '',
+            'courierLogo'        => $shipping['logo_url'] ? config('app.url') . $shipping['logo_url'] : '',
             'courierCompany'     => $shipping['courier_name'] ?? '',
             'courierServiceName' => $shipping['service_name'] ?? '',
             'totalWeight'        => $totalWeight,
-            'shippingFee'        => 'Rp.'. number_format($shipping['price'] ?? 0),
+            'shippingFee'        => 'Rp.' . number_format($shipping['price'] ?? 0),
             'buyerName'          => $address['name'] ?? $order['user']['name'],
             'buyerAddress'       => $address['address_line_1'] ?? '',
             'buyerPhone'         => $address['phone'] ?? '',

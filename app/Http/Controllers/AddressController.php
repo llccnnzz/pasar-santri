@@ -1,10 +1,9 @@
 <?php
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\UserAddressStoreRequest;
 use App\Http\Requests\UserAddressUpdateRequest;
+use Illuminate\Http\Request;
 
 class AddressController extends Controller
 {

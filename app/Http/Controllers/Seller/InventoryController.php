@@ -2,19 +2,18 @@
 
 namespace App\Http\Controllers\Seller;
 
-use App\Models\Product;
-use App\Models\Category;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
-use App\Models\ProductVariant;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use App\Http\Requests\InventoryStoreRequest;
-use App\Http\Requests\InventoryUpdateRequest;
 use App\Http\Requests\InventoryAddVariantRequest;
 use App\Http\Requests\InventoryBulkDeleteRequest;
 use App\Http\Requests\InventoryBulkStatusUpdateRequest;
+use App\Http\Requests\InventoryStoreRequest;
+use App\Http\Requests\InventoryUpdateRequest;
+use App\Models\Category;
+use App\Models\Product;
+use App\Models\ProductVariant;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class InventoryController extends Controller
 {

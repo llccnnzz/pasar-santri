@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\KycApplication;
+use App\Notifications\SellerNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -93,7 +94,10 @@ class AdminKycController extends Controller
                 $user->assignRole('seller');
             }
 
+            $user->notify(new SellerNotification('kyc_approved', $kycApplication));
+
             DB::commit();
+
 
             return redirect()
                 ->route('admin.kyc.show', $kycApplication)
@@ -134,6 +138,8 @@ class AdminKycController extends Controller
             if ($user->hasRole('seller')) {
                 $user->removeRole('seller');
             }
+
+            $user->notify(new SellerNotification('kyc_rejected', $kycApplication));
 
             DB::commit();
 

@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Order;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class OrderPolicy
 {
@@ -49,8 +48,8 @@ class OrderPolicy
     public function delete(User $user, Order $order): bool
     {
         // Only shop owner can delete their orders, and only if order is pending or cancelled
-        return $user->shop && 
-               $user->shop->id === $order->shop_id && 
+        return $user->shop &&
+               $user->shop->id === $order->shop_id &&
                in_array($order->status, ['pending', 'cancelled']);
     }
 
@@ -91,8 +90,8 @@ class OrderPolicy
      */
     public function markSettled(User $user, Order $order): bool
     {
-        return $user->shop && 
-               $user->shop->id === $order->shop_id && 
+        return $user->shop &&
+               $user->shop->id === $order->shop_id &&
                $order->status === 'delivered';
     }
 

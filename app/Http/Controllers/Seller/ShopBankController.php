@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers\Seller;
 
-use App\Models\ShopBank;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\ShopBankStoreRequest;
 use App\Http\Requests\ShopBankUpdateRequest;
+use App\Models\ShopBank;
+use Illuminate\Http\Request;
 
 class ShopBankController extends Controller
 {
