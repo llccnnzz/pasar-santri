@@ -161,23 +161,15 @@ class OrderController extends Controller
         }
 
         if ($order['status'] === 'confirmed' && $newStatus === 'processing') {
-            if (($request['collection_method'] !== null && ! in_array($request['collection_method'], ['drop_off', 'pickup']))) {
-                $byteshipOrder = $this->handleCreateByteship($order, $biteship, $request['collection_method'] ?? null);
+            if ($request['collection_method'] !== null && in_array($request['collection_method'], ['drop_off', 'pickup'])) {
+                $byteshipOrder = $this->handleCreateByteship($order, $biteship, $request['collection_method']);
 
-                if ($byteshipOrder['success'] === true) {
-                    $order['status'] = $newStatus;
-                    $order->save();
-                } else {
-                    return redirect()->back()->withErrors($byteshipOrder['error']);
-                }
-            } else {
-                $order['shipment_ref_id'] = $request['collection_method'];
-                $order['status']          = $newStatus;
+                $order['status'] = $newStatus;
                 $order->save();
+
+                $this->logStatusChange($order, $oldStatus, $newStatus);
             }
         }
-
-        $this->logStatusChange($order, $oldStatus, $newStatus);
 
         return redirect()->route('seller.orders.label', $order)
             ->with('success', 'Order created in Biteship. Shipping label ready.');
@@ -188,14 +180,12 @@ class OrderController extends Controller
         $payload = $this->generateByteshipPayload($order, $collectionMethod);
         $result  = $biteship->createOrder($payload);
 
-        if ($result['success'] === true) {
-            $order->update([
-                'shipment_ref_id'  => $result['id'] ?? null,
-                'tracking_details' => $result['courier'] ?? [],
-                'biteship_order'   => $result,
-            ]);
+        $order->update([
+            'shipment_ref_id'  => $result['id'] ?? null,
+            'tracking_details' => $result['courier'] ?? [],
+            'biteship_order'   => $result,
+        ]);
 
-        }
         return $result;
     }
 

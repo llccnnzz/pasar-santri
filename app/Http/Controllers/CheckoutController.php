@@ -289,6 +289,14 @@ class CheckoutController extends Controller
                     $paymentDetails['promo'] = $promoData;
                 }
 
+                if (is_array($pickedRate['available_collection_method'])) {
+                    $collection_method = count($pickedRate['available_collection_method']) === 1
+                        ? $pickedRate['available_collection_method'][0]
+                        : $pickedRate['available_collection_method'];
+                } else {
+                    $collection_method = $pickedRate['available_collection_method'];
+                }
+
                 $order = Order::create([
                     'user_id'        => $user->id,
                     'shop_id'        => $shopId,
@@ -305,7 +313,7 @@ class CheckoutController extends Controller
                             'description'       => $shippingMethod->description,
                             'logo_url'          => $shippingMethod->logo_url,
                             'price'             => $shippingCost,
-                            'collection_method' => is_array($pickedRate['available_collection_method']) && in_array('pickup', $pickedRate['available_collection_method']) ? 'pickup' : 'drop_off',
+                            'collection_method' => $collection_method,
                         ],
                     ],
                     'payment_detail' => $paymentDetails,
