@@ -42,28 +42,80 @@ class SellerController extends Controller
 
         // Try to get cached data first
         $dashboardData = Cache::remember($cacheKey, $cacheDuration, function() use ($shop, $startDate, $endDate, $dateRange) {
-            return [
-                'stats' => $this->getOptimizedStats($shop, $startDate, $endDate, $dateRange),
-                'ordersByStatus' => $this->getOrdersByStatus($shop, $startDate),
-                'monthlySales' => $this->getOptimizedMonthlySalesData($shop),
-                'weeklyRevenue' => $this->getOptimizedWeeklyRevenueData($shop),
-                'revenueBreakdown' => $this->getRevenueBreakdown($shop, $startDate, $endDate),
-                'topCustomers' => $this->getTopCustomers($shop, $startDate, $endDate),
-                'productsByLocation' => $this->getProductsByLocation($shop, $startDate, $endDate),
-                'recentActivity' => $this->getRecentActivity($shop),
-            ];
+            $data = [];
+            
+            try {
+                $data['stats'] = $this->getOptimizedStats($shop, $startDate, $endDate, $dateRange);
+            } catch (\Exception $e) {
+                \Log::warning("Failed to get stats for shop {$shop->id}: " . $e->getMessage());
+                $data['stats'] = ['total_sales' => 0, 'total_orders' => 0, 'pending_orders' => 0, 'total_products' => 0, 'active_products' => 0, 'out_of_stock' => 0, 'total_revenue' => 0, 'growth_percentage' => 0];
+            }
+            
+            try {
+                $data['ordersByStatus'] = $this->getOrdersByStatus($shop, $startDate);
+            } catch (\Exception $e) {
+                \Log::warning("Failed to get orders by status for shop {$shop->id}: " . $e->getMessage());
+                $data['ordersByStatus'] = [];
+            }
+            
+            try {
+                $data['monthlySales'] = $this->getOptimizedMonthlySalesData($shop);
+            } catch (\Exception $e) {
+                \Log::warning("Failed to get monthly sales for shop {$shop->id}: " . $e->getMessage());
+                $data['monthlySales'] = ['months' => [], 'sales' => []];
+            }
+            
+            try {
+                $data['weeklyRevenue'] = $this->getOptimizedWeeklyRevenueData($shop);
+            } catch (\Exception $e) {
+                \Log::warning("Failed to get weekly revenue for shop {$shop->id}: " . $e->getMessage());
+                $data['weeklyRevenue'] = ['weeks' => [], 'revenue' => []];
+            }
+            
+            try {
+                $data['revenueBreakdown'] = $this->getRevenueBreakdown($shop, $startDate, $endDate);
+            } catch (\Exception $e) {
+                \Log::warning("Failed to get revenue breakdown for shop {$shop->id}: " . $e->getMessage());
+                $data['revenueBreakdown'] = ['income' => 0, 'profit' => 0, 'expenses' => 0, 'income_percentage' => 0, 'profit_percentage' => 0, 'expenses_percentage' => 0];
+            }
+            
+            try {
+                $data['topCustomers'] = $this->getTopCustomers($shop, $startDate, $endDate);
+            } catch (\Exception $e) {
+                \Log::warning("Failed to get top customers for shop {$shop->id}: " . $e->getMessage());
+                $data['topCustomers'] = collect([]);
+            }
+            
+            try {
+                $data['recentActivity'] = $this->getRecentActivity($shop);
+            } catch (\Exception $e) {
+                \Log::warning("Failed to get recent activity for shop {$shop->id}: " . $e->getMessage());
+                $data['recentActivity'] = collect([]);
+            }
+            
+            return $data;
         });
 
         // Always get fresh recent orders (not cached as they change frequently)
-        $recentOrders = $shop->orders()
-            ->with(['user:id,name,email'])
-            ->select(['id', 'user_id', 'invoice', 'status', 'payment_detail', 'order_details', 'created_at'])
-            ->orderBy('created_at', 'desc')
-            ->limit(10)
-            ->get();
+        try {
+            $recentOrders = $shop->orders()
+                ->with(['user:id,name,email'])
+                ->select(['id', 'user_id', 'invoice', 'status', 'payment_detail', 'order_details', 'created_at'])
+                ->orderBy('created_at', 'desc')
+                ->limit(10)
+                ->get();
+        } catch (\Exception $e) {
+            \Log::warning("Failed to get recent orders for shop {$shop->id}: " . $e->getMessage());
+            $recentOrders = collect([]);
+        }
 
         // Always get fresh top products (not heavily cached)
-        $topProducts = $this->getOptimizedTopSellingProducts($shop, $startDate, $endDate);
+        try {
+            $topProducts = $this->getOptimizedTopSellingProducts($shop, $startDate, $endDate);
+        } catch (\Exception $e) {
+            \Log::warning("Failed to get top products for shop {$shop->id}: " . $e->getMessage());
+            $topProducts = collect([]);
+        }
 
         return view('seller.dashboard', array_merge($dashboardData, [
             'recentOrders' => $recentOrders,
@@ -92,12 +144,12 @@ class SellerController extends Controller
         $orderStats = DB::table('orders')
             ->selectRaw("
                 COUNT(*) as total_orders,
-                COUNT(CASE WHEN status IN ('completed', 'shipped', 'delivered') THEN 1 END) as total_sales,
+                COUNT(CASE WHEN status IN ('completed', 'shipped', 'delivered', 'finished') THEN 1 END) as total_sales,
                 COUNT(CASE WHEN status IN ('pending', 'confirmed', 'processing') THEN 1 END) as pending_orders,
                 COALESCE(SUM(CASE
-                    WHEN status IN ('completed', 'shipped', 'delivered')
+                    WHEN status IN ('completed', 'shipped', 'delivered', 'finished')
                         AND created_at BETWEEN ? AND ?
-                    THEN CAST((payment_detail::jsonb)->>'total_amount' AS DECIMAL(15,2))
+                    THEN CAST(payment_detail->>'total_amount' AS DECIMAL(15,2))
                     ELSE 0
                 END), 0) as total_revenue
             ", [$startDate, $endDate])
@@ -154,15 +206,15 @@ class SellerController extends Controller
         $revenues = DB::table('orders')
             ->selectRaw("
                 COALESCE(SUM(CASE
-                    WHEN status IN ('completed', 'shipped', 'delivered')
+                    WHEN status IN ('completed', 'shipped', 'delivered', 'finished')
                         AND created_at BETWEEN ? AND ?
-                    THEN CAST((payment_detail::jsonb)->>'total_amount' AS DECIMAL(15,2))
+                    THEN CAST(payment_detail->>'total_amount' AS DECIMAL(15,2))
                     ELSE 0
                 END), 0) as current_revenue,
                 COALESCE(SUM(CASE
-                    WHEN status IN ('completed', 'shipped', 'delivered')
+                    WHEN status IN ('completed', 'shipped', 'delivered', 'finished')
                         AND created_at BETWEEN ? AND ?
-                    THEN CAST((payment_detail::jsonb)->>'total_amount' AS DECIMAL(15,2))
+                    THEN CAST(payment_detail->>'total_amount' AS DECIMAL(15,2))
                     ELSE 0
                 END), 0) as previous_revenue
             ", [$currentStart, $currentEnd, $previousStart, $previousEnd])
@@ -190,8 +242,8 @@ class SellerController extends Controller
             ->selectRaw("
                 TO_CHAR(created_at, 'YYYY-MM') as month,
                 COALESCE(SUM(CASE
-                    WHEN status IN ('completed', 'shipped', 'delivered')
-                    THEN CAST((payment_detail::jsonb)->>'total_amount' AS DECIMAL(15,2))
+                    WHEN status IN ('completed', 'shipped', 'delivered', 'finished')
+                    THEN CAST(payment_detail->>'total_amount' AS DECIMAL(15,2))
                     ELSE 0
                 END), 0) as revenue
             ")
@@ -224,32 +276,54 @@ class SellerController extends Controller
     {
         // Get products that exist in completed orders from the JSON order_details column
         // This is a complex query for PostgreSQL JSON operations with proper casting
-        $productSales = DB::select("
-            SELECT
-                p.id,
-                p.name,
-                p.slug,
-                p.price,
-                p.stock,
-                p.status,
-                COALESCE(SUM(
-                    CASE
-                        WHEN o.status IN ('completed', 'shipped', 'delivered')
-                        THEN (item->>'quantity')::integer
-                        ELSE 0
-                    END
-                ), 0) as total_sold
-            FROM products p
-            LEFT JOIN orders o ON o.shop_id = p.shop_id
-            LEFT JOIN LATERAL jsonb_array_elements((o.order_details::jsonb)->'items') AS item ON (item->>'id') = p.id::text
-            WHERE p.shop_id = ?
-                AND p.deleted_at IS NULL
-                AND (o.created_at BETWEEN ? AND ? OR o.created_at IS NULL)
-                AND (o.deleted_at IS NULL OR o.deleted_at IS NULL)
-            GROUP BY p.id, p.name, p.slug, p.price, p.stock, p.status
-            ORDER BY total_sold DESC, p.stock DESC
-            LIMIT ?
-        ", [$shop->id, $startDate, $endDate, $limit]);
+        try {
+            $productSales = DB::select("
+                SELECT
+                    p.id,
+                    p.name,
+                    p.slug,
+                    p.price,
+                    p.stock,
+                    p.status,
+                    COALESCE(SUM(
+                        CASE
+                            WHEN o.status IN ('completed', 'shipped', 'delivered', 'finished')
+                                AND o.order_details IS NOT NULL 
+                            THEN (item->>'quantity')::integer
+                            ELSE 0
+                        END
+                    ), 0) as total_sold
+                FROM products p
+                LEFT JOIN orders o ON o.shop_id = p.shop_id
+                LEFT JOIN LATERAL jsonb_array_elements(o.order_details::jsonb->'items') AS item ON (item->>'id') = p.id::text
+                WHERE p.shop_id = ?
+                    AND p.deleted_at IS NULL
+                    AND (o.created_at BETWEEN ? AND ? OR o.created_at IS NULL)
+                    AND (o.deleted_at IS NULL OR o.deleted_at IS NULL)
+                GROUP BY p.id, p.name, p.slug, p.price, p.stock, p.status
+                ORDER BY total_sold DESC, p.stock DESC
+                LIMIT ?
+            ", [$shop->id, $startDate, $endDate, $limit]);
+        } catch (\Exception $e) {
+            // Fallback: get products without sales data if JSON query fails
+            \Log::warning("Failed to get top selling products for shop {$shop->id}: " . $e->getMessage());
+            $productSales = DB::select("
+                SELECT
+                    p.id,
+                    p.name,
+                    p.slug,
+                    p.price,
+                    p.stock,
+                    p.status,
+                    0 as total_sold
+                FROM products p
+                WHERE p.shop_id = ?
+                    AND p.deleted_at IS NULL
+                    AND p.status = 'active'
+                ORDER BY p.stock DESC
+                LIMIT ?
+            ", [$shop->id, $limit]);
+        }
 
         // Convert to Product models to get media relationships
         return collect($productSales)->map(function($productData) {
@@ -272,8 +346,8 @@ class SellerController extends Controller
             ->selectRaw("
                 EXTRACT(WEEK FROM created_at) as week_number,
                 COALESCE(SUM(CASE
-                    WHEN status IN ('completed', 'shipped', 'delivered')
-                    THEN CAST((payment_detail::jsonb)->>'total_amount' AS DECIMAL(15,2))
+                    WHEN status IN ('completed', 'shipped', 'delivered', 'finished')
+                    THEN CAST(payment_detail->>'total_amount' AS DECIMAL(15,2))
                     ELSE 0
                 END), 0) as revenue
             ")
@@ -665,18 +739,18 @@ class SellerController extends Controller
         $result = DB::table('orders')
             ->selectRaw("
                 COALESCE(SUM(CASE
-                    WHEN status IN ('completed', 'shipped', 'delivered')
-                    THEN CAST((payment_detail::jsonb)->>'total_amount' AS DECIMAL(15,2))
+                    WHEN status IN ('completed', 'shipped', 'delivered', 'finished')
+                    THEN CAST(payment_detail->>'total_amount' AS DECIMAL(15,2))
                     ELSE 0
                 END), 0) as income,
                 COALESCE(SUM(CASE
-                    WHEN status IN ('completed', 'shipped', 'delivered')
-                    THEN CAST((payment_detail::jsonb)->>'total_amount' AS DECIMAL(15,2)) * 0.85
+                    WHEN status IN ('completed', 'shipped', 'delivered', 'finished')
+                    THEN CAST(payment_detail->>'total_amount' AS DECIMAL(15,2)) * 0.85
                     ELSE 0
                 END), 0) as profit,
                 COALESCE(SUM(CASE
-                    WHEN status IN ('completed', 'shipped', 'delivered')
-                    THEN CAST((payment_detail::jsonb)->>'total_amount' AS DECIMAL(15,2)) * 0.15
+                    WHEN status IN ('completed', 'shipped', 'delivered', 'finished')
+                    THEN CAST(payment_detail->>'total_amount' AS DECIMAL(15,2)) * 0.15
                     ELSE 0
                 END), 0) as expenses
             ")
@@ -708,8 +782,8 @@ class SellerController extends Controller
                 users.email,
                 COUNT(orders.id) as order_count,
                 COALESCE(SUM(CASE
-                    WHEN orders.status IN ('completed', 'shipped', 'delivered')
-                    THEN CAST((orders.payment_detail::jsonb)->>'total_amount' AS DECIMAL(15,2))
+                    WHEN orders.status IN ('completed', 'shipped', 'delivered', 'finished')
+                    THEN CAST(orders.payment_detail->>'total_amount' AS DECIMAL(15,2))
                     ELSE 0
                 END), 0) as total_spent
             ")
@@ -720,39 +794,6 @@ class SellerController extends Controller
             ->orderByDesc('total_spent')
             ->limit($limit)
             ->get();
-    }
-
-    private function getProductsByLocation($shop, $startDate, $endDate)
-    {
-        // Get top selling locations based on shipping addresses from order_details JSON
-        // Need to cast text column to jsonb for PostgreSQL JSON operations with correct operator syntax
-        $locations = DB::table('orders')
-            ->selectRaw("
-                COALESCE((order_details::jsonb)->'address'->>'city', 'Unknown') as city,
-                COUNT(orders.id) as order_count,
-                COALESCE(SUM(CASE
-                    WHEN orders.status IN ('completed', 'shipped', 'delivered')
-                    THEN 1
-                    ELSE 0
-                END), 0) as completed_orders
-            ")
-            ->where('orders.shop_id', $shop->id)
-            ->whereBetween('orders.created_at', [$startDate, $endDate])
-            ->whereNull('orders.deleted_at')
-            ->groupBy('city')
-            ->orderByDesc('completed_orders')
-            ->limit(5)
-            ->get();
-
-        $totalOrders = $locations->sum('completed_orders') ?: 1;
-
-        return $locations->map(function ($location) use ($totalOrders) {
-            return [
-                'city' => $location->city ?: 'Unknown',
-                'count' => $location->completed_orders,
-                'percentage' => round(($location->completed_orders / $totalOrders) * 100, 1),
-            ];
-        });
     }
 
     private function getRecentActivity($shop, $limit = 10)
