@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [ShopController::class, 'index'])->name('homepage');
+Route::get('/best-deal', [ShopController::class, 'bestDeal'])->name('best-deal');
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/shops', [ShopController::class, 'list']);
 Route::post('/webhook/biteship', [BiteshipWebhookController::class, 'handle']);

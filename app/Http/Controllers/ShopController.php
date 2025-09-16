@@ -62,6 +62,11 @@ class ShopController extends Controller
         return view('welcome', array_merge($homepageData, compact('seoData', 'bannerPromotion')));
     }
 
+    public function bestDeal(Request $request)
+    {
+
+    }
+
     public function list(Request $request)
     {
         $query = Shop::withCount('products')->where('is_open', true);
