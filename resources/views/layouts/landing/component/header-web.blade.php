@@ -152,7 +152,7 @@
                             </div>
                             <div class="header-action-icon-2">
                                 <a class="mini-cart-icon" href="#">
-                                    <i data-feather="bell"></i>
+                                    <img alt="Nest" src="/assets/imgs/theme/icons/bell.svg" />
                                     @if (auth()->check() &&
                                             auth()->user()->unreadNotifications()->where('type', 'App\Notifications\BuyerNotification')->count() > 0)
                                         <span class="pro-count blue">
@@ -209,24 +209,7 @@
                                                         </div>
                                                         <div class="shopping-cart-title">
                                                             <h4>{{ $data['message'] ?? 'No message' }}</h4>
-                                                            <small>Status:
-                                                                {{ $data['formatted_type'] ?? 'N/A' }}</small>
-                                                            <br>
                                                             <small>{{ $notif->created_at->diffForHumans() }}</small>
-                                                        </div>
-                                                        <div class="shopping-cart-delete">
-                                                            @if (!$notif->read_at)
-                                                                <form
-                                                                    action="{{ route('buyer.notifications.markAsRead', $notif->id) }}"
-                                                                    method="POST" style="display:inline">
-                                                                    @csrf
-                                                                    <button type="submit"
-                                                                        class="btn btn-sm border-0 rounded-circle text-center text-success bg-success-transparent mt-1"
-                                                                        data-bs-toggle="tooltip" title="Mark as read">
-                                                                        <i data-feather="check"></i>
-                                                                    </button>
-                                                                </form>
-                                                            @endif
                                                         </div>
                                                     </li>
                                                 @endforeach
@@ -318,7 +301,7 @@
                         <nav>
                             <ul>
                                 <li class="hot-deals"><img src="/assets/imgs/theme/icons/icon-hot.svg"
-                                        alt="hot deals" /><a href="#">Deals</a></li>
+                                        alt="hot deals" /><a href="/best-deal">Deals</a></li>
                                 <li>
                                     <a href="/">Home</a>
                                 </li>

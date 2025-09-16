@@ -72,7 +72,8 @@
                                                     {{ number_format($order['order_details']['shipping']['price'], 0, '.', ',') }}
                                                 </div>
 
-                                                <a href="{{ route('seller.orders.show', $order) }}" class="text-primary" data-bs-toggle="tooltip" title="Change">
+                                                <a href="{{ route('seller.orders.show', $order) }}" class="text-primary"
+                                                    data-bs-toggle="tooltip" title="Change">
                                                     Ubah Kurir
                                                 </a>
                                             </div>
@@ -100,33 +101,48 @@
                                                 class="badge bg-{{ $order->status_badge }}">{{ $order->status_label }}</span>
                                         </td>
 
-                                        <td class="text-center">
-                                            {{-- Accept form --}}
-                                            <form action="{{ route('seller.orders.create-order', $order) }}" method="POST"
-                                                class="d-inline accept-form me-1">
-                                                @csrf
-                                                @method('PUT')
-                                                <input type="hidden" name="status" value="processing">
-                                                <input type="hidden" name="collection_method" value="drop_off">
-                                                <button type="submit"
-                                                    class="icon border-0 rounded-circle text-center bg-success-transparent"
-                                                    data-bs-toggle="tooltip" title="Drop Off">
-                                                    <i data-feather="layers"></i>
-                                                </button>
-                                            </form>
+                                        @php
+                                            $collectionMethod = data_get(
+                                                $order->order_details,
+                                                'shipping.collection_method',
+                                            );
+                                            $methods = is_array($collectionMethod)
+                                                ? $collectionMethod
+                                                : [$collectionMethod];
+                                        @endphp
 
-                                            <form action="{{ route('seller.orders.create-order', $order) }}" method="POST"
-                                                class="d-inline accept-form me-1">
-                                                @csrf
-                                                @method('PUT')
-                                                <input type="hidden" name="status" value="processing">
-                                                <input type="hidden" name="collection_method" value="pick_up">
-                                                <button type="submit"
-                                                    class="icon border-0 rounded-circle text-center bg-success-transparent"
-                                                    data-bs-toggle="tooltip" title="Pick Up">
-                                                    <i data-feather="archive"></i>
-                                                </button>
-                                            </form>
+                                        <td class="text-center">
+                                            {{-- Drop Off --}}
+                                            @if (in_array('drop_off', $methods))
+                                                <form action="{{ route('seller.orders.create-order', $order) }}"
+                                                    method="POST" class="d-inline accept-form me-1">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <input type="hidden" name="status" value="processing">
+                                                    <input type="hidden" name="collection_method" value="drop_off">
+                                                    <button type="submit"
+                                                        class="icon border-0 rounded-circle text-center bg-success-transparent"
+                                                        data-bs-toggle="tooltip" title="Drop Off">
+                                                        <i data-feather="layers"></i>
+                                                    </button>
+                                                </form>
+                                            @endif
+
+                                            {{-- Pick Up --}}
+                                            @if (in_array('pickup', $methods))
+                                                <form action="{{ route('seller.orders.create-order', $order) }}"
+                                                    method="POST" class="d-inline accept-form me-1">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <input type="hidden" name="status" value="processing">
+                                                    <input type="hidden" name="collection_method" value="pickup">
+                                                    <button type="submit"
+                                                        class="icon border-0 rounded-circle text-center bg-success-transparent"
+                                                        data-bs-toggle="tooltip" title="Pick Up">
+                                                        <i data-feather="archive"></i>
+                                                    </button>
+                                                </form>
+                                            @endif
 
                                             {{-- Reject button (open modal) --}}
                                             <button type="button"
