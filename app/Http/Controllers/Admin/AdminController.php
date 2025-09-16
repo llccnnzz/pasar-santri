@@ -10,6 +10,7 @@ use App\Models\Shop;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
@@ -43,37 +44,72 @@ class AdminController extends Controller
         $statistics['kyc_approved'] = $kycCounts->approved;
         $statistics['kyc_rejected'] = $kycCounts->rejected;
 
-        // --- Revenue (fetch once, compute in PHP) ---
-        $deliveredOrders = Order::delivered()
-            ->where('created_at', '>=', now()->subMonths(6)->startOfMonth())
-            ->get();
+        // --- Revenue (using proper database queries for better performance) ---
+        $revenueData = Order::selectRaw("
+                COALESCE(SUM(CASE
+                    WHEN status IN ('completed', 'shipped', 'delivered', 'finished')
+                    THEN CAST(payment_detail->>'total_amount' AS DECIMAL(15,2))
+                    ELSE 0
+                END), 0) as total_revenue,
+                COALESCE(SUM(CASE
+                    WHEN status IN ('completed', 'shipped', 'delivered', 'finished')
+                        AND created_at >= ?
+                        AND created_at <= ?
+                    THEN CAST(payment_detail->>'total_amount' AS DECIMAL(15,2))
+                    ELSE 0
+                END), 0) as monthly_revenue,
+                COALESCE(SUM(CASE
+                    WHEN status IN ('completed', 'shipped', 'delivered', 'finished')
+                        AND created_at >= ?
+                        AND created_at <= ?
+                    THEN CAST(payment_detail->>'total_amount' AS DECIMAL(15,2))
+                    ELSE 0
+                END), 0) as weekly_revenue,
+                COALESCE(SUM(CASE
+                    WHEN status IN ('completed', 'shipped', 'delivered', 'finished')
+                        AND created_at >= ?
+                        AND created_at <= ?
+                    THEN CAST(payment_detail->>'total_amount' AS DECIMAL(15,2))
+                    ELSE 0
+                END), 0) as daily_revenue
+            ", [
+                now()->startOfMonth(), now()->endOfMonth(), // monthly
+                now()->startOfWeek(), now()->endOfWeek(),   // weekly
+                now()->startOfDay(), now()->endOfDay()      // daily
+            ])
+            ->whereNull('deleted_at')
+            ->first();
 
         $revenue = [
-            'total_revenue'   => $deliveredOrders->sum('total_amount'),
-            'monthly_revenue' => $deliveredOrders->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
-                ->sum('total_amount'),
-            'weekly_revenue'  => $deliveredOrders->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])
-                ->sum('total_amount'),
-            'daily_revenue'   => $deliveredOrders->whereBetween('created_at', [now()->startOfDay(), now()->endOfDay()])
-                ->sum('total_amount'),
+            'total_revenue'   => $revenueData->total_revenue ?? 0,
+            'monthly_revenue' => $revenueData->monthly_revenue ?? 0,
+            'weekly_revenue'  => $revenueData->weekly_revenue ?? 0,
+            'daily_revenue'   => $revenueData->daily_revenue ?? 0,
         ];
 
-        // --- Monthly Analytics (users, orders, revenue in 6 months) ---
-        $months = collect(range(5, 0))->map(fn($i) => now()->subMonths($i));
+                // --- Monthly revenue (last 6 months) - using database aggregation ---
+        $monthlyRevenue = Order::selectRaw("
+                DATE_TRUNC('month', created_at) as month,
+                COALESCE(SUM(CASE
+                    WHEN status IN ('completed', 'shipped', 'delivered', 'finished')
+                    THEN CAST(payment_detail->>'total_amount' AS DECIMAL(15,2))
+                    ELSE 0
+                END), 0) as total
+            ")
+            ->where('created_at', '>=', now()->subMonths(6)->startOfMonth())
+            ->whereNull('deleted_at')
+            ->groupBy(DB::raw("DATE_TRUNC('month', created_at)"))
+            ->orderBy('month')
+            ->get()
+            ->pluck('total', 'month')
+            ->toArray();
 
-        // Preload users and orders once
-        $users = User::where('created_at', '>=', now()->subMonths(5)->startOfMonth())->get();
-        $orders = Order::where('created_at', '>=', now()->subMonths(5)->startOfMonth())->get();
-
-        $monthlyAnalytics = $months->map(function ($month) use ($users, $orders, $deliveredOrders) {
-            return [
-                'month'   => $month->format('M Y'),
-                'users'   => $users->whereBetween('created_at', [$month->startOfMonth(), $month->endOfMonth()])->count(),
-                'orders'  => $orders->whereBetween('created_at', [$month->startOfMonth(), $month->endOfMonth()])->count(),
-                'revenue' => $deliveredOrders->whereBetween('created_at', [$month->startOfMonth(), $month->endOfMonth()])
-                    ->sum('total_amount'),
-            ];
-        });
+        // Fill in missing months with 0
+        $monthlyAnalytics = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $month = now()->subMonths($i)->startOfMonth()->format('Y-m-01 00:00:00');
+            $monthlyAnalytics[] = $monthlyRevenue[$month] ?? 0;
+        }
 
         // --- Recent Activity ---
         $recentActivity = [

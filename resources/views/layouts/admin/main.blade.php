@@ -595,14 +595,6 @@
     <script src="/admin-assets/assets/js/magnific-popup.min.js"></script>
     <script src="/admin-assets/assets/js/sweetalert2.all.min.js"></script>
     <script src="/admin-assets/assets/js/kanban-board.js"></script>
-    <!--=== Apex Charts ===-->
-    <script src="/admin-assets/assets/js/apex/apexcharts.js"></script>
-    <!--=== Amcharts ===-->
-    <script src="/admin-assets/assets/js/amcharts/index.js"></script>
-    <script src="/admin-assets/assets/js/amcharts/map.js"></script>
-    <script src="/admin-assets/assets/js/amcharts/worldLow.js"></script>
-    <script src="/admin-assets/assets/js/amcharts/Animated.js"></script>
-    <script src="/admin-assets/assets/js/apex/ecommerce-chart.js"></script>
     <script src="/admin-assets/assets/js/custom.js"></script>
 
     <!-- Flash Messages -->
