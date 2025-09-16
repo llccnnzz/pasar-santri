@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\Shop;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class ShopController extends Controller
 {
@@ -64,7 +65,114 @@ class ShopController extends Controller
 
     public function bestDeal(Request $request)
     {
+        // Cache best deal data for 30 minutes
+        $bestDealData = Cache::remember('best_deal_data', 1800, function () {
+            // Get products from product_ads table grouped by category
+            $productCategories = [
+                'flash_sale' => DB::table('product_ads')
+                    ->join('products', 'product_ads.product_id', '=', 'products.id')
+                    ->join('shops', 'products.shop_id', '=', 'shops.id')
+                    ->where('product_ads.category', 'flash_sale')
+                    ->where('product_ads.is_active', true)
+                    ->where('products.deleted_at', null)
+                    ->where('shops.is_open', true)
+                    ->where(function($query) {
+                        $query->whereNull('product_ads.valid_until')
+                              ->orWhere('product_ads.valid_until', '>', now());
+                    })
+                    ->select('products.*', 'product_ads.valid_until', 'product_ads.admin_notes')
+                    ->orderBy('product_ads.sort_order', 'asc')
+                    ->limit(12)
+                    ->get(),
 
+                'hot_promo' => DB::table('product_ads')
+                    ->join('products', 'product_ads.product_id', '=', 'products.id')
+                    ->join('shops', 'products.shop_id', '=', 'shops.id')
+                    ->where('product_ads.category', 'hot_promo')
+                    ->where('product_ads.is_active', true)
+                    ->where('products.deleted_at', null)
+                    ->where('shops.is_open', true)
+                    ->select('products.*', 'product_ads.admin_notes')
+                    ->orderBy('product_ads.sort_order', 'asc')
+                    ->limit(15)
+                    ->get(),
+
+                'big_discount' => DB::table('product_ads')
+                    ->join('products', 'product_ads.product_id', '=', 'products.id')
+                    ->join('shops', 'products.shop_id', '=', 'shops.id')
+                    ->where('product_ads.category', 'big_discount')
+                    ->where('product_ads.is_active', true)
+                    ->where('products.deleted_at', null)
+                    ->where('shops.is_open', true)
+                    ->select('products.*', 'product_ads.admin_notes')
+                    ->orderBy('product_ads.sort_order', 'asc')
+                    ->limit(12)
+                    ->get(),
+
+                'less_than_10k' => DB::table('product_ads')
+                    ->join('products', 'product_ads.product_id', '=', 'products.id')
+                    ->join('shops', 'products.shop_id', '=', 'shops.id')
+                    ->where('product_ads.category', 'less_than_10k')
+                    ->where('product_ads.is_active', true)
+                    ->where('products.deleted_at', null)
+                    ->where('shops.is_open', true)
+                    ->select('products.*', 'product_ads.admin_notes')
+                    ->orderBy('products.final_price', 'asc')
+                    ->limit(12)
+                    ->get(),
+
+                'new_product' => DB::table('product_ads')
+                    ->join('products', 'product_ads.product_id', '=', 'products.id')
+                    ->join('shops', 'products.shop_id', '=', 'shops.id')
+                    ->where('product_ads.category', 'new_product')
+                    ->where('product_ads.is_active', true)
+                    ->where('products.deleted_at', null)
+                    ->where('shops.is_open', true)
+                    ->select('products.*', 'product_ads.admin_notes')
+                    ->orderBy('products.created_at', 'desc')
+                    ->limit(8)
+                    ->get(),
+            ];
+
+            // Load relations for each product collection
+            foreach ($productCategories as $category => $products) {
+                $productIds = $products->pluck('id')->toArray();
+                if (!empty($productIds)) {
+                    $productsWithRelations = Product::with(['defaultImage', 'hoverImage', 'shop'])
+                        ->whereIn('id', $productIds)
+                        ->get()
+                        ->keyBy('id');
+
+                    $productCategories[$category] = $products->map(function($product) use ($productsWithRelations) {
+                        $productModel = $productsWithRelations->get($product->id);
+                        if ($productModel) {
+                            $productModel->admin_notes = $product->admin_notes ?? null;
+                            $productModel->valid_until = $product->valid_until ?? null;
+                            return $productModel;
+                        }
+                        return null;
+                    })->filter();
+                }
+            }
+
+            return $productCategories;
+        });
+
+        // Prepare SEO data for best deal page
+        $seoData = [
+            'title' => 'Best Deals - ' . env('APP_NAME'),
+            'description' => 'Discover amazing deals and flash sales at ' . env('APP_NAME') . '. Find hot promos, big discounts, affordable products under 10k, and newest arrivals with unbeatable prices.',
+            'keywords' => 'best deals, flash sale, hot promo, big discount, affordable products, new arrivals, marketplace deals, special offers, discounts',
+            'canonical' => route('best-deal'),
+        ];
+
+        $bannerPromotion = GlobalVariable::where('key','iLike', 'banner_promotion%')->get()->mapWithKeys(function ($item) {;
+            return [
+                str_replace('banner_promotion_', '', $item['key']) => (in_array($item['type'], ['array', 'json']) ? json_decode($item['value'], true) : $item['value'])
+            ];
+        })->toArray();
+
+        return view('best-deal', compact('bestDealData', 'seoData', 'bannerPromotion'));
     }
 
     public function list(Request $request)
