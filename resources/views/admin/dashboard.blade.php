@@ -543,132 +543,137 @@
 @endsection
 
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Feather Icons
-    feather.replace();
+    <script src="/admin-assets/assets/js/apexcharts.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize Feather Icons
+        feather.replace();
 
-    const monthlyData = @json($monthlyAnalytics);
+        const monthlyData = @json($monthlyAnalytics);
 
-    // Revenue Overview Chart
-    const revenueOptions = {
-        series: [{
-            name: 'Revenue',
-            data: monthlyData.map(item => item.revenue)
-        }],
-        chart: {
-            type: 'area',
-            height: 350
-        },
-        dataLabels: {
-            enabled: false
-        },
-        stroke: {
-            curve: 'smooth'
-        },
-        xaxis: {
-            categories: monthlyData.map(item => item.month)
-        },
-        colors: ['#7c3aed'],
-        fill: {
-            type: 'gradient',
-            gradient: {
-                shadeIntensity: 1,
-                opacityFrom: 0.7,
-                opacityTo: 0.9,
-                stops: [0, 90, 100]
+        // Revenue Overview Chart
+        const revenueOptions = {
+            series: [{
+                name: 'Revenue',
+                data: monthlyData.map(item => item.revenue)
+            }],
+            chart: {
+                type: 'area',
+                height: 350
+            },
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                curve: 'smooth'
+            },
+            xaxis: {
+                categories: monthlyData.map(item => item.month)
+            },
+            colors: ['#7c3aed'],
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    shadeIntensity: 1,
+                    opacityFrom: 0.7,
+                    opacityTo: 0.9,
+                    stops: [0, 90, 100]
+                }
             }
+        };
+
+        if (document.querySelector("#revenue_overview")) {
+            const revenueChart = new ApexCharts(document.querySelector("#revenue_overview"), revenueOptions);
+            revenueChart.render();
         }
-    };
 
-    if (document.querySelector("#revenue_overview")) {
-        const revenueChart = new ApexCharts(document.querySelector("#revenue_overview"), revenueOptions);
-        revenueChart.render();
-    }
+        // Monthly Analytics Chart
+        const monthlyOptions = {
+            series: [{
+                name: 'Orders',
+                type: 'column',
+                data: monthlyData.map(item => item.orders)
+            }, {
+                name: 'Users',
+                type: 'line',
+                data: monthlyData.map(item => item.users)
+            }],
+            chart: {
+                height: 350,
+                type: 'line'
+            },
+            stroke: {
+                width: [0, 4]
+            },
+            dataLabels: {
+                enabled: true,
+                enabledOnSeries: [1]
+            },
+            xaxis: {
+                categories: monthlyData.map(item => item.month)
+            },
+            colors: ['#3b82f6', '#ef4444']
+        };
 
-    // Monthly Analytics Chart
-    const monthlyOptions = {
-        series: [{
-            name: 'Orders',
-            type: 'column',
-            data: monthlyData.map(item => item.orders)
-        }, {
-            name: 'Users',
-            type: 'line',
-            data: monthlyData.map(item => item.users)
-        }],
-        chart: {
-            height: 350,
-            type: 'line'
-        },
-        stroke: {
-            width: [0, 4]
-        },
-        dataLabels: {
-            enabled: true,
-            enabledOnSeries: [1]
-        },
-        xaxis: {
-            categories: monthlyData.map(item => item.month)
-        },
-        colors: ['#3b82f6', '#ef4444']
-    };
-
-    if (document.querySelector("#monthly_analytics")) {
-        const monthlyChart = new ApexCharts(document.querySelector("#monthly_analytics"), monthlyOptions);
-        monthlyChart.render();
-    }
-
-    // User Types Chart
-    const userTypesOptions = {
-        series: [{{ $statistics['total_sellers'] }}, {{ $statistics['total_customers'] }}],
-        chart: {
-            type: 'donut',
-            height: 250
-        },
-        labels: ['Sellers', 'Customers'],
-        colors: ['#10b981', '#f59e0b'],
-        legend: {
-            position: 'bottom'
+        if (document.querySelector("#monthly_analytics")) {
+            const monthlyChart = new ApexCharts(document.querySelector("#monthly_analytics"), monthlyOptions);
+            monthlyChart.render();
         }
-    };
 
-    if (document.querySelector("#user_types_chart")) {
-        const userTypesChart = new ApexCharts(document.querySelector("#user_types_chart"), userTypesOptions);
-        userTypesChart.render();
-    }
-
-    // Growth Overview Chart
-    const growthOptions = {
-        series: [{
-            name: 'Growth',
-            data: monthlyData.map(item => item.users)
-        }],
-        chart: {
-            type: 'bar',
-            height: 350
-        },
-        plotOptions: {
-            bar: {
-                horizontal: false,
-                columnWidth: '55%',
-                endingShape: 'rounded'
+        // User Types Chart
+        const userTypesOptions = {
+            series: [{{ $statistics['total_sellers'] }}, {{ $statistics['total_customers'] }}],
+            chart: {
+                type: 'donut',
+                height: 250
+            },
+            labels: ['Sellers', 'Customers'],
+            colors: ['#10b981', '#f59e0b'],
+            legend: {
+                position: 'bottom'
             }
-        },
-        dataLabels: {
-            enabled: false
-        },
-        xaxis: {
-            categories: monthlyData.map(item => item.month)
-        },
-        colors: ['#8b5cf6']
-    };
+        };
 
-    if (document.querySelector("#growth_overview")) {
-        const growthChart = new ApexCharts(document.querySelector("#growth_overview"), growthOptions);
-        growthChart.render();
-    }
-});
-</script>
+        if (document.querySelector("#user_types_chart")) {
+            const userTypesChart = new ApexCharts(document.querySelector("#user_types_chart"), userTypesOptions);
+            userTypesChart.render();
+        }
+
+        // Growth Overview Chart
+        const growthOptions = {
+            series: [{
+                name: 'Growth',
+                data: monthlyData.map(item => item.users)
+            }],
+            chart: {
+                type: 'bar',
+                height: 350
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: false,
+                    columnWidth: '55%',
+                    endingShape: 'rounded'
+                }
+            },
+            dataLabels: {
+                enabled: false
+            },
+            xaxis: {
+                categories: monthlyData.map(item => item.month)
+            },
+            colors: ['#8b5cf6']
+        };
+
+        if (document.querySelector("#growth_overview")) {
+            const growthChart = new ApexCharts(document.querySelector("#growth_overview"), growthOptions);
+            growthChart.render();
+        }
+    });
+    </script>
+@endpush
+
+@push('head')
+    <link rel="stylesheet" href="/admin-assets/assets/css/apexcharts-legend.min.css" />
+    <link rel="stylesheet" href="/admin-assets/assets/css/apexcharts.min.css" />
 @endpush
