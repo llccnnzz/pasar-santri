@@ -68,10 +68,10 @@
             <table>
                 <tr>
                     <td class="logo">
-                        <img src="{{ $page['mainLogo'] }}" width="180"
-                            alt="Pasar Santri Marketplace Logo" />
+                        <img src="{{ $page['mainLogo'] }}" width="180" alt="Pasar Santri Marketplace Logo" />
                     </td>
-                    <td style="text-align: right; padding-top: 30px;"><b style="font-size: 20px; color: #0e4e1d;">{{ $page['invoice'] }}</b></td>
+                    <td style="text-align: right; padding-top: 30px;"><b
+                            style="font-size: 20px; color: #0e4e1d;">{{ $page['invoice'] }}</b></td>
                 </tr>
             </table>
 
@@ -125,6 +125,7 @@
                     <td width="50%">
                         <strong>Dari:</strong><br>
                         {{ $page['shopName'] }}<br>
+                        {{ $page['shopAddress'] }}<br>
                         {{ $page['shopPhone'] }}
                     </td>
                 </tr>

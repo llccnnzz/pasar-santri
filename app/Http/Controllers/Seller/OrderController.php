@@ -373,6 +373,7 @@ class OrderController extends Controller
     private function buildLabelPages(Order $order): array
     {
         $shopId   = $order['shop_id'];
+        $shop     = $order['shop'];
         $details  = $order['order_details'] ?? [];
         $shipping = $details['shipping'] ?? [];
         $address  = $details['address'] ?? [];
@@ -382,6 +383,39 @@ class OrderController extends Controller
         $totalWeight = collect($details['items'] ?? [])->sum(function ($i) {
             return (float) $i['weight'] * (int) $i['quantity'];
         });
+
+        $buyerAddressParts = [
+            $address['address_line_1'] ?? null,
+            $address['village'] ?? null,
+            $address['subdistrict'] ?? null,
+            $address['city'] ?? null,
+            $address['province'] ?? null,
+            $address['postal_code'] ?? null,
+        ];
+
+        $buyerAddress = implode(', ', array_filter($buyerAddressParts));
+
+        $buyerAddressDetail = ! empty($address['address_line_2'])
+            ? implode(', ', array_filter([
+            $address['address_line_2'],
+            $address['village'] ?? null,
+            $address['subdistrict'] ?? null,
+            $address['city'] ?? null,
+            $address['province'] ?? null,
+            $address['postal_code'] ?? null,
+        ]))
+            : '';
+
+        $shopAddressParts = [
+            $shop['address'] ?? null,
+            $shop['village'] ?? null,
+            $shop['subdistrict'] ?? null,
+            $shop['city'] ?? null,
+            $shop['province'] ?? null,
+            $shop['postal_code'] ?? null,
+        ];
+
+        $shopAdrress = implode(', ', array_filter($shopAddressParts));
 
         return [[
             'mainLogo'           => config('app.url') . '/assets/imgs/theme/logo.png',
@@ -393,11 +427,12 @@ class OrderController extends Controller
             'totalWeight'        => $totalWeight,
             'shippingFee'        => 'Rp.' . number_format($shipping['price'] ?? 0),
             'buyerName'          => $address['name'] ?? $order['user']['name'],
-            'buyerAddress'       => $address['address_line_1'] ?? '',
+            'buyerAddress'       => $buyerAddress,
             'buyerPhone'         => $address['phone'] ?? '',
-            'buyerAddressDetail' => $address['address_line_2'] ?? '',
+            'buyerAddressDetail' => $buyerAddressDetail,
             'orderNotes'         => $details['notes'] ?? '',
             'shopName'           => $order['shop']['name'],
+            'shopAddress'        => $shopAdrress,
             'shopPhone'          => $order['shop']['phone'],
             'items'              => collect($details['items'] ?? [])->map(function ($i) {
                 return [
