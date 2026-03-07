@@ -1,26 +1,80 @@
+# Laravel & PHP
 /.phpunit.cache
-/node_modules
-/public/build
-/public/hot
-/public/storage
-/storage/*.key
-/storage/pail
 /vendor
+/node_modules
 .env
 .env.backup
 .env.production
 .phpactor.json
 .phpunit.result.cache
-Homestead.json
-Homestead.yaml
+auth.json
+composer.lock
+
+# Build & Assets
+/public/build
+/public/hot
+/public/storage
 npm-debug.log
 yarn-error.log
-/auth.json
+package-lock.json
+
+# Storage & Cache
+/storage/*.key
+/storage/pail
+/storage/app/*
+!/storage/app/.gitignore
+/storage/framework/cache/*
+!/storage/framework/cache/.gitignore
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitignore
+/storage/framework/testing/*
+!/storage/framework/testing/.gitignore
+/storage/framework/views/*
+!/storage/framework/views/.gitignore
+/storage/logs/*
+!/storage/logs/.gitignore
+/bootstrap/cache/*
+!/bootstrap/cache/.gitignore
+
+# IDE & Editors
 /.fleet
 /.idea
 /.nova
 /.vscode
 /.zed
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
 
-# User Manual generated files
+# Laravel Homestead
+Homestead.json
+Homestead.yaml
+
+# Project Specific
 /docs/User-Manual.html
+/docs/*.pdf
+/information-pasar-santri/
+
+# Database
+*.sqlite
+*.sqlite-journal
+database.sqlite
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Backup files
+*.bak
+*.backup
+*~
