@@ -320,39 +320,22 @@ Aplikasi akan berjalan di: **http://localhost:8000**
 
 Edit file `.env` dan sesuaikan konfigurasi berikut:
 
-#### Database (PostgreSQL)
-```env
-DB_CONNECTION=pgsql
-DB_HOST=127.0.0.1
-DB_PORT=5434
-DB_DATABASE=pasar_santri
-DB_USERNAME=postgres
-DB_PASSWORD=postgres
-```
+#### Database
+Konfigurasikan koneksi database di file `.env`:
+- Database driver (PostgreSQL recommended)
+- Host dan port
+- Nama database
+- Username dan password
 
-#### Redis (Optional)
-```env
-REDIS_HOST=127.0.0.1
-REDIS_PASSWORD=null
-REDIS_PORT=6382
-```
+#### Cache & Queue (Optional)
+Konfigurasikan Redis untuk caching dan queue di file `.env`.
 
-#### Biteship API
-```env
-BITESHIP_API_KEY=your_biteship_api_key_here
-BITESHIP_API_URL=https://api.biteship.com/v1
-```
+#### Third-Party API
+Konfigurasikan API key untuk layanan eksternal di file `.env`:
+- **Biteship API** - Untuk integrasi logistik dan pengiriman
 
-#### Mail Configuration
-```env
-MAIL_MAILER=smtp
-MAIL_HOST=smtp.mailtrap.io
-MAIL_PORT=2525
-MAIL_USERNAME=your_username
-MAIL_PASSWORD=your_password
-MAIL_FROM_ADDRESS="noreply@pasarsantri.com"
-MAIL_FROM_NAME="${APP_NAME}"
-```
+#### Email
+Konfigurasikan SMTP untuk pengiriman email di file `.env`.
 
 #### Session & Cache
 ```env
@@ -472,27 +455,22 @@ php artisan db:seed --class=ProductSeeder
 
 ## 🔌 API Integration
 
-### Biteship API
+### Third-Party Services
 
-Platform ini terintegrasi dengan **Biteship API** untuk logistik end-to-end.
+Platform ini terintegrasi dengan layanan eksternal untuk logistik end-to-end.
 
-#### Endpoints yang Digunakan:
+**Fitur Integrasi:**
+- Sync daftar kurir
+- Hitung ongkir real-time
+- Buat order pengiriman
+- Tracking pengiriman
 
-1. **GET /couriers** - Mendapatkan daftar kurir Indonesia
-2. **POST /rates/couriers** - Hitung ongkos kirim real-time
-3. **POST /orders** - Buat order pengiriman
-4. **GET /trackings/{id}** - Tracking status pengiriman
-5. **Webhook** - Auto-update status (shipped/delivered)
-
-#### Kurir yang Didukung (19):
-AnterAja, Borzo, Deliveree, Gojek, Grab, ID Express, JNE, J&T, Lalamove, Lion Parcel, Ninja Express, Paxel, Pos Indonesia, RPX, SAP Express, Sentral Cargo, SiCepat, TIKI, Wahana
-
-#### Service Class:
+**Service Class:**
 ```php
 app/Services/BiteshipService.php
 ```
 
-#### Konfigurasi:
+**Konfigurasi:**
 ```php
 config/services.php
 ```
